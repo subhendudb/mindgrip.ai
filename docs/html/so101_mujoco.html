@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MuJoCo Simulation · MindGrip AI</title>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">MindGrip AI project docs</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html">MindGrip AI Home</a></li><li><a href="project_page.html">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html" class="active">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html">Directory Structure</a></li><li><a href="acronyms.html">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+<h1 id="so-101-mujoco-simulation">SO-101 MuJoCo simulation</h1>
+<p>Use a <strong>MuJoCo-simulated SO-101 follower</strong> with LeRobot teleoperate / record.</p>
+<p>The default scene (<code>src/lerobot/robots/so101_mujoco/assets/so101_scene.xml</code>) is the <strong>official TheRobotStudio SO-ARM100 MuJoCo model</strong> (<code>Simulation/SO101</code>, <code>so101_new_calib</code>). <code>IITD_EPR_KIT4-main</code> only ships the same CAD as <strong>ROS2 URDF/Gazebo</strong> (no MJCF); use that kit for RViz/Gazebo, and this scene for MuJoCo.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mode</th>
+<th>Follower</th>
+<th>Teleop</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>A — Leader connected</strong></td>
+<td><code>--robot.type=so101_mujoco</code></td>
+<td><code>--teleop.type=so101_leader</code></td>
+<td>Real leader plugged in; practice / record without moving the real follower</td>
+</tr>
+<tr class="even">
+<td><strong>B — Sim only</strong></td>
+<td><code>--robot.type=so101_mujoco</code></td>
+<td><code>--teleop.type=so101_keyboard</code></td>
+<td>No arms; generate datasets and debug the ML pipeline</td>
+</tr>
+</tbody>
+</table>
+<p>Install: <code>uv sync --extra so101-mujoco</code> (add <code>--extra feetech</code> for a real leader).</p>
+<p>Full commands and keyboard map: <a href="https://github.com/huggingface/lerobot/blob/main/examples/so101_mujoco/README.md">examples/so101_mujoco/README.md</a> (local path <code>examples/so101_mujoco/README.md</code>).</p>
+<h3 id="quick-starts">Quick starts</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># B — keyboard + sim (no hardware)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run lerobot-teleoperate <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--robot.type</span><span class="op">=</span>so101_mujoco <span class="at">--robot.id</span><span class="op">=</span>sim_follower <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--teleop.type</span><span class="op">=</span>so101_keyboard <span class="at">--display_data</span><span class="op">=</span>true</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># A — real leader → sim follower</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run lerobot-teleoperate <span class="dt">\</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--robot.type</span><span class="op">=</span>so101_mujoco <span class="at">--robot.id</span><span class="op">=</span>sim_follower <span class="dt">\</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--teleop.type</span><span class="op">=</span>so101_leader <span class="at">--teleop.port</span><span class="op">=</span>/dev/tty.usbmodemXXXX <span class="at">--teleop.id</span><span class="op">=</span>LeoArm <span class="dt">\</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--display_data</span><span class="op">=</span>true</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Record sim dataset for ACT / other policies</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run lerobot-record <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--robot.type</span><span class="op">=</span>so101_mujoco <span class="at">--robot.id</span><span class="op">=</span>sim_follower <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--teleop.type</span><span class="op">=</span>so101_keyboard <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--dataset.repo_id</span><span class="op">=</span><span class="va">${HF_USER}</span>/so101_mujoco_demo <span class="dt">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--dataset.num_episodes</span><span class="op">=</span>10 <span class="dt">\</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--dataset.single_task</span><span class="op">=</span><span class="st">&quot;Pick and place in sim&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--display_data</span><span class="op">=</span>true</span></code></pre></div>
+<blockquote>
+<p>Sim demos are for learning the pipeline. For the physical pick-and-place sorter, still collect real USB-cam demos on the follower (see <a href="project_page.html">project page</a>).</p>
+<p>Link lengths and joint limits from this model are the numbers used in <a href="so101_kinematics.html">SO-101 Forward &amp; Inverse Kinematics</a>.</p>
+</blockquote>
+
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>

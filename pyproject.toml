@@ -1,0 +1,12 @@
+[project]
+name = "so101-lab"
+version = "0.1.0"
+description = "SO-101 pick & place sorting lab — LeRobot overlay workspace"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.uv.workspace]
+members = [
+  "packages/lerobot_robot_so101_mujoco",
+  "packages/lerobot_teleoperator_so101_keyboard",
+]

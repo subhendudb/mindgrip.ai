@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Policy Cheatsheet · MindGrip AI</title>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">MindGrip AI project docs</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html">MindGrip AI Home</a></li><li><a href="project_page.html">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html" class="active">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html">Directory Structure</a></li><li><a href="acronyms.html">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+<h1 id="so-101-policy-cheatsheet">SO-101 Policy Cheatsheet</h1>
+<p>Quick guide to <strong>which LeRobot policy to pick</strong> for the SO-101 arm — especially the <a href="project_page.html">pick &amp; place sorting project</a> — with or without a USB camera.</p>
+<blockquote>
+<p><strong>TIP:</strong> For color / shape / category sorting on a tabletop SO-101, start with <strong>ACT + one fixed USB camera</strong>. Use this page when you outgrow that or want a VLA.</p>
+</blockquote>
+<p>See also: <a href="acronyms.html">Acronyms glossary</a> · <a href="cheat-sheet.html">Commands cheat sheet</a> · <a href="hardware_guide.html">Compute Hardware Guide</a></p>
+<hr />
+<h2 id="second-decision-so-101-sorting">60-second decision (SO-101 sorting)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Your situation</th>
+<th>Pick</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>First sorting robot, USB cam, MacBook Air + cloud GPU</td>
+<td><strong>ACT</strong></td>
+<td>Fast to train, data-efficient (~50 demos), light compute</td>
+</tr>
+<tr class="even">
+<td>Same setup, want smoother / multi-modal motions</td>
+<td><strong>Diffusion Policy</strong></td>
+<td>Better when demos have several valid ways to grasp/place</td>
+</tr>
+<tr class="odd">
+<td>Multiple spoken/written task variants (“put red in left bin”)</td>
+<td><strong>SmolVLA</strong></td>
+<td>Small VLA; needs language in the dataset <code>task</code> field</td>
+</tr>
+<tr class="even">
+<td>Foundation-model / research, big cloud GPU</td>
+<td><strong>π₀ / π₀.₅ / π₀-FAST</strong></td>
+<td>Strong generalist VLAs; heavy train + fine-tune</td>
+</tr>
+<tr class="odd">
+<td>No USB camera</td>
+<td><strong>Don’t train a vision sorter</strong></td>
+<td>Color/shape sorting needs pixels. Use teleop/replay only, or add a camera</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Without a USB camera:</strong> policies below that list “vision required” will <strong>not</strong> solve visual sorting. Joint-only control can still be used for hardware checks (<code>lerobot-teleoperate</code>, <code>lerobot-replay</code>), but autonomous <em>sorting</em> needs a camera.</p>
+<hr />
+<h2 id="legend">Legend</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Best fit when you have a fixed overview webcam (640×480 @ 30 FPS is enough for color sorting)</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>What you can still do; usually <em>not</em> visual pick-and-place</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Rough training class (see <a href="hardware_guide.html">hardware guide</a>)</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>How well it matches the sorting project on MacBook Air + cloud</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="policy-cards">Policy cards</h2>
+<h3 id="act-action-chunking-transformer">ACT — Action Chunking Transformer</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Lightweight imitation / behaviour cloning</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Predicts short chunks of future joint actions from images + robot state.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td><strong>Best default</strong> for SO-101 color/shape sorting, pick-to-bin, simple recycling demos.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Config expects image features — not a practical sorter. Use for teleop/hardware only.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Light (~2–6 GB VRAM) · cloud: AWS <code>g5</code> / HF <code>a10g-large</code></td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★★★★ first policy</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="act.html">ACT</a></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lerobot-train</span> <span class="at">--policy.type</span><span class="op">=</span>act <span class="at">--dataset.repo_id</span><span class="op">=</span>USER/pick_place_sorting ...</span></code></pre></div>
+<hr />
+<h3 id="diffusion-policy">Diffusion Policy</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Denoising diffusion over action sequences</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Learns a distribution of actions — good when demos are multi-modal (several valid grasps).</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Strong for sorting when trajectories vary a lot; smoother than plain BC.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Vision-oriented in typical SO-101 setups — skip for visual sorting.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Medium (~8–14 GB) · same A10G/L4 class, longer than ACT</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★★★ after ACT works</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td>Policy type <code>diffusion</code> in train CLI · <a href="hardware_guide.html">hardware guide</a></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lerobot-train</span> <span class="at">--policy.type</span><span class="op">=</span>diffusion <span class="at">--dataset.repo_id</span><span class="op">=</span>USER/pick_place_sorting ...</span></code></pre></div>
+<hr />
+<h3 id="smolvla-small-visionlanguageaction">SmolVLA — Small Vision–Language–Action</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Small VLA (vision + language → actions)</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Fine-tune a compact foundation policy with camera views, state, and a text instruction.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Best when one arm must switch tasks via language (“red bin” vs “blue bin”) without separate ACT models.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Needs vision (+ language). Empty-camera tricks exist for <em>missing extra views</em>, not zero cameras.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Small VLA (~10–16 GB) · A10G/L4 OK; slower than ACT</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★★★ multi-instruction sorting</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="smolvla.html">SmolVLA</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="π₀-pi0">π₀ (Pi0)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Large flow-matching VLA</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Generalist vision–language–action model; fine-tune for your SO-101 tasks.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Research / advanced: few-shot transfer, rich language, varied objects.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Not for camera-less sorting.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large VLA (~24–40 GB) · prefer A100-class</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ explore after ACT/SmolVLA</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="pi0.html">π₀</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="π₀-fast-pi0fast">π₀-FAST (Pi0Fast)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Faster-token π₀ family variant</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>π₀-style VLA with FAST action tokenization for snappier inference.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>When you want π₀-class generality with better runtime on the robot.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Vision + language required.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large VLA</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ advanced</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="pi0fast.html">π₀-FAST</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="π₀.₅-pi05">π₀.₅ (Pi05)</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Later π-family VLA</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Stronger π-series policy for open-world / language-conditioned control.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Advanced multi-task sorting, research demos.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Not applicable for visual sorting.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large VLA · A100+ recommended</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ research</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="pi05.html">π₀.₅</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="multitask-dit">Multitask DiT</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Diffusion / flow Transformer + CLIP vision/text</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Language-conditioned multitask diffusion policy.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Several related sorting tasks in one model (different objects/bins via text).</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Relies on vision + language — not camera-less.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Diffusion class (~8–14 GB+) · inference likes a strong GPU</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★★ multi-task sorting</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="multi_task_dit.html">Multitask DiT</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="x-vla">X-VLA</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Cross-embodiment VLA</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Pretrained across robots/cameras; adapt with domain IDs and rename maps.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>When reusing Hub checkpoints and mapping <code>front</code> → expected image keys.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Expects image views (can pad with empty cameras if a checkpoint wants more views than you have).</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large VLA</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ advanced transfer</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="xvla.html">X-VLA</a> · <a href="rename_map.html">Rename map</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="eo-1">EO-1</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>VLM backbone + flow-matching action head</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Conversation-style vision–language–state → continuous actions.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Language-driven SO-101 tasks; needs task text in data.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Vision required.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large / multimodal</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ explore</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="eo1.html">EO-1</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="molmoact2">MolmoAct2</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Vision–language–action</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Molmo-based act policy for grounded visual instructions.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Instruction-following pick/place when you have GPU headroom.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Vision required.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Heavy (benchmarks often on H100-class)</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★ research</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="molmoact2.html">MolmoAct2</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="nvidia-gr00t-n1.5">NVIDIA GR00T N1.5</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Large multimodal robot foundation model</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>NVIDIA’s generalist humanoid/manipulation stack in LeRobot.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Heavy research; overkill for simple 3-bin color sort.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Not a camera-less sorter.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Multimodal large (~24–40 GB+)</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★ curiosity / research</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="groot.html">GR00T</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="wall-oss">WALL-OSS</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Embodied multimodal / VLA-style</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Large vision–language–action pretrained policy family.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Advanced open-world manipulation experiments.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Vision required.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Large VLA</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★ research</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td><a href="walloss.html">WALL-OSS</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="vq-bet">VQ-BeT</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Vector-quantized behaviour transformer</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Discrete latent actions + transformer; light BC family.</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Alternative light policy for vision+state demos (often single cam).</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Still expects an image key in config — not for sorting without cam.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Light (~2–6 GB)</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★★★ alternative to ACT</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td>Policy type <code>vqbet</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="tdmpc">TDMPC</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Type</strong></td>
+<td>Model-based / MPC-style learning</td>
+</tr>
+<tr class="even">
+<td><strong>One-liner</strong></td>
+<td>Planning with a learned dynamics model (often sim / RL-flavoured setups).</td>
+</tr>
+<tr class="odd">
+<td><strong>With USB cam</strong></td>
+<td>Niche for SO-101 tabletop IL sorting — prefer ACT first.</td>
+</tr>
+<tr class="even">
+<td><strong>Without USB cam</strong></td>
+<td>Possible in state-based control loops; <strong>not</strong> the path for visual bin sorting.</td>
+</tr>
+<tr class="odd">
+<td><strong>Compute</strong></td>
+<td>Light class, config-dependent</td>
+</tr>
+<tr class="even">
+<td><strong>SO-101 fit</strong></td>
+<td>★ special cases</td>
+</tr>
+<tr class="odd">
+<td><strong>Docs</strong></td>
+<td>Policy type <code>tdmpc</code> · see RL guides for related workflows</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="master-matrix-so-101">Master matrix (SO-101)</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Policy</th>
+<th>CLI <code>policy.type</code> / path</th>
+<th>USB cam sorting</th>
+<th>No USB cam</th>
+<th>Language?</th>
+<th>Train on Air?</th>
+<th>Cloud starter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ACT</strong></td>
+<td><code>act</code></td>
+<td><strong>Best</strong></td>
+<td>No (visual)</td>
+<td>No</td>
+<td>Tiny only</td>
+<td><code>g5.2xlarge</code> / HF <code>a10g-large</code></td>
+</tr>
+<tr class="even">
+<td><strong>Diffusion</strong></td>
+<td><code>diffusion</code></td>
+<td>Excellent</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>A10G / L4</td>
+</tr>
+<tr class="odd">
+<td><strong>VQ-BeT</strong></td>
+<td><code>vqbet</code></td>
+<td>Good alt</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>A10G</td>
+</tr>
+<tr class="even">
+<td><strong>SmolVLA</strong></td>
+<td><code>smolvla</code></td>
+<td>Multi-task text</td>
+<td>No</td>
+<td><strong>Yes</strong></td>
+<td>No</td>
+<td>A10G / L4</td>
+</tr>
+<tr class="odd">
+<td><strong>Multitask DiT</strong></td>
+<td><code>multi_task_dit</code></td>
+<td>Multi-task text</td>
+<td>No</td>
+<td><strong>Yes</strong></td>
+<td>No</td>
+<td>A10G+</td>
+</tr>
+<tr class="even">
+<td><strong>π₀ / FAST / π₀.₅</strong></td>
+<td><code>pi0</code> / <code>pi0_fast</code> / <code>pi05</code></td>
+<td>Advanced</td>
+<td>No</td>
+<td><strong>Yes</strong></td>
+<td>No</td>
+<td>A100-class</td>
+</tr>
+<tr class="odd">
+<td><strong>X-VLA</strong></td>
+<td><code>xvla</code></td>
+<td>Advanced + rename map</td>
+<td>Empty cams ≠ no cam</td>
+<td><strong>Yes</strong></td>
+<td>No</td>
+<td>A100-class</td>
+</tr>
+<tr class="even">
+<td><strong>EO-1 / MolmoAct2 / GR00T / WALL-OSS</strong></td>
+<td>see docs</td>
+<td>Research</td>
+<td>No</td>
+<td>Usually yes</td>
+<td>No</td>
+<td>Large GPU</td>
+</tr>
+<tr class="odd">
+<td><strong>TDMPC</strong></td>
+<td><code>tdmpc</code></td>
+<td>Rare for sorting</td>
+<td>State-only niches</td>
+<td>No</td>
+<td>No</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="use-case-policy-sorting-project-scenarios">Use-case → policy (sorting project scenarios)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>SO-101 use case</th>
+<th>With USB camera</th>
+<th>Without USB camera</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Color-based sorting (3 blocks → 3 bins)</td>
+<td><strong>ACT</strong> (start) → Diffusion if needed</td>
+<td>Not solvable visually — add camera</td>
+</tr>
+<tr class="even">
+<td>Shape-based sorting</td>
+<td><strong>ACT</strong> or <strong>Diffusion</strong></td>
+<td>Same — needs vision</td>
+</tr>
+<tr class="odd">
+<td>Recycling / warehouse pick-to-bin</td>
+<td><strong>ACT</strong>; <strong>SmolVLA</strong> if bins chosen by text</td>
+<td>Teleop only</td>
+</tr>
+<tr class="even">
+<td>Produce grading / defect markers</td>
+<td><strong>ACT</strong> / <strong>Diffusion</strong>; VLA if instructions vary</td>
+<td>Needs vision</td>
+</tr>
+<tr class="odd">
+<td>One model, many verbal tasks</td>
+<td><strong>SmolVLA</strong> or Multitask DiT</td>
+<td>Needs cam + language in demos</td>
+</tr>
+<tr class="even">
+<td>Hub pretrained → your SO-101</td>
+<td><strong>X-VLA</strong> / π-family + rename map</td>
+<td>Still need at least the views the checkpoint expects</td>
+</tr>
+<tr class="odd">
+<td>Hardware bring-up only</td>
+<td>Any — prefer no train yet</td>
+<td><strong>Teleop + replay</strong> (no policy)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="macbook-air-reminder">MacBook Air reminder</h2>
+<ul>
+<li><strong>Record &amp; deploy</strong> on the Air with USB cam.</li>
+<li><strong>Train</strong> on cloud (NVIDIA A10G/L4 or HF Jobs; AMD ROCm possible but more DIY).</li>
+<li>Prefer <strong>ACT</strong> until sorting succeeds; then try Diffusion or SmolVLA.</li>
+</ul>
+<p>Full host/cloud sizing: <a href="project_page.html">project page — Host Computer</a>.</p>
+
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>

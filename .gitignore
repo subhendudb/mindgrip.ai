@@ -1,0 +1,12 @@
+# SO-101 Lab
+.so101_cli.env
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+outputs/

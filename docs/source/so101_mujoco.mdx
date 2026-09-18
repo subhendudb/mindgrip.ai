@@ -1,0 +1,23 @@
+# SO-101 MuJoCo simulation
+
+> Live guide: **[Optional Tooling](./optional_tooling)** (purpose · install · CLI 16–18 · future use cases · reference).
+
+Use a **MuJoCo-simulated SO-101 follower** with LeRobot teleoperate / record.
+
+| Mode | Follower | Teleop | CLI |
+| --- | --- | --- | --- |
+| Viewer (Control sliders) | `so101_mujoco` | — | **16** |
+| **A — Leader → sim** | `--robot.type=so101_mujoco` | `--teleop.type=so101_leader` | **17** |
+| **B — Keyboard → sim** | `--robot.type=so101_mujoco` | `--teleop.type=so101_keyboard` | copy-paste |
+
+Install (from so101-lab root):
+
+```bash
+uv pip install -e packages/lerobot_robot_so101_mujoco
+uv pip install -e packages/lerobot_teleoperator_so101_keyboard
+# or: ./so101_cli_menu.sh 18
+```
+
+Scene assets live under `packages/lerobot_robot_so101_mujoco/.../assets/so101_scene.xml` (TheRobotStudio `so101_new_calib`). LeRobot UX patches are **not** required for these plugins.
+
+> **Sim demos are for learning the pipeline only.** For the physical sorter, collect real USB-cam demos — see [Roadmap](./roadmap) Steps 7–9.

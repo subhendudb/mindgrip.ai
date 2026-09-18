@@ -1,0 +1,584 @@
+<style>
+    .home-page {
+      --home-max: 1080px;
+      line-height: 1.6;
+    }
+    .home-page a { color: var(--accent); }
+    .home-page a:hover { color: var(--accent-hover); }
+
+    .home-hero {
+      position: relative;
+      isolation: isolate;
+      min-height: min(78vh, 640px);
+      display: grid;
+      align-items: end;
+      padding: 2.5rem 0 2.75rem;
+      margin: 0 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background:
+        radial-gradient(ellipse 80% 60% at 85% 20%, rgb(209 147 79 / 0.14), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgb(209 147 79 / 0.06), transparent 50%),
+        var(--bg);
+      overflow: hidden;
+    }
+    .home-hero-inner {
+      max-width: var(--home-max);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .home-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.35rem;
+    }
+    .home-brand-row img {
+      width: 2.5rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+    }
+    .home-brand-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.85rem, 4vw, 2.65rem);
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.05;
+      margin: 0;
+    }
+    .home-eyebrow {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 0.2rem;
+    }
+    .home-hero h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: var(--text);
+      margin: 0 0 0.85rem;
+      max-width: 28rem;
+      text-wrap: balance;
+    }
+    .home-hero-lead {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 34rem;
+      text-wrap: pretty;
+    }
+    .home-hero-lead strong { color: var(--text); font-weight: 600; }
+    .home-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin: 0 0 1.75rem;
+    }
+    .home-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.05rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none !important;
+      border: 1px solid var(--border-strong);
+      color: var(--text) !important;
+      background: var(--surface);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .home-cta:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text) !important;
+    }
+    .home-cta.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-contrast) !important;
+    }
+    .home-cta.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: var(--accent-contrast) !important;
+    }
+    .home-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem 1.75rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .home-stats li {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .home-stats strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.15rem;
+    }
+    .home-hero-visual {
+      position: absolute;
+      right: -4%;
+      top: 8%;
+      width: min(48%, 520px);
+      z-index: 0;
+      opacity: 0.92;
+      pointer-events: none;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 100%);
+    }
+    .home-hero-visual img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 60px rgb(0 0 0 / 0.35);
+    }
+    @media (max-width: 900px) {
+      .home-hero-visual { display: none; }
+      .home-hero { min-height: 0; padding-top: 1.75rem; }
+    }
+
+    .home-section {
+      max-width: var(--home-max);
+      margin: 0 0 2.75rem;
+      padding-top: 0.35rem;
+    }
+    .home-section > h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.45rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.55rem;
+      color: var(--text);
+    }
+    .home-section > .home-sec-lead {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      max-width: 40rem;
+    }
+    .home-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.4rem;
+    }
+
+    .home-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem 1.5rem;
+    }
+    @media (max-width: 720px) {
+      .home-split { grid-template-columns: 1fr; }
+    }
+    .home-point {
+      padding: 1rem 0 1.05rem;
+      border-top: 1px solid var(--border);
+    }
+    .home-point h3 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.08rem;
+      margin: 0 0 0.4rem;
+      color: var(--text);
+      letter-spacing: -0.015em;
+    }
+    .home-point p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .home-compare {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.5rem 0 0;
+    }
+    .home-compare th,
+    .home-compare td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.75rem 0.85rem 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .home-compare th {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      font-weight: 500;
+      border-bottom-color: var(--border-strong);
+    }
+    .home-compare td:first-child {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+      padding-right: 1rem;
+      width: 7.5rem;
+    }
+    .home-compare .yes { color: var(--chip-ok-text); }
+
+    .home-path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      margin: 0.85rem 0 0;
+    }
+    .home-path span {
+      font-size: 0.82rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--border);
+      background: var(--surface-elevated);
+      color: var(--text);
+    }
+    .home-path .arrow { border: 0; background: transparent; color: var(--muted); padding: 0 0.1rem; }
+
+    .home-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 640px) {
+      .home-nav-grid { grid-template-columns: 1fr; }
+    }
+    .home-nav-grid a {
+      display: block;
+      padding: 1rem 0.85rem 1rem 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none !important;
+      color: inherit !important;
+    }
+    .home-nav-grid a:nth-child(odd) { padding-right: 1.25rem; }
+    .home-nav-grid a strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+    .home-nav-grid a span {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+    .home-nav-grid a:hover strong { color: var(--accent-hover); }
+
+    .home-author {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.25rem 1.5rem;
+      align-items: start;
+      padding: 1.35rem 0 0;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 560px) {
+      .home-author { grid-template-columns: 1fr; }
+    }
+    .home-author-mark {
+      width: 4.25rem;
+      height: 4.25rem;
+      border: 1px solid var(--border-strong);
+      background: var(--brand-grad);
+      display: grid;
+      place-items: center;
+    }
+    .home-author-mark img { width: 2.4rem; height: 2.4rem; }
+    .home-author h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.35rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: -0.02em;
+    }
+    .home-author .role {
+      margin: 0 0 0.65rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .home-author p {
+      margin: 0 0 0.85rem;
+      color: var(--muted);
+      max-width: 38rem;
+      font-size: 0.95rem;
+    }
+    .home-author-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.15rem;
+      font-size: 0.9rem;
+    }
+    .home-author-links a { font-weight: 600; }
+
+    .home-foot {
+      max-width: var(--home-max);
+      margin: 2rem 0 1rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-faint);
+    }
+    .home-foot a { color: var(--muted); }
+  </style>
+
+<div class="home-page">
+<header class="home-hero">
+        <div class="home-hero-inner">
+          <div class="home-brand-row">
+            <img src="/brand/mindgrip-mark.svg" width="40" height="40" alt="" />
+            <div>
+              <span class="home-eyebrow">so101-lab · docs</span>
+              <p class="home-brand-name">MindGrip AI</p>
+            </div>
+          </div>
+          <h2>A project lab on top of LeRobot — teach any similar arm to sort, pick, and place.</h2>
+          <p class="home-hero-lead">
+            <strong>MindGrip AI</strong> is the curriculum and tooling layer for cognitive targeting and handling:
+            assemble → calibrate → teleop → record → train ACT → deploy.
+            This repo keeps vanilla <strong>LeRobot</strong> / <strong>LeLab</strong> intact and adds the pieces a real lab needs.
+          </p>
+          <div class="home-ctas">
+            <a class="home-cta primary" href="project_page.html">Open the project guide</a>
+            <a class="home-cta" href="roadmap.html">9-step roadmap</a>
+            <a class="home-cta" href="cli_menu.html">CLI menu</a>
+          </div>
+          <ul class="home-stats">
+            <li><strong>6 DOF</strong> + gripper · dual-arm kit</li>
+            <li><strong>~100</strong> teleop demonstrations</li>
+            <li><strong>2 bins</strong> match-box vs reject</li>
+          </ul>
+        </div>
+        <div class="home-hero-visual" aria-hidden="true">
+          <img
+            src="/images/home-hero-arm.jpg"
+            alt=""
+            width="1280"
+            height="720"
+          />
+        </div>
+      </header>
+
+      <section class="home-section" id="purpose">
+        <p class="home-label">Purpose of this repository</p>
+        <h2>What so101-lab is for</h2>
+        <p class="home-sec-lead">
+          Upstream LeRobot is the engine. This overlay is the <strong>lab workbook</strong>:
+          plugins, a guided CLI, optional UX patches, and end-to-end docs so you can finish a sorting robot —
+          and reuse the same pattern on other LeRobot-class arms.
+        </p>
+        <div class="home-split">
+          <div class="home-point">
+            <h3>Primary lab (this kit)</h3>
+            <p>
+              Binary sorter on SO-101 (leader + follower):
+              match-box → match-box bin; everything else → reject.
+              Learned with ACT from teleop demos — not hand-coded trajectories.
+            </p>
+          </div>
+          <div class="home-point">
+            <h3>Reusable for similar arms</h3>
+            <p>
+              Same loop works for other Feetech / LeRobot-style kits:
+              ports, calibration ids, camera name, task string, dataset → train → rollout.
+              Swap hardware config; keep the curriculum and CLI shape.
+            </p>
+          </div>
+          <div class="home-point">
+            <h3>Overlay, not a fork</h3>
+            <p>
+              Vanilla <code>lerobot/</code> stays upstream-clean.
+              Plugins install as <code>lerobot_robot_*</code> / <code>lerobot_teleoperator_*</code> packages;
+              optional patches are explicit and reversible.
+            </p>
+          </div>
+          <div class="home-point">
+            <h3>Two paths, one project</h3>
+            <p>
+              Prefer <a href="lelab.html">LeLab</a> on a laptop for calibrate → record → HF Jobs → deploy.
+              Use <a href="cli_menu.html"><code>so101_cli_menu.sh</code></a> on Pi, for motor IDs, debugging, and scripting.
+            </p>
+          </div>
+        </div>
+        <div class="home-path" aria-label="Pipeline">
+          <span>Hardware</span><span class="arrow">→</span>
+          <span>Calibrate</span><span class="arrow">→</span>
+          <span>Teleop</span><span class="arrow">→</span>
+          <span>Record</span><span class="arrow">→</span>
+          <span>Train ACT</span><span class="arrow">→</span>
+          <span>Rollout</span>
+        </div>
+      </section>
+
+      <section class="home-section" id="value">
+        <p class="home-label">Why this repo</p>
+        <h2>Value over stock LeRobot &amp; LeLab</h2>
+        <p class="home-sec-lead">
+          LeRobot and LeLab are excellent foundations. This lab fills the gaps between “library docs” and “a finished sorter on your desk.”
+        </p>
+        <table class="home-compare">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">LeRobot / LeLab alone</th>
+              <th scope="col">This overlay adds</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Scope</td>
+              <td>General APIs, GUI workflows, Hub train/deploy</td>
+              <td class="yes">Opinionated 9-step MindGrip path for a binary sort lab</td>
+            </tr>
+            <tr>
+              <td>Day-to-day CLI</td>
+              <td>Long <code>uv run …</code> flags to remember</td>
+              <td class="yes"><code>so101_cli_menu.sh</code> + <code>.so101_cli.env</code> for every stage</td>
+            </tr>
+            <tr>
+              <td>Workshop gaps</td>
+              <td>Motor ID / assembly still manual; scene design lightly covered</td>
+              <td class="yes">Motor ID steps, camera placement, L<sub>max</sub> / FK–IK, teleop sync checklist</td>
+            </tr>
+            <tr>
+              <td>Simulation</td>
+              <td>Core sims elsewhere</td>
+              <td class="yes">Installable MuJoCo robot + keyboard teleop plugins</td>
+            </tr>
+            <tr>
+              <td>macOS / cam UX</td>
+              <td>Stock behaviour</td>
+              <td class="yes">Optional patches (TTY keys, OBS cam, all-episodes viz)</td>
+            </tr>
+            <tr>
+              <td>Upstream hygiene</td>
+              <td>—</td>
+              <td class="yes">No permanent fork of <code>src/lerobot/</code> required</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="home-sec-lead" style="margin-top:1.1rem">
+          Upstream docs stay authoritative:
+          <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">LeRobot</a>
+          ·
+          <a href="https://huggingface.co/docs/lerobot/lelab" target="_blank" rel="noopener noreferrer">LeLab</a>.
+          This site documents <em>how we run them</em> for MindGrip.
+        </p>
+      </section>
+
+      <section class="home-section" id="featured">
+        <p class="home-label">Featured lab</p>
+        <h2>SO-101 pick &amp; place · binary sort</h2>
+        <p class="home-sec-lead">
+          Task string:
+          <code>Pick object: put match box in match-box bin; put other objects in reject bin</code>.
+          Data plan ~40–50 episodes per class. ACT on HF Jobs / cloud GPU; rollout on laptop, desktop, or Pi.
+        </p>
+        <div class="home-ctas">
+          <a class="home-cta primary" href="project_page.html">Pick &amp; Place Sorting</a>
+          <a class="home-cta" href="roadmap.html#step-1">Start at Step 1</a>
+          <a class="home-cta" href="so101_kinematics.html">FK &amp; IK</a>
+          <a class="home-cta" href="policy_cheatsheet.html">Policy cheatsheet</a>
+        </div>
+      </section>
+
+      <section class="home-section" id="start">
+        <p class="home-label">Documentation map</p>
+        <h2>Start here</h2>
+        <div class="home-nav-grid">
+          <a href="project_page.html">
+            <strong>Pick &amp; Place Sorting</strong>
+            <span>Hardware, host PC, LeLab vs CLI, architecture, success criteria</span>
+          </a>
+          <a href="roadmap.html">
+            <strong>Roadmap · Support · Reference</strong>
+            <span>Nine steps from motors to autonomous rollout</span>
+          </a>
+          <a href="lelab.html">
+            <strong>LeLab (recommended path)</strong>
+            <span>When the GUI wins — calibrate → record → HF Jobs → deploy</span>
+          </a>
+          <a href="cli_menu.html">
+            <strong>CLI Command Menu</strong>
+            <span>Every <code>so101_cli_menu.sh</code> option mapped</span>
+          </a>
+          <a href="so101_kinematics.html">
+            <strong>Forward &amp; Inverse Kinematics</strong>
+            <span>Reach, L<sub>max</sub>, and scene design for the arm</span>
+          </a>
+          <a href="optional_tooling.html">
+            <strong>Optional Tooling</strong>
+            <span>MuJoCo sim + keyboard teleop (CLI · 16–18)</span>
+          </a>
+          <a href="roadmap.html#troubleshooting">
+            <strong>Troubleshooting</strong>
+            <span>Hardware faults and leader–follower teleop sync tips</span>
+          </a>
+          <a href="directory_structure.html">
+            <strong>Directory Structure</strong>
+            <span>so101-lab layout, plugins, patches, docs-web</span>
+          </a>
+          <a href="acronyms.html">
+            <strong>Acronyms</strong>
+            <span>HF, ACT, FK/IK, LeoArm, and other short names</span>
+          </a>
+          <a href="policy_cheatsheet.html">
+            <strong>Policy Cheatsheet</strong>
+            <span>ACT first; when to try Diffusion / SmolVLA</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="home-section" id="author">
+        <p class="home-label">Author</p>
+        <div class="home-author">
+          <div class="home-author-mark" aria-hidden="true">
+            <img src="/brand/mindgrip-mark.svg" alt="" />
+          </div>
+          <div>
+            <h2>Subhendu Datta Bhowmik</h2>
+            <p class="role">Senior Director, Enterprise AI &amp; Digital Engineering · Kolkata, India</p>
+            <p>
+              MindGrip AI is part of a broader practice spanning enterprise systems, cloud platforms,
+              and AI &amp; robotics — documented on
+              <a href="https://subhdb.co.in" target="_blank" rel="noopener noreferrer">The Digital Journey</a>.
+              This lab is the hands-on robotics companion: imitation learning on a desk-scale arm,
+              with production-minded workflow discipline.
+            </p>
+            <div class="home-author-links">
+              <a href="https://subhdb.co.in" target="_blank" rel="noopener noreferrer">subhdb.co.in</a>
+              <a href="mailto:subhendu.dattabhowmik@gmail.com">Email</a>
+              <a href="https://huggingface.co/SUBHENDU" target="_blank" rel="noopener noreferrer">Hugging Face · SUBHENDU</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p class="home-foot">
+        Stack: SO-101 · LeRobot · LeLab · ACT · so101-lab overlay.
+        Upstream:
+        <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">huggingface.co/docs/lerobot</a>.
+        Example dataset / model from this lab:
+        <a href="https://huggingface.co/datasets/SUBHENDU/pick_place_sorting_20260911_184643" target="_blank" rel="noopener noreferrer">dataset</a>
+        ·
+        <a href="https://huggingface.co/SUBHENDU/act_2026-09-11_13-54-04" target="_blank" rel="noopener noreferrer">ACT checkpoint</a>.
+      </p>
+</div>

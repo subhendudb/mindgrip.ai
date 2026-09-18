@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CLI Command Menu · MindGrip AI · LeRobot Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    .project-page {
+      --surface:   var(--panel);
+      --surface2:  var(--code-bg);
+      --accent:    var(--mindgrip);
+      --accent2:   #1a7f37;
+      --accent3:   #cf222e;
+      --accent4:   #8250df;
+      --accent5:   #bf4b00;
+      --radius:    2px;
+    }
+
+    .project-page, .project-page * { box-sizing: border-box; }
+    .project-page {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      max-width: none !important;
+      width: 100%;
+    }
+/* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--bg) 45%, var(--tagline-bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 0 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,159,28,.14), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,159,28,.12);
+      border: 1px solid rgba(255,159,28,.35);
+      color: #bf4b00;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      font-family: var(--font-display);
+      background: linear-gradient(135deg, var(--text) 20%, var(--mindgrip) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 640px;
+      margin: 0 auto 32px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .tag span { color: var(--text); font-weight: 500; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1080px; margin: 0; padding: 0; }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 12px;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 720px;
+      margin-bottom: 36px;
+    }
+
+    /* ── CARDS GRID ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .card p  { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── USE-CASE LIST ── */
+    .use-case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .uc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .uc-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .uc-item p  { color: var(--muted); font-size: 13.5px; }
+
+    /* ── STEPS TIMELINE ── */
+    .timeline { position: relative; padding-left: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 0 20px;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .timeline-item + .timeline-item .step-connector { display: block; }
+
+    .step-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      min-height: 24px;
+      background: var(--border);
+      margin-top: 0;
+    }
+    .timeline-item:last-child .step-line { display: none; }
+
+    .step-body {
+      padding-bottom: 36px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      margin-bottom: 10px;
+    }
+    .step-header h3 { font-size: 17px; font-weight: 600; }
+    .step-phase {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .phase-hw  { background: rgba(191,75,0,.08);   color: var(--accent5); border: 1px solid rgba(191,75,0,.25); }
+    .phase-sw  { background: rgba(209,147,79,.08); color: var(--accent);  border: 1px solid rgba(209,147,79,.25); }
+    .phase-data{ background: rgba(26,127,55,.08);  color: var(--accent2); border: 1px solid rgba(26,127,55,.25); }
+    .phase-ml  { background: rgba(130,80,223,.08); color: var(--accent4); border: 1px solid rgba(130,80,223,.25); }
+    .phase-run { background: rgba(207,34,46,.08);  color: var(--accent3); border: 1px solid rgba(207,34,46,.25); }
+
+    .step-body p  { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .step-body ul { padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .step-body ul li { margin-bottom: 4px; }
+    .step-body ul li strong { color: var(--text); }
+
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #2d2d2d;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-top: 12px;
+      color: #e6edf3;
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
+    pre .comment { color: #8b949e; }
+    pre .cmd     { color: #79c0ff; }
+    pre .flag    { color: #d2a8ff; }
+    pre .val     { color: #a5d6ff; }
+    pre .kw      { color: #ffa657; }
+
+    /* ── HARDWARE SPEC TABLE ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-top: 20px;
+    }
+    .spec-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .spec-table td:first-child { color: var(--text); font-weight: 500; }
+    .spec-table tr:hover td { background: var(--surface2); }
+
+    /* ── POLICY GRID ── */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+    }
+    .policy-card .pname { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .policy-card .pdesc { color: var(--muted); font-size: 12.5px; }
+    .policy-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .pb-rec { background: rgba(26,127,55,.12); color: var(--accent2); }
+    .pb-adv { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .pb-exp { background: rgba(191,75,0,.12); color: var(--accent5); }
+
+    /* ── LELAB COMPARISON ── */
+    .path-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    @media (max-width: 720px) {
+      .path-split { grid-template-columns: 1fr; }
+    }
+    .path-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+    }
+    .path-card.preferred {
+      border-color: rgba(26,127,55,.35);
+      box-shadow: 0 0 0 1px rgba(26,127,55,.08);
+    }
+    .path-card h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+    .path-card p { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+    .path-card ul { padding-left: 18px; color: var(--muted); font-size: 13.5px; margin: 0; }
+    .path-card ul li { margin-bottom: 6px; }
+    .path-card ul li strong { color: var(--text); }
+    .cmp-lelab { color: var(--accent2); font-weight: 600; }
+    .cmp-cli   { color: var(--accent); font-weight: 600; }
+
+    /* ── CLI COMMAND MENU ── */
+    .cli-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 20px;
+    }
+    .cli-jump a {
+      display: inline-block;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--accent);
+      background: rgba(209,147,79,.08);
+      border: 1px solid rgba(209,147,79,.22);
+      border-radius: 20px;
+      padding: 6px 12px;
+    }
+    .cli-jump a:hover { background: rgba(209,147,79,.14); }
+    .cli-menu details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .cli-menu details[open] { border-color: rgba(209,147,79,.35); }
+    .cli-menu summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+    .cli-menu summary::-webkit-details-marker { display: none; }
+    .cli-menu summary::after {
+      content: "▸";
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .cli-menu details[open] summary::after { content: "▾"; }
+    .cli-menu .cli-step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(209,147,79,.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .cli-menu .cli-body {
+      padding: 0 18px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .cli-menu .cli-body p {
+      color: var(--muted);
+      font-size: 13.5px;
+      margin: 12px 0 8px;
+    }
+    .cli-menu .cli-body a.deep {
+      font-size: 12.5px;
+      color: var(--accent);
+    }
+    .cmp-hw    { color: var(--accent5); font-weight: 600; }
+    .cmp-both  { color: var(--muted); font-weight: 500; }
+
+    /* ── NOTICE BOX ── */
+    .notice {
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-size: 13.5px;
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-body { color: var(--muted); }
+    .notice-body strong { color: var(--text); }
+    .n-info  { background: rgba(209,147,79,.08); border: 1px solid rgba(209,147,79,.22); }
+    .n-warn  { background: rgba(191,75,0,.08);   border: 1px solid rgba(191,75,0,.22); }
+    .n-tip   { background: rgba(26,127,55,.08);  border: 1px solid rgba(26,127,55,.22); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── STEP COLORS ── */
+    .s1 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s2 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s3 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s4 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s5 { background: rgba(209,147,79,.12); color: var(--accent); }
+    .s6 { background: rgba(209,147,79,.12); color: var(--accent); }
+    .s7 { background: rgba(26,127,55,.12);  color: var(--accent2); }
+    .s8 { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .s9 { background: rgba(207,34,46,.12);  color: var(--accent3); }
+
+    @media (max-width: 640px) {
+      .timeline-item { grid-template-columns: 36px 1fr; gap: 0 14px; }
+      .step-num { width: 36px; height: 36px; font-size: 13px; }
+    }
+  
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">Emphasizes cognitive decision-making for complex object targeting and handling.</div>
+      <!--NAV-->
+    </nav>
+    <main class="content project-page">
+<!-- ════════════════ HERO ════════════════ -->
+<section id="cli-menu-hero" style="border-bottom:none;padding-bottom:24px">
+  <div class="container">
+    <div class="section-label">Terminal</div>
+    <h1 style="font-size:clamp(28px,5vw,42px);font-family:var(--font-display);letter-spacing:-.02em;margin-bottom:12px">CLI Command Menu</h1>
+    <p class="lead">
+      Complete terminal path for the SO-101 binary sorter <strong>without LeLab</strong> — every option from
+      <code>./so101_cli_menu.sh</code> (0–21 + C / D / S / Q), with the exact <code>uv run …</code> equivalents.
+    </p>
+    <div class="notice n-info">
+      <div class="notice-icon">📖</div>
+      <div class="notice-body">
+        Prefer the GUI? See <a href="lelab.html"><strong>LeLab for MindGrip AI</strong></a>
+        · Overview: <a href="project_page.html"><strong>Pick &amp; Place Sorting</strong></a> · <a href="roadmap.html"><strong>Roadmap · Support · Reference</strong></a>
+        · Teleop lag? <a href="roadmap.html#troubleshooting">Troubleshooting</a>
+        · Sim: <a href="optional_tooling.html#mujoco">MuJoCo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ HOW TO RUN ════════════════ -->
+<section id="cli-menu">
+  <div class="container">
+    <div class="section-label">Wrapper</div>
+    <h2>How to run</h2>
+    <p class="lead">
+      From the repo root. Config is saved in <code>.so101_cli.env</code>.
+      Defaults: <strong>LEADER_ID</strong> / <strong>FOLLOWER_ID</strong> = <code>LeoArm</code> ·
+      <strong>HF_LEROBOT_HOME</strong> = <code>~/Documents/lerobot</code> (not <code>~/.cache</code>).
+      Example ports on this Mac setup:
+      leader <code>/dev/tty.usbmodem5AE60832361</code> · follower <code>/dev/tty.usbmodem5B141118901</code>
+      — rediscover with option <strong>0</strong> if they change.
+    </p>
+
+<pre><span class="cmd">./so101_cli_menu.sh</span>
+<span class="cmd">./so101_cli_menu.sh</span> <span class="val">5</span>          <span class="comment"># one-shot (calibrate leader)</span>
+<span class="cmd">DRY_RUN=1 ./so101_cli_menu.sh</span> <span class="val">8</span></pre>
+
+    <div class="notice n-warn" style="margin-top:16px">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>Task string:</strong> the menu uses <code>$TASK</code> from <code>.so101_cli.env</code>.
+        Script default is still <code>Pick coloured block and place in matching bin</code>.
+        For MindGrip binary sort, set <strong>TASK</strong> via option <strong>C</strong> to:
+        <code>Pick object: put match box in match-box bin; put other objects in reject bin</code>
+      </div>
+    </div>
+
+    <div class="notice n-tip" style="margin-top:12px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        <strong>Not in the shell menu:</strong> physical <strong>Assemble</strong> and <strong>Sorting scene</strong>
+        — see <a href="roadmap.html#step-3">roadmap Step 3</a> and
+        <a href="roadmap.html#step-6">roadmap Step 6</a>.
+      </div>
+    </div>
+
+    <div class="cli-jump">
+      <a href="#cli-0">0 · Ports</a>
+      <a href="#cli-1">1 · Cameras</a>
+      <a href="#cli-2">2 · Install</a>
+      <a href="#cli-3">3 · Motor ID</a>
+      <a href="#cli-4">4 · Setup motors</a>
+      <a href="#cli-5">5 · Cal leader</a>
+      <a href="#cli-6">6 · Cal follower</a>
+      <a href="#cli-7">7 · Teleop</a>
+      <a href="#cli-8">8 · Teleop+cam</a>
+      <a href="#cli-9">9 · Sync help</a>
+      <a href="#cli-10">10 · Record</a>
+      <a href="#cli-11">11 · Viz</a>
+      <a href="#cli-12">12 · Train ACT</a>
+      <a href="#cli-13">13 · Train Diff</a>
+      <a href="#cli-14">14 · Rollout</a>
+      <a href="#cli-15">15 · Replay</a>
+      <a href="#cli-16">16 · MuJoCo viewer</a>
+      <a href="#cli-17">17 · Leader→sim</a>
+      <a href="#cli-18">18 · MuJoCo extra</a>
+      <a href="#cli-19">19 · HF login</a>
+      <a href="#cli-20">20 · Docs serve</a>
+      <a href="#cli-21">21 · Record no cam</a>
+      <a href="#cli-C">C · Config</a>
+      <a href="#cli-D">D · Dry-run</a>
+      <a href="#cli-S">S · Save</a>
+    </div>
+
+    <div class="cli-menu">
+
+      <details id="cli-0" open>
+        <summary><span class="cli-step-badge">0</span> Find USB ports</summary>
+        <div class="cli-body">
+          <p>Menu: <code>lerobot-find-port</code>. Run after plugging / unplugging a bus. Unplug the adapter you want to identify when prompted.</p>
+<pre><span class="cmd">uv run lerobot-find-port</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-1">
+        <summary><span class="cli-step-badge">1</span> Find cameras (OpenCV)</summary>
+        <div class="cli-body">
+          <p>Menu: <code>lerobot-find-cameras opencv</code>. Note the index for <code>CAM_INDEX</code> (option <strong>C</strong>).</p>
+<pre><span class="cmd">uv run lerobot-find-cameras</span> <span class="val">opencv</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-2">
+        <summary><span class="cli-step-badge">2</span> Install / sync deps</summary>
+        <div class="cli-body">
+          <p>feetech + viz + hardware + dataset. <a class="deep" href="roadmap.html#step-1">Open Step 1 in roadmap →</a></p>
+<pre><span class="cmd">uv sync</span> <span class="flag">--locked --extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span> <span class="flag">--extra</span> <span class="val">hardware</span> <span class="flag">--extra</span> <span class="val">dataset</span>
+<span class="cmd">uv run python</span> <span class="flag">--version</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-3">
+        <summary><span class="cli-step-badge">3</span> Program motor ID</summary>
+        <div class="cli-body">
+          <p>Connect <strong>only</strong> the target motor. Prompts for leader/follower port and ID 1–6.
+          <a class="deep" href="roadmap.html#step-2">Open Step 2 →</a></p>
+<pre><span class="comment"># Leader example (discover port with option 0)</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">1</span>
+
+<span class="comment"># Follower example</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">1</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-4">
+        <summary><span class="cli-step-badge">4</span> Setup motors</summary>
+        <div class="cli-body">
+          <p>Official helper — choose leader (<code>so101_leader</code>) or follower (<code>so101_follower</code>).
+          <a class="deep" href="roadmap.html#step-2">Open Step 2 →</a></p>
+<pre><span class="cmd">uv run lerobot-setup-motors</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span>
+
+<span class="cmd">uv run lerobot-setup-motors</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-5">
+        <summary><span class="cli-step-badge">5</span> Calibrate leader</summary>
+        <div class="cli-body">
+          <p>Writes calibration under <code>$HF_LEROBOT_HOME/calibration/teleoperators/so_leader/LeoArm.json</code>
+          (default home <code>~/Documents/lerobot</code>). Prefer LeLab on a laptop when available —
+          <a href="lelab.html">LeLab guide</a>. <a class="deep" href="roadmap.html#step-4">Open Step 4 →</a></p>
+<pre><span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-6">
+        <summary><span class="cli-step-badge">6</span> Calibrate follower</summary>
+        <div class="cli-body">
+          <p>Writes <code>$HF_LEROBOT_HOME/calibration/robots/so_follower/LeoArm.json</code>.
+          Same id <code>LeoArm</code> for both arms on this project. <a class="deep" href="roadmap.html#step-4">Open Step 4 →</a></p>
+<pre><span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-7">
+        <summary><span class="cli-step-badge">7</span> Teleop (no camera)</summary>
+        <div class="cli-body">
+          <p>Confirm leader → follower mirroring before recording. <a class="deep" href="roadmap.html#step-5">Open Step 5 →</a></p>
+<pre><span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-8">
+        <summary><span class="cli-step-badge">8</span> Teleop (USB camera + Rerun)</summary>
+        <div class="cli-body">
+          <p>Adds <code>--robot.cameras</code> and <code>--display_data</code> (installs viz / rerun if needed).
+          Sync issues? <a class="deep" href="roadmap.html#troubleshooting">Troubleshooting →</a>
+          <a class="deep" href="roadmap.html#step-5">Open Step 5 →</a></p>
+<pre><span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-9">
+        <summary><span class="cli-step-badge">9</span> Teleop sync help (Roadmap)</summary>
+        <div class="cli-body">
+          <p>Opens <a class="deep" href="roadmap.html#troubleshooting">Roadmap · Troubleshooting</a>
+          (hardware, calibration, lag / offset / per-joint sync tips). Same as menu option <strong>9</strong>.</p>
+        </div>
+      </details>
+
+      <details id="cli-10">
+        <summary><span class="cli-step-badge">10</span> Record demos (USB camera)</summary>
+        <div class="cli-body">
+          <p>Uses <code>$TASK</code>, camera JSON, episode count / times from config. Prefer MindGrip binary-sort task string (option <strong>C</strong>).
+          <a class="deep" href="roadmap.html#step-7">Open Step 7 →</a></p>
+<pre><span class="cmd">uv run lerobot-record</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">100</span> \
+  <span class="flag">--dataset.episode_time_s=</span><span class="val">120</span> \
+  <span class="flag">--dataset.reset_time_s=</span><span class="val">60</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"$TASK"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-11">
+        <summary><span class="cli-step-badge">11</span> Visualize dataset</summary>
+        <div class="cli-body">
+          <p><code>lerobot-dataset-viz</code> — resolves stamped repo ids under <code>$HF_LEROBOT_HOME</code>. Prompt for episode index or <code>all</code>.</p>
+<pre><span class="cmd">uv run lerobot-dataset-viz</span> \
+  <span class="flag">--repo-id</span> <span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--video-backend</span> <span class="val">pyav</span> \
+  <span class="flag">--num-workers</span> <span class="val">0</span> \
+  <span class="flag">--all-episodes</span>
+<span class="comment"># Or: --episode-index N · add --root /path/to/local/dataset when present</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-12">
+        <summary><span class="cli-step-badge">12</span> Train ACT (cloud CUDA)</summary>
+        <div class="cli-body">
+          <p>Run on a CUDA GPU host — not on a typical laptop/desktop or Pi. Prefer ACT for this project.
+          <a class="deep" href="roadmap.html#step-8">Open Step 8 →</a></p>
+<pre><span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">act</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_act</span> \
+  <span class="flag">--job_name=</span><span class="val">sorting_act</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-13">
+        <summary><span class="cli-step-badge">13</span> Train Diffusion (cloud CUDA)</summary>
+        <div class="cli-body">
+          <p>Alternate policy — also requires CUDA. <a class="deep" href="roadmap.html#step-8">Open Step 8 →</a></p>
+<pre><span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">diffusion</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_diffusion</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-14">
+        <summary><span class="cli-step-badge">14</span> Rollout / evaluate</summary>
+        <div class="cli-body">
+          <p>Copy checkpoint to the <strong>host laptop/desktop or Pi</strong> (or use a Hub path), then roll out.
+          <a class="deep" href="roadmap.html#step-9">Open Step 9 →</a></p>
+<pre><span class="cmd">uv run lerobot-rollout</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--policy.path=</span><span class="val">outputs/train/sorting_act/checkpoints/last</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/eval_pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">20</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"$TASK"</span> \
+  <span class="flag">--strategy.num_episodes=</span><span class="val">20</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-15">
+        <summary><span class="cli-step-badge">15</span> Replay episode on follower</summary>
+        <div class="cli-body">
+          <p>Open-loop replay — camera not required. Stop LeLab teleop/record first so the follower USB is free.
+          Clear the table or reset objects to the episode start. Needs a local dataset under <code>$HF_LEROBOT_HOME</code>.</p>
+<pre><span class="cmd">uv run lerobot-replay</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.root=</span><span class="val">$HF_LEROBOT_HOME/${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.episode=</span><span class="val">0</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-16">
+        <summary><span class="cli-step-badge">16</span> MuJoCo interactive viewer</summary>
+        <div class="cli-body">
+          <p>Native Control sliders drive the sim arm (no keyboard teleop). On macOS prefers <code>mjpython</code>.
+          <a class="deep" href="optional_tooling.html#mujoco">MuJoCo docs →</a></p>
+<pre><span class="comment"># macOS with mjpython in .venv</span>
+<span class="cmd">mjpython -m lerobot_robot_so101_mujoco.run_viewer</span>
+
+<span class="comment"># Fallback</span>
+<span class="cmd">uv run python -m lerobot_robot_so101_mujoco.run_viewer</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-17">
+        <summary><span class="cli-step-badge">17</span> MuJoCo — real leader → sim</summary>
+        <div class="cli-body">
+          <p>Physical leader drives the sim arm (<code>so101_mujoco</code> + <code>so101_leader</code>, <code>--robot.show_viewer=true</code>).
+          <a class="deep" href="optional_tooling.html#mujoco">MuJoCo docs →</a></p>
+<pre><span class="comment"># On macOS may use mjpython -m lerobot.scripts.lerobot_teleoperate …</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> \
+  <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--robot.show_viewer=</span><span class="val">true</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--display_data=</span><span class="val">false</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-18">
+        <summary><span class="cli-step-badge">18</span> Install MuJoCo extra</summary>
+        <div class="cli-body">
+          <p>Ensures so101-lab plugins (editable installs) + viz + feetech so leader→sim still works.</p>
+<pre><span class="cmd">uv pip install -e</span> <span class="val">packages/lerobot_robot_so101_mujoco</span>
+<span class="cmd">uv pip install -e</span> <span class="val">packages/lerobot_teleoperator_so101_keyboard</span>
+<span class="comment"># In sibling lerobot env when present:</span>
+<span class="cmd">uv sync</span> <span class="flag">--extra</span> <span class="val">viz</span> <span class="flag">--extra</span> <span class="val">feetech</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-19">
+        <summary><span class="cli-step-badge">19</span> HF auth login</summary>
+        <div class="cli-body">
+          <p>Needed for Hub datasets / jobs. Uses <code>hf</code> if on PATH, else <code>uv run hf</code>.</p>
+<pre><span class="cmd">hf auth login</span>
+<span class="comment"># or: uv run hf auth login</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-20">
+        <summary><span class="cli-step-badge">20</span> Serve project HTML docs</summary>
+        <div class="cli-body">
+          <p>Runs <code>./start.sh</code> from the repo root (docs web UI).</p>
+<pre><span class="cmd">./start.sh</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-21">
+        <summary><span class="cli-step-badge">21</span> Record demos (no camera) — Use Case 1</summary>
+        <div class="cli-body">
+          <p>Fixed pick &amp; place — state + action only. Sets <code>--dataset.push_to_hub=false</code> and <code>--display_data=false</code>.
+          Still uses <code>$TASK</code> from config.</p>
+<pre><span class="cmd">uv run lerobot-record</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">100</span> \
+  <span class="flag">--dataset.episode_time_s=</span><span class="val">120</span> \
+  <span class="flag">--dataset.reset_time_s=</span><span class="val">60</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"$TASK"</span> \
+  <span class="flag">--dataset.push_to_hub=</span><span class="val">false</span> \
+  <span class="flag">--display_data=</span><span class="val">false</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-C">
+        <summary><span class="cli-step-badge">C</span> Configure ports / ids / HF / camera</summary>
+        <div class="cli-body">
+          <p>Interactive prompts for <code>LEADER_PORT</code>, <code>FOLLOWER_PORT</code>, ids, <code>HF_USER</code>,
+          <code>DATASET_REPO</code>, <code>EVAL_REPO</code>, <code>TASK</code>, camera index, policy path, episode counts / times —
+          then writes <code>.so101_cli.env</code>.</p>
+          <p>Recommend setting <strong>TASK</strong> to the MindGrip binary-sort string (see notice above).</p>
+        </div>
+      </details>
+
+      <details id="cli-D">
+        <summary><span class="cli-step-badge">D</span> Toggle dry-run</summary>
+        <div class="cli-body">
+          <p>Print commands only — does not execute. Same as <code>DRY_RUN=1</code> for one-shot runs.</p>
+<pre><span class="cmd">DRY_RUN=1 ./so101_cli_menu.sh</span> <span class="val">8</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-S">
+        <summary><span class="cli-step-badge">S</span> Save config now</summary>
+        <div class="cli-body">
+          <p>Writes current in-memory settings to <code>.so101_cli.env</code> without re-prompting.</p>
+        </div>
+      </details>
+
+      <details id="cli-Q">
+        <summary><span class="cli-step-badge">Q</span> Quit</summary>
+        <div class="cli-body">
+          <p>Exit the interactive menu.</p>
+        </div>
+      </details>
+
+    </div>
+
+    <div class="notice n-tip" style="margin-top:16px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        Camera index may be <code>0</code> or <code>1</code> — confirm with option <strong>1</strong>.
+        Detailed narrative, photos, and troubleshooting stay in the
+        <a href="roadmap.html#steps">project roadmap</a>.
+        Prefer LeLab when you can: <a href="lelab.html">LeLab for MindGrip AI</a>.
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+  </div>
+</body>
+</html>

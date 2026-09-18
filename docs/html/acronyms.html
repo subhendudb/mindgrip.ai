@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acronyms Glossary · MindGrip AI</title>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">MindGrip AI project docs</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html">MindGrip AI Home</a></li><li><a href="project_page.html">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html">Directory Structure</a></li><li><a href="acronyms.html" class="active">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+<h1 id="acronyms-short-names">Acronyms &amp; short names</h1>
+<p>Glossary of abbreviations used in the <strong>SO-101 Pick &amp; Place Sorting</strong> project and related LeRobot docs. Prefer this page when you see short forms like <strong>HF</strong>, <strong>ACT</strong>, or <strong>VLA</strong> without expansion.</p>
+<blockquote>
+<p><strong>TIP:</strong> Start here from the <a href="project_page.html">project page</a>, then jump back to the step you were reading.</p>
+</blockquote>
+<h2 id="how-to-use-this-page">How to use this page</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Acronym</strong></td>
+<td>Short form as written in the docs</td>
+</tr>
+<tr class="even">
+<td><strong>Stands for / full name</strong></td>
+<td>Expanded meaning</td>
+</tr>
+<tr class="odd">
+<td><strong>In this project</strong></td>
+<td>Why it matters for SO-101 sorting on MacBook Air</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="platforms-tools-products">Platforms, tools &amp; products</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acronym</th>
+<th>Stands for / full name</th>
+<th>In this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>HF</strong></td>
+<td>Hugging Face</td>
+<td>Company / platform hosting models, datasets, and <strong>HF Jobs</strong> (cloud GPUs).</td>
+</tr>
+<tr class="even">
+<td><strong>Hub</strong></td>
+<td>Hugging Face Hub</td>
+<td>Online library where you push datasets and download/share policies.</td>
+</tr>
+<tr class="odd">
+<td><strong>HF Jobs</strong></td>
+<td>Hugging Face Jobs</td>
+<td>Managed cloud GPU training jobs — preferred for Step 8 on MacBook Air.</td>
+</tr>
+<tr class="even">
+<td><strong>LeRobot</strong></td>
+<td>LeRobot (Hugging Face robotics library)</td>
+<td>Framework for teleop, datasets, training, and robot rollout.</td>
+</tr>
+<tr class="odd">
+<td><strong>LeLab</strong></td>
+<td>LeRobot Lab (GUI)</td>
+<td>Recommended graphical app for calibrate → teleop → record → train → deploy.</td>
+</tr>
+<tr class="even">
+<td><strong>CLI</strong></td>
+<td>Command-Line Interface</td>
+<td>Terminal commands (<code>lerobot-train</code>, <code>uv run …</code>) instead of the GUI.</td>
+</tr>
+<tr class="odd">
+<td><strong>GUI</strong></td>
+<td>Graphical User Interface</td>
+<td>Point-and-click app (LeLab) instead of typing long flags.</td>
+</tr>
+<tr class="even">
+<td><strong>uv</strong></td>
+<td>uv (Astral package manager)</td>
+<td>Installs Python deps and runs tools; this Mac uses <strong>Python 3.13.4</strong> via uv.</td>
+</tr>
+<tr class="odd">
+<td><strong>OS</strong></td>
+<td>Operating System</td>
+<td>macOS on this host; Linux notes appear for other machines.</td>
+</tr>
+<tr class="even">
+<td><strong>PC</strong></td>
+<td>Personal Computer</td>
+<td>The MacBook Air control computer in this setup.</td>
+</tr>
+<tr class="odd">
+<td><strong>UI</strong></td>
+<td>User Interface</td>
+<td>Screens and controls in LeLab or Rerun.</td>
+</tr>
+<tr class="even">
+<td><strong>API</strong></td>
+<td>Application Programming Interface</td>
+<td>Code-facing camera / robot interfaces (e.g. OpenCV camera config).</td>
+</tr>
+<tr class="odd">
+<td><strong>YAML</strong></td>
+<td>YAML Ain’t Markup Language</td>
+<td>Config / job description format (HF Jobs can avoid hand-writing this via LeLab).</td>
+</tr>
+<tr class="even">
+<td><strong>JSON</strong></td>
+<td>JavaScript Object Notation</td>
+<td>File format for calibration (this project: <code>LeoArm.json</code> under <code>so_leader/</code> and <code>so_follower/</code>; legacy examples often use <code>my_leader.json</code> / <code>my_follower.json</code>).</td>
+</tr>
+<tr class="odd">
+<td><strong>MJPG</strong></td>
+<td>Motion JPEG</td>
+<td>Camera codec often more stable over USB (<code>fourcc: MJPG</code>).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="hardware-robotics">Hardware &amp; robotics</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acronym</th>
+<th>Stands for / full name</th>
+<th>In this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>SO-101</strong> / <strong>SO-ARM101</strong></td>
+<td>Standard Open Arm 101 (desktop arm kit)</td>
+<td>The leader + follower arms used for teleop and sorting.</td>
+</tr>
+<tr class="even">
+<td><strong>SO-100</strong></td>
+<td>Standard Open Arm 100</td>
+<td>Earlier related arm family; docs may mention it next to SO-101.</td>
+</tr>
+<tr class="odd">
+<td><strong>DOF</strong></td>
+<td>Degrees Of Freedom</td>
+<td>SO-101 is <strong>6-DOF</strong> (six joints including gripper).</td>
+</tr>
+<tr class="even">
+<td><strong>STS3215</strong></td>
+<td>Feetech STS3215 servo</td>
+<td>Smart servo motor model on the arms (variants C001 / C018 / C046).</td>
+</tr>
+<tr class="odd">
+<td><strong>TTL</strong></td>
+<td>Transistor–Transistor Logic (serial bus)</td>
+<td>Bus used by Feetech motors at ~1 Mbps.</td>
+</tr>
+<tr class="even">
+<td><strong>USB</strong></td>
+<td>Universal Serial Bus</td>
+<td>Arm adapters (<code>/dev/tty.usbmodem…</code>) and the overview webcam.</td>
+</tr>
+<tr class="odd">
+<td><strong>PSU</strong></td>
+<td>Power Supply Unit</td>
+<td>External <strong>5 V</strong> (leader) and <strong>12 V</strong> (follower) supplies — required (USB alone is not enough).</td>
+</tr>
+<tr class="even">
+<td><strong>ID</strong></td>
+<td>Identifier</td>
+<td>Motor bus ID (1–6 per arm) and robot/teleop ids (this project: both <code>LeoArm</code>; legacy docs may show <code>my_leader</code> / <code>my_follower</code>).</td>
+</tr>
+<tr class="odd">
+<td><strong>J1–J6</strong></td>
+<td>Joint 1 through Joint 6</td>
+<td>Joint nicknames: pan, lift, elbow, wrist flex, wrist roll, gripper.</td>
+</tr>
+<tr class="even">
+<td><strong>EE</strong></td>
+<td>End-Effector</td>
+<td>Tip of the arm (gripper) that picks objects.</td>
+</tr>
+<tr class="odd">
+<td><strong>FK</strong></td>
+<td>Forward Kinematics</td>
+<td>Compute gripper pose from joint angles (URDF helper use). Full SO-101 derivation: <a href="so101_kinematics.html">SO-101 Forward &amp; Inverse Kinematics</a>.</td>
+</tr>
+<tr class="even">
+<td><strong>IK</strong></td>
+<td>Inverse Kinematics</td>
+<td>Compute joint angles from a desired gripper pose (ROS2 / planning paths). Same page walks the Jacobian solver used for EE / planning paths.</td>
+</tr>
+<tr class="odd">
+<td><strong>URDF</strong></td>
+<td>Unified Robot Description Format</td>
+<td>Robot model file for viz / kinematics — optional helper, not required for LeRobot IL.</td>
+</tr>
+<tr class="even">
+<td><strong>ROS2</strong></td>
+<td>Robot Operating System 2</td>
+<td>Optional robotics middleware; <strong>not</strong> required for this sorting pipeline.</td>
+</tr>
+<tr class="odd">
+<td><strong>RViz</strong></td>
+<td>ROS Visualization</td>
+<td>Optional 3D viewer in the ROS ecosystem.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="vision-sensing-control-rates">Vision, sensing &amp; control rates</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acronym</th>
+<th>Stands for / full name</th>
+<th>In this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OpenCV</strong></td>
+<td>Open Source Computer Vision Library</td>
+<td>How LeRobot opens the USB webcam on macOS.</td>
+</tr>
+<tr class="even">
+<td><strong>FPS</strong></td>
+<td>Frames Per Second</td>
+<td>Camera rate used here: <strong>640×480 @ 30 FPS</strong>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Hz</strong></td>
+<td>Hertz (cycles per second)</td>
+<td>Control / teleop loop rate (e.g. ~60 Hz teleop timing).</td>
+</tr>
+<tr class="even">
+<td><strong>Mbps</strong></td>
+<td>Megabits per second</td>
+<td>Motor bus baud rate (~1 Mbps).</td>
+</tr>
+<tr class="odd">
+<td><strong>Rerun</strong></td>
+<td>Rerun (visualization SDK)</td>
+<td>Live window for camera + joint plots when <code>--display_data=true</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="learning-policies-ml">Learning, policies &amp; ML</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acronym</th>
+<th>Stands for / full name</th>
+<th>In this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IL</strong></td>
+<td>Imitation Learning</td>
+<td>Learn from human demos (teleop) instead of hand-coded pick scripts.</td>
+</tr>
+<tr class="even">
+<td><strong>BC</strong></td>
+<td>Behaviour Cloning</td>
+<td>Classic imitation style: map observations → actions from demos.</td>
+</tr>
+<tr class="odd">
+<td><strong>ML</strong></td>
+<td>Machine Learning</td>
+<td>Training the neural policy in Step 8.</td>
+</tr>
+<tr class="even">
+<td><strong>Policy</strong></td>
+<td>Control policy (neural network)</td>
+<td>Model that maps camera + joints → motor commands.</td>
+</tr>
+<tr class="odd">
+<td><strong>ACT</strong></td>
+<td>Action Chunking Transformer</td>
+<td><strong>Recommended</strong> first policy for pick-and-place sorting.</td>
+</tr>
+<tr class="even">
+<td><strong>Diffusion</strong> / <strong>Diffusion Policy</strong></td>
+<td>Denoising diffusion policy</td>
+<td>Smoother multi-modal actions; heavier than ACT on this Air.</td>
+</tr>
+<tr class="odd">
+<td><strong>VLA</strong></td>
+<td>Vision–Language–Action model</td>
+<td>Policies that take images + language (e.g. SmolVLA, Pi-0 family).</td>
+</tr>
+<tr class="even">
+<td><strong>SmolVLA</strong></td>
+<td>Small Vision–Language–Action model</td>
+<td>Advanced LeRobot VLA; not practical to train on M1 Air 8 GB.</td>
+</tr>
+<tr class="odd">
+<td><strong>Pi-0</strong> / <strong>π₀</strong> / <strong>Pi0</strong></td>
+<td>Physical Intelligence π₀ policy</td>
+<td>Large flow-matching VLA; cloud / big GPU only.</td>
+</tr>
+<tr class="even">
+<td><strong>Pi0Fast</strong> / <strong>π₀-FAST</strong></td>
+<td>Pi-0 Fast variant</td>
+<td>Faster tokenization variant of Pi-0; still compute-heavy.</td>
+</tr>
+<tr class="odd">
+<td><strong>Pi05</strong> / <strong>π₀.₅</strong></td>
+<td>Pi-0.5 policy</td>
+<td>Later Pi-family model; not for local Air training.</td>
+</tr>
+<tr class="even">
+<td><strong>DiT</strong></td>
+<td>Diffusion Transformer</td>
+<td>Architecture used in some multitask policies.</td>
+</tr>
+<tr class="odd">
+<td><strong>RL</strong></td>
+<td>Reinforcement Learning</td>
+<td>Learn from reward/trial-and-error; separate from this IL sorting path.</td>
+</tr>
+<tr class="even">
+<td><strong>HIL</strong></td>
+<td>Human-In-the-Loop</td>
+<td>Human stays involved during data/RL collection (related tutorials).</td>
+</tr>
+<tr class="odd">
+<td><strong>PEFT</strong></td>
+<td>Parameter-Efficient Fine-Tuning</td>
+<td>Train fewer weights (e.g. LoRA) — advanced training option.</td>
+</tr>
+<tr class="even">
+<td><strong>LoRA</strong></td>
+<td>Low-Rank Adaptation</td>
+<td>Popular PEFT method for fine-tuning large models.</td>
+</tr>
+<tr class="odd">
+<td><strong>OOM</strong></td>
+<td>Out Of Memory</td>
+<td>Crash risk when training large policies on 8 GB unified memory.</td>
+</tr>
+<tr class="even">
+<td><strong>VRAM</strong></td>
+<td>Video RAM (GPU memory)</td>
+<td>On NVIDIA cards; on Apple Silicon, memory is <strong>unified</strong> with system RAM.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="compute-macbook-air-host">Compute (MacBook Air host)</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Acronym</th>
+<th>Stands for / full name</th>
+<th>In this project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>CPU</strong></td>
+<td>Central Processing Unit</td>
+<td>M1 has 8 CPU cores; handles teleop, recording, light inference.</td>
+</tr>
+<tr class="even">
+<td><strong>GPU</strong></td>
+<td>Graphics Processing Unit</td>
+<td>M1 has a 7-core GPU; useful for viz/inference, weak for full training.</td>
+</tr>
+<tr class="odd">
+<td><strong>MPS</strong></td>
+<td>Metal Performance Shaders</td>
+<td>Apple Silicon PyTorch accelerator backend (alternative to CUDA).</td>
+</tr>
+<tr class="even">
+<td><strong>CUDA</strong></td>
+<td>Compute Unified Device Architecture</td>
+<td>NVIDIA GPU API — used on cloud HF Jobs, not on MacBook Air.</td>
+</tr>
+<tr class="odd">
+<td><strong>SSD</strong></td>
+<td>Solid-State Drive</td>
+<td>Internal disk; keep free space for demos and checkpoints.</td>
+</tr>
+<tr class="even">
+<td><strong>GB</strong></td>
+<td>Gigabyte</td>
+<td>Memory/disk size (this Air: <strong>8 GB</strong> RAM).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="quick-say-it-out-loud-cheat-sheet">Quick “say it out loud” cheat sheet</h2>
+<table>
+<thead>
+<tr class="header">
+<th>You see…</th>
+<th>Read it as…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>HF Jobs</td>
+<td>Hugging Face Jobs</td>
+</tr>
+<tr class="even">
+<td>ACT</td>
+<td>Action Chunking Transformer</td>
+</tr>
+<tr class="odd">
+<td>VLA</td>
+<td>Vision–Language–Action</td>
+</tr>
+<tr class="even">
+<td>DOF</td>
+<td>Degrees of Freedom</td>
+</tr>
+<tr class="odd">
+<td>CLI / GUI</td>
+<td>Command-line / graphical interface</td>
+</tr>
+<tr class="even">
+<td>PSU</td>
+<td>Power supply unit</td>
+</tr>
+<tr class="odd">
+<td>IL</td>
+<td>Imitation learning</td>
+</tr>
+<tr class="even">
+<td>USB cam @ 30 FPS</td>
+<td>USB camera at 30 frames per second</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related-pages">Related pages</h2>
+<ul>
+<li><a href="project_page.html">SO-101 Pick &amp; Place Sorting</a> — main project roadmap</li>
+<li><a href="policy_cheatsheet.html">SO-101 Policy Cheatsheet</a> — ACT, VLA, π₀, … and when to use each (with/without USB camera)</li>
+<li><a href="cheat-sheet.html">Cheat sheet</a> — command reference</li>
+<li><a href="lelab.html">LeLab</a> — GUI workflow</li>
+<li><a href="hardware_guide.html">Compute Hardware Guide</a> — training hardware sizing</li>
+<li><a href="act.html">ACT</a> · <a href="smolvla.html">SmolVLA</a> · <a href="pi0.html">π₀</a> — policy docs</li>
+</ul>
+
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>

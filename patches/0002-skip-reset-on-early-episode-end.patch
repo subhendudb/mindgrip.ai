@@ -1,0 +1,80 @@
+diff --git a/src/lerobot/scripts/lerobot_record.py b/src/lerobot/scripts/lerobot_record.py
+index c411ebf9..89de94b6 100644
+--- a/src/lerobot/scripts/lerobot_record.py
++++ b/src/lerobot/scripts/lerobot_record.py
+@@ -131,6 +131,7 @@ from lerobot.robots import (  # noqa: F401
+     reachy2,
+     rebot_b601_follower,
+     so_follower,
++    so101_mujoco,
+     unitree_g1 as unitree_g1_robot,
+ )
+ from lerobot.teleoperators import (  # noqa: F401
+@@ -148,6 +149,7 @@ from lerobot.teleoperators import (  # noqa: F401
+     reachy2_teleoperator,
+     rebot_102_leader,
+     so_leader,
++    so101_keyboard,
+     unitree_g1,
+ )
+ from lerobot.teleoperators.keyboard import KeyboardTeleop
+@@ -452,6 +454,7 @@ def record(
+             recorded_episodes = 0
+             while recorded_episodes < cfg.dataset.num_episodes and not events["stop_recording"]:
+                 log_say(f"Recording episode {dataset.num_episodes}", cfg.play_sounds)
++                events["episode_ended_early"] = False
+                 record_loop(
+                     robot=robot,
+                     events=events,
+@@ -467,11 +470,34 @@ def record(
+                     display_compressed_images=display_compressed_images,
+                 )
+ 
+-                # Execute a few seconds without recording to give time to manually reset the environment
++                # Execute a few seconds without recording to give time to manually reset the environment.
++                # Skip this when the user ended the episode early with n/→/Enter — that wait felt like
++                # "resetting" instead of finishing the episode.
+                 # Skip reset for the last episode to be recorded
+-                if not events["stop_recording"] and (
++                need_env_reset = not events["stop_recording"] and (
+                     (recorded_episodes < cfg.dataset.num_episodes - 1) or events["rerecord_episode"]
+-                ):
++                )
++                if need_env_reset and events.get("rerecord_episode"):
++                    log_say("Reset the environment", cfg.play_sounds)
++                    record_loop(
++                        robot=robot,
++                        events=events,
++                        fps=cfg.dataset.fps,
++                        teleop_action_processor=teleop_action_processor,
++                        robot_action_processor=robot_action_processor,
++                        robot_observation_processor=robot_observation_processor,
++                        teleop=teleop,
++                        control_time_s=cfg.dataset.reset_time_s,
++                        single_task=cfg.dataset.single_task,
++                        display_data=cfg.display_data,
++                    )
++                elif need_env_reset and events.get("episode_ended_early"):
++                    log_say(
++                        "Episode ended — saving. Put the object back, next episode starts now.",
++                        cfg.play_sounds,
++                    )
++                    events["episode_ended_early"] = False
++                elif need_env_reset:
+                     log_say("Reset the environment", cfg.play_sounds)
+ 
+                     record_loop(
+@@ -491,11 +517,13 @@ def record(
+                     log_say("Re-record episode", cfg.play_sounds)
+                     events["rerecord_episode"] = False
+                     events["exit_early"] = False
++                    events["episode_ended_early"] = False
+                     dataset.clear_episode_buffer()
+                     continue
+ 
+                 dataset.save_episode()
+                 recorded_episodes += 1
++                events["episode_ended_early"] = False
+     finally:
+         log_say("Stop recording", cfg.play_sounds, blocking=True)
+ 

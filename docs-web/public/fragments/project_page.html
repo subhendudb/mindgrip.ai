@@ -1,0 +1,1436 @@
+<style>
+
+    .project-page {
+      --surface:   var(--panel);
+      --surface2:  var(--code-bg);
+      --accent:    var(--mindgrip);
+      --accent2:   #1a7f37;
+      --accent3:   #cf222e;
+      --accent4:   #8250df;
+      --accent5:   #bf4b00;
+      --radius:    2px;
+    }
+
+    .project-page, .project-page * { box-sizing: border-box; }
+    .project-page {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      max-width: none !important;
+      width: 100%;
+    }
+/* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--bg) 45%, var(--tagline-bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 0 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,159,28,.14), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,159,28,.12);
+      border: 1px solid rgba(255,159,28,.35);
+      color: #bf4b00;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      font-family: var(--font-display);
+      background: linear-gradient(135deg, var(--text) 20%, var(--mindgrip) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 640px;
+      margin: 0 auto 32px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .tag span { color: var(--text); font-weight: 500; }
+    a.tag {
+      text-decoration: none;
+      color: var(--muted);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    a.tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a.tag:hover span { color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1080px; margin: 0; padding: 0; }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 12px;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 720px;
+      margin-bottom: 36px;
+    }
+
+    /* ── CARDS GRID ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .card p  { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── USE-CASE LIST ── */
+    .use-case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .uc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .uc-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .uc-item p  { color: var(--muted); font-size: 13.5px; }
+
+    /* ── STEPS TIMELINE ── */
+    .timeline { position: relative; padding-left: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 0 20px;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .timeline-item + .timeline-item .step-connector { display: block; }
+
+    .step-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      min-height: 24px;
+      background: var(--border);
+      margin-top: 0;
+    }
+    .timeline-item:last-child .step-line { display: none; }
+
+    .step-body {
+      padding-bottom: 36px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      margin-bottom: 10px;
+    }
+    .step-header h3 { font-size: 17px; font-weight: 600; }
+    .step-phase {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .phase-hw  { background: rgba(191,75,0,.08);   color: var(--accent5); border: 1px solid rgba(191,75,0,.25); }
+    .phase-sw  { background: rgba(209,147,79,.08); color: var(--accent);  border: 1px solid rgba(209,147,79,.25); }
+    .phase-data{ background: rgba(26,127,55,.08);  color: var(--accent2); border: 1px solid rgba(26,127,55,.25); }
+    .phase-ml  { background: rgba(130,80,223,.08); color: var(--accent4); border: 1px solid rgba(130,80,223,.25); }
+    .phase-run { background: rgba(207,34,46,.08);  color: var(--accent3); border: 1px solid rgba(207,34,46,.25); }
+
+    .step-body p  { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .step-body ul { padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .step-body ul li { margin-bottom: 4px; }
+    .step-body ul li strong { color: var(--text); }
+
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #2d2d2d;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-top: 12px;
+      color: #e6edf3;
+      font-family: var(--font-mono);
+      line-height: 1.5;
+    }
+    pre .comment { color: #8b949e; }
+    pre .cmd     { color: #79c0ff; }
+    pre .flag    { color: #d2a8ff; }
+    pre .val     { color: #a5d6ff; }
+    pre .kw      { color: #ffa657; }
+
+    /* ── HARDWARE SPEC TABLE ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-top: 20px;
+    }
+    .spec-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .spec-table td:first-child { color: var(--text); font-weight: 500; }
+    .spec-table tr:hover td { background: var(--surface2); }
+
+    /* ── POLICY GRID ── */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+    }
+    .policy-card .pname { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .policy-card .pdesc { color: var(--muted); font-size: 12.5px; }
+    .policy-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .pb-rec { background: rgba(26,127,55,.12); color: var(--accent2); }
+    .pb-adv { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .pb-exp { background: rgba(191,75,0,.12); color: var(--accent5); }
+
+    /* ── LELAB COMPARISON ── */
+    .path-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    @media (max-width: 720px) {
+      .path-split { grid-template-columns: 1fr; }
+    }
+    .path-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+    }
+    .path-card.preferred {
+      border-color: rgba(26,127,55,.35);
+      box-shadow: 0 0 0 1px rgba(26,127,55,.08);
+    }
+    .path-card h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+    .path-card p { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+    .path-card ul { padding-left: 18px; color: var(--muted); font-size: 13.5px; margin: 0; }
+    .path-card ul li { margin-bottom: 6px; }
+    .path-card ul li strong { color: var(--text); }
+    .cmp-lelab { color: var(--accent2); font-weight: 600; }
+    .cmp-cli   { color: var(--accent); font-weight: 600; }
+
+    /* ── CLI COMMAND MENU ── */
+    .cli-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 20px;
+    }
+    .cli-jump a {
+      display: inline-block;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--accent);
+      background: rgba(209,147,79,.08);
+      border: 1px solid rgba(209,147,79,.22);
+      border-radius: 20px;
+      padding: 6px 12px;
+    }
+    .cli-jump a:hover { background: rgba(209,147,79,.14); }
+    .cli-menu details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .cli-menu details[open] { border-color: rgba(209,147,79,.35); }
+    .cli-menu summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+    .cli-menu summary::-webkit-details-marker { display: none; }
+    .cli-menu summary::after {
+      content: "▸";
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .cli-menu details[open] summary::after { content: "▾"; }
+    .cli-menu .cli-step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(209,147,79,.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .cli-menu .cli-body {
+      padding: 0 18px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .cli-menu .cli-body p {
+      color: var(--muted);
+      font-size: 13.5px;
+      margin: 12px 0 8px;
+    }
+    .cli-menu .cli-body a.deep {
+      font-size: 12.5px;
+      color: var(--accent);
+    }
+    .cmp-hw    { color: var(--accent5); font-weight: 600; }
+    .cmp-both  { color: var(--muted); font-weight: 500; }
+
+    /* ── NOTICE BOX ── */
+    .notice {
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-size: 13.5px;
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-body { color: var(--muted); }
+    .notice-body strong { color: var(--text); }
+    .n-info  { background: rgba(209,147,79,.08); border: 1px solid rgba(209,147,79,.22); }
+    .n-warn  { background: rgba(191,75,0,.08);   border: 1px solid rgba(191,75,0,.22); }
+    .n-tip   { background: rgba(26,127,55,.08);  border: 1px solid rgba(26,127,55,.22); }
+
+    /* ── CONTROL FLOW (s3) ── */
+    .flow-chart {
+      margin: 0 0 24px;
+      padding: 20px 16px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .flow-main {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: center;
+      gap: 8px;
+    }
+    .flow-node {
+      flex: 1 1 120px;
+      max-width: 160px;
+      min-width: 110px;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      text-align: center;
+    }
+    .flow-node .flow-tag {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .flow-node .flow-detail {
+      display: block;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .flow-node.start,
+    .flow-node.end {
+      max-width: 130px;
+      background: rgba(209,147,79,.08);
+      border-color: rgba(209,147,79,.3);
+    }
+    .flow-node.sense { border-color: rgba(209,147,79,.35); }
+    .flow-node.sense .flow-tag { color: var(--accent); }
+    .flow-node.control { border-color: rgba(130,80,223,.4); }
+    .flow-node.control .flow-tag { color: var(--accent4); }
+    .flow-node.actuate { border-color: rgba(26,127,55,.4); }
+    .flow-node.actuate .flow-tag { color: var(--accent2); }
+    .flow-node.check { border-color: rgba(191,75,0,.4); }
+    .flow-node.check .flow-tag { color: var(--accent5); }
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 700;
+      flex: 0 0 auto;
+      padding: 0 2px;
+      user-select: none;
+    }
+    .flow-branch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    @media (max-width: 640px) {
+      .flow-arrow { display: none; }
+      .flow-node { max-width: none; }
+      .flow-branch { grid-template-columns: 1fr; }
+    }
+    .flow-branch-card {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .flow-branch-card strong { color: var(--text); }
+    .flow-branch-card.no {
+      border-color: rgba(207,34,46,.35);
+      background: rgba(207,34,46,.06);
+    }
+    .flow-branch-card.yes {
+      border-color: rgba(26,127,55,.35);
+      background: rgba(26,127,55,.06);
+    }
+    .flow-phases {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+    .flow-phase {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      color: var(--text);
+    }
+    .flow-phase span {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .flow-caption {
+      margin: 12px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    .term-tip {
+      border-bottom: 1px dotted var(--accent);
+      cursor: help;
+      text-decoration: none;
+      color: inherit;
+    }
+    .term-tip:hover { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── STEP COLORS ── */
+    .s1 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s2 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s3 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s4 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s5 { background: rgba(209,147,79,.12); color: var(--accent); }
+    .s6 { background: rgba(209,147,79,.12); color: var(--accent); }
+    .s7 { background: rgba(26,127,55,.12);  color: var(--accent2); }
+    .s8 { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .s9 { background: rgba(207,34,46,.12);  color: var(--accent3); }
+
+    @media (max-width: 640px) {
+      .timeline-item { grid-template-columns: 36px 1fr; gap: 0 14px; }
+      .step-num { width: 36px; height: 36px; font-size: 13px; }
+    }
+  
+  </style>
+
+<div class="project-page">
+<!-- ════════════════ HERO ════════════════ -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">MindGrip AI · SO-101 · Binary Sort · ACT</div>
+    <h1>Pick &amp; Place<br>Binary Object Sorter</h1>
+    <p><strong>MindGrip AI</strong> emphasizes cognitive decision-making for complex object targeting and handling. Build an autonomous <strong>binary sorter</strong> on the SO-101 LeRobot dual-arm kit (leader + follower): <strong>match-box objects → match-box bin</strong>; <strong>all other objects → reject bin</strong> — learned from human demonstration (ACT), not hand-coded paths. Prefer <a href="#lelab" class="term-tip" title="LeLab is the official LeRobot GUI (Hugging Face) for SO-101: calibrate, teleop, record demos, train, and deploy — without memorizing long CLI flags. Use after motors &amp; assembly."><strong>LeLab</strong></a> after assembly; use CLI when you need full control. Control PC: any <strong>standard laptop/desktop (8–16&nbsp;GB RAM)</strong> or a <strong>Raspberry Pi</strong> (see <a href="#host-computer">Host Computer</a> plans); training on cloud GPUs.</p>
+    <div class="hero-tags">
+      <a class="tag" href="#use-cases"><span>Use case</span> Match-box vs reject (binary)</a>
+      <a class="tag" href="#hardware"><span>Hardware</span> SO-101 (Feetech STS3215)</a>
+      <a class="tag" href="#host-computer"><span>Host PC</span> Laptop/desktop 8–16&nbsp;GB · or Raspberry Pi</a>
+      <a class="tag" href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer"><span>Framework</span> LeRobot (HuggingFace)</a>
+      <a class="tag" href="#purpose"><span>Learning</span> Imitation / Behaviour Cloning</a>
+      <a class="tag" href="#act-policy"><span>Policy</span> ACT (primary)</a>
+      <a class="tag" href="#control-flow"><span>Architecture</span> Sense → ACT → Actuate</a>
+    </div>
+
+    <div class="notice n-info" style="margin: 24px auto 0; max-width: 720px; text-align: left;">
+      <div class="notice-icon">📖</div>
+      <div class="notice-body"><strong>Task string:</strong> <code>Pick object: put match box in match-box bin; put other objects in reject bin</code>
+      · <strong>Hardware:</strong> <a href="#hardware">SO-101 arm specs</a>
+      · <strong>Host PC:</strong> <a href="#host-computer">laptop / Pi plans</a>
+      · <strong>LeLab:</strong> <a href="#lelab" class="term-tip" title="Official LeRobot GUI for SO-101 — calibrate, teleop, record, train, deploy.">GUI path</a>
+      · <strong>No LeLab?</strong> <a href="#cli-menu"><code>./so101_cli_menu.sh</code> / CLI</a>
+      · <strong>Roadmap:</strong> <a href="roadmap.html">9 steps · support · scripts</a>
+      · <strong>Control flow:</strong> <a href="#control-flow">Sense → ACT → Actuate</a>
+      · <strong>Software:</strong> <a href="#software">stack · LeLab · CLI · optional</a>
+      · <strong>Sync issues:</strong> <a href="roadmap.html#troubleshooting">Troubleshooting</a>
+      · <strong>FK / IK:</strong> <a href="so101_kinematics.html">kinematics</a>
+      · <strong>Policies:</strong> <a href="policy_cheatsheet.html">cheatsheet</a>
+      · <strong>Optional tooling:</strong> <a href="#optional-tooling">MuJoCo · keyboard</a>
+      · <strong>Acronyms:</strong> <a href="acronyms.html">glossary</a>
+      · <strong>Repo map:</strong> <a href="directory_structure.html">directory structure</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ OVERVIEW ════════════════ -->
+<section id="overview">
+  <div class="container">
+    <div class="section-label">Overview</div>
+    <h2>Project Description &amp; Defined Outcome</h2>
+    <p class="lead">
+      Binary sort use case on the SO-101 dual-arm kit — learned from human demonstration, not hand-coded paths.
+    </p>
+
+    <div class="cards" style="margin-bottom:28px">
+      <div class="card">
+        <h3>Problem statement</h3>
+        <p>Manual sorting of match-box vs non–match-box items is repetitive and hard to scale in lab / light-industrial settings.</p>
+      </div>
+      <div class="card">
+        <h3>Primary use case</h3>
+        <p><strong>Match-box objects → match-box bin</strong><br><strong>All other objects → reject bin</strong></p>
+      </div>
+      <div class="card">
+        <h3>Core challenge</h3>
+        <p>Visually tell match-box from other objects; grasp and place into the correct of two bins; learn from human teleop demos.</p>
+      </div>
+      <div class="card">
+        <h3>Constraints</h3>
+        <p>Limited kit docs &amp; fragile 3D-printed parts; need vision + teleop data pipeline; bridge teleop → dataset → ACT → real-robot eval.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Approach</h3>
+    <ol style="margin:0 0 28px;padding-left:1.25rem;color:var(--muted)">
+      <li>Assemble &amp; calibrate leader / follower arms</li>
+      <li>Teleoperate demos with USB camera</li>
+      <li>Record <strong>~40–50 episodes per class</strong> (~80–100 total, balanced match-box / other)</li>
+      <li>Train <strong>ACT</strong> (imitation learning / BC)</li>
+      <li>Deploy &amp; evaluate on the physical follower</li>
+    </ol>
+
+    <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px">
+      <div class="card">
+        <h3>Success criteria</h3>
+        <ul style="margin:0;padding-left:1.1rem;color:var(--muted);font-size:14px">
+          <li>Calibrated dual-arm teleop with USB camera</li>
+          <li>~80–100 balanced demos (both object types)</li>
+          <li>Trained ACT policy deployed on follower</li>
+          <li>Autonomous correct-bin placement</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Deliverables</h3>
+        <ul style="margin:0;padding-left:1.1rem;color:var(--muted);font-size:14px">
+          <li>Reproducible CLI / LeLab workflow</li>
+          <li>Dataset + ACT checkpoint</li>
+          <li>Demo video of autonomous sorting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="notice n-tip">
+      <div class="notice-icon">🎯</div>
+      <div class="notice-body">
+        <strong>Defined outcome:</strong> A working binary sorter on SO-101 — match-box → match-box bin; other → reject bin — learned from demonstration (ACT).<br>
+        <strong>Dataset task string:</strong>
+        <code>Pick object: put match box in match-box bin; put other objects in reject bin</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ PURPOSE ════════════════ -->
+<section id="purpose">
+  <div class="container">
+    <div class="section-label">Purpose</div>
+    <h2>What This Project Builds</h2>
+    <p class="lead">
+      A tabletop SO-101 follower that learns to autonomously <strong>binary-sort match-box vs other objects</strong> into two bins — using USB-camera vision and joint actions from leader–follower teleop, then trained with <strong>ACT</strong> (imitation learning). The same pipeline later supports colour, shape, and other sorting scenarios.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(88,166,255,.15)">🤖</div>
+        <h3>Autonomous Manipulation</h3>
+        <p>The SO-101 follower arm learns from human demonstrations to grasp, lift, and place objects into target zones without any manual control.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(63,185,80,.15)">🧠</div>
+        <h3>Imitation Learning Pipeline</h3>
+        <p>Full ML pipeline: record human demos via leader-follower teleoperation → build a HuggingFace dataset → train a neural policy → deploy autonomously.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(210,168,255,.15)">📷</div>
+        <h3>Vision-Guided Sorting</h3>
+        <p>A fixed USB camera streams an overview of the workspace. The policy maps pixels + joint states → motor commands to pick and sort with visual feedback.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,166,87,.15)">🔬</div>
+        <h3>Research & Education</h3>
+        <p>Ideal for learning robotics, computer vision, and deep learning in one integrated project. Fully reproducible with open-source tooling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ USE CASES ════════════════ -->
+<section id="use-cases">
+  <div class="container">
+    <div class="section-label">Use Cases</div>
+    <h2>Primary Task &amp; Extended Sorting Scenarios</h2>
+    <p class="lead">
+      <strong>Primary (this project):</strong> binary match-box vs reject.
+      The same teleop → dataset → ACT → deploy pipeline also supports the scenarios below once the binary sorter works.
+    </p>
+
+    <div class="notice n-info" style="margin-bottom:24px">
+      <div class="notice-icon">📦</div>
+      <div class="notice-body">
+        <strong>Primary use case — binary sort:</strong>
+        Match-box objects → match-box bin · All other objects → reject bin.
+        Collect ~40–50 demos per class (~80–100 total). Train ACT. Evaluate correct-bin placement on the follower.
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Same pipeline — additional scenarios</h3>
+    <div class="use-case-grid">
+      <div class="uc-item">
+        <h4>🎨 Colour-Based Sorting</h4>
+        <p>Place red, blue and green blocks into matching colour bins — the simplest extension after binary sort works.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🔷 Shape-Based Sorting</h4>
+        <p>Sort cubes, cylinders and spheres into separate trays. Tests generalisation over object geometry.</p>
+      </div>
+      <div class="uc-item">
+        <h4>♻️ Recycling Simulation</h4>
+        <p>Classify plastic vs paper vs metal objects (lightweight proxies) into correct disposal bins.</p>
+      </div>
+      <div class="uc-item">
+        <h4>📦 Warehouse Pick-to-Bin</h4>
+        <p>Pick objects from a central pile and route them to labelled destination zones — e-commerce order fulfilment.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🍎 Produce Grading</h4>
+        <p>Sort small produce replicas by ripeness indicator (colour) into quality-graded output bins.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🔩 Defect Inspection</h4>
+        <p>Separate “pass” parts from “reject” parts based on visual markers — industrial QC simulation.</p>
+      </div>
+    </div>
+    <div class="notice n-tip" style="margin-top:28px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body"><strong>Recommendation:</strong> Finish the <strong>binary match-box sorter</strong> first (two bins, ~80–100 balanced demos, ACT). Then reuse the pipeline for colour / shape scenarios.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ HARDWARE ════════════════ -->
+<section id="hardware">
+  <div class="container">
+    <div class="section-label">Hardware</div>
+    <h2>SO-101 Arm Specification</h2>
+    <p class="lead">The SO-101 is a 6-DOF desktop arm built around Feetech STS3215 servos. A bilateral (leader + follower) setup is used for teleoperated data collection.</p>
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Leader Arm</th>
+          <th>Follower Arm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Degrees of Freedom</td><td>6-DOF</td><td>6-DOF</td></tr>
+        <tr><td>Motors</td><td>6 × STS3215-C046/C001 (5 V)</td><td>6 × STS3215-C018 (12 V, 30 kg·cm)</td></tr>
+        <tr><td>Encoder Resolution</td><td>12-bit · 4096 steps/rev</td><td>12-bit · 4096 steps/rev</td></tr>
+        <tr><td>Communication</td><td>TTL Serial Bus 1 Mbps</td><td>TTL Serial Bus 1 Mbps</td></tr>
+          <tr><td>USB Port (example)</td><td><code>/dev/ttyUSB*</code> / <code>/dev/tty.usbmodem*</code></td><td><code>/dev/ttyUSB*</code> / <code>/dev/tty.usbmodem*</code></td></tr>
+        <tr><td>LeLab / CLI id</td><td><code>LeoArm</code> → <code>so_leader/LeoArm.json</code></td><td><code>LeoArm</code> → <code>so_follower/LeoArm.json</code></td></tr>
+        <tr><td>Power Supply</td><td>5 V external PSU</td><td>12 V external PSU</td></tr>
+        <tr><td>Recommended Camera</td><td>—</td><td>USB webcam · 640×480 @ 30 FPS · 3P lens (OpenCV)</td></tr>
+        <tr><td>Camera Resolution Used</td><td>—</td><td>640 × 480 @ 30 FPS</td></tr>
+      </tbody>
+    </table>
+    <table class="spec-table" style="margin-top:28px">
+      <thead>
+        <tr><th>#</th><th>Joint</th><th>Motor Name</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>shoulder_pan</td><td>STS3215</td><td>Base rotation (left / right)</td></tr>
+        <tr><td>2</td><td>shoulder_lift</td><td>STS3215-C001 (leader) / C018</td><td>Shoulder pitch (up / down)</td></tr>
+        <tr><td>3</td><td>elbow_flex</td><td>STS3215</td><td>Elbow bend</td></tr>
+        <tr><td>4</td><td>wrist_flex</td><td>STS3215</td><td>Wrist pitch</td></tr>
+        <tr><td>5</td><td>wrist_roll</td><td>STS3215</td><td>Wrist rotation</td></tr>
+        <tr><td>6</td><td>gripper</td><td>STS3215</td><td>Gripper open / close</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:36px;font-size:18px">Motor Variants — Leader (5 V)</h3>
+    <p class="lead" style="margin-bottom:12px">Lighter/faster motors for sensing &amp; teleop input. J2 uses higher-torque <strong>C001</strong>.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>#</th><th>Motor</th><th>Model</th><th>Gear</th><th>Stall Torque</th><th>Voltage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>shoulder_pan</td><td>STS3215-C046</td><td>1:147</td><td>~14.4 kg·cm</td><td>5 V</td></tr>
+        <tr><td>2</td><td>shoulder_lift</td><td>STS3215-C001</td><td>1:345</td><td>~19 kg·cm</td><td>5 V</td></tr>
+        <tr><td>3–6</td><td>elbow / wrist / gripper</td><td>STS3215-C046</td><td>1:147</td><td>~14.4 kg·cm</td><td>5 V</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:28px;font-size:18px">Motor Variants — Follower (12 V)</h3>
+    <p class="lead" style="margin-bottom:12px">All joints use <strong>C018</strong> (1:345, ~30 kg·cm) for payload holding torque. Do not mix C018 and C046 on the same arm without recalibrating.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>#</th><th>Motor</th><th>Model</th><th>Gear</th><th>Stall Torque</th><th>Voltage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1–6</td><td>all joints</td><td>STS3215-C018</td><td>1:345</td><td>~30 kg·cm</td><td>12 V</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════ HOST COMPUTER ════════════════ -->
+<section id="host-computer">
+  <div class="container">
+    <div class="section-label">Host Computer</div>
+    <h2>Laptop / Desktop (8–16&nbsp;GB) or Raspberry Pi</h2>
+    <p class="lead">
+      The control PC does <strong>not</strong> need to be a MacBook. Any <strong>standard laptop or desktop with 8–16&nbsp;GB RAM</strong> (low-end / mid-range)
+      can run install → calibrate → teleop → record → deploy. A <strong>Raspberry Pi</strong> can also be a host with a clear, constrained plan.
+      On every plan, <strong>ACT training (Step 8) goes to a cloud NVIDIA GPU</strong> — do not expect comfortable local training on these machines.
+    </p>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Recommended host classes</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Class</th><th>Example hardware</th><th>RAM</th><th>OS</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A · Laptop / desktop (preferred)</strong></td>
+          <td>Any modern Intel/AMD or Apple Silicon notebook or PC</td>
+          <td><strong>8–16&nbsp;GB</strong></td>
+          <td>Ubuntu 22.04/24.04 or macOS</td>
+          <td>Full CLI + LeLab UI, USB cam, recording, ACT rollout</td>
+        </tr>
+        <tr>
+          <td><strong>B · Raspberry Pi 5</strong></td>
+          <td>Pi 5 · 8&nbsp;GB (4&nbsp;GB works for lighter CLI-only)</td>
+          <td>4–8&nbsp;GB</td>
+          <td>Raspberry Pi OS <strong>64-bit</strong> / Ubuntu Server arm64</td>
+          <td>Teleop, record (lower res), rollout; pair with cloud train</td>
+        </tr>
+        <tr>
+          <td><strong>C · Raspberry Pi 4</strong></td>
+          <td>Pi 4 · 4–8&nbsp;GB</td>
+          <td>4–8&nbsp;GB</td>
+          <td>64-bit OS required</td>
+          <td>Feasible but tighter — prefer Pi 5 or a laptop if you can</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Baseline specs (laptop / desktop)</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Item</th><th>Minimum (works)</th><th>Comfortable</th><th>Project implication</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CPU</td><td>4 cores (x86_64 or Apple Silicon)</td><td>6–8+ cores</td><td>Control loop, OpenCV, Rerun viz, ACT inference</td></tr>
+        <tr><td>RAM</td><td><strong>8&nbsp;GB</strong></td><td><strong>16&nbsp;GB</strong></td><td>8&nbsp;GB: close apps while recording; 16&nbsp;GB: smoother LeLab + cam</td></tr>
+        <tr><td>Storage</td><td>256&nbsp;GB SSD · keep <strong>60–80+&nbsp;GB free</strong></td><td>512&nbsp;GB+</td><td>Demos + checkpoints fill disk quickly</td></tr>
+        <tr><td>USB</td><td>2× USB-A/C (serial dongles + webcam)</td><td>Hub OK if powered</td><td>Leader + follower Feetech adapters + camera</td></tr>
+        <tr><td>GPU (local)</td><td>Integrated is fine</td><td>Optional NVIDIA for tiny experiments</td><td><strong>Do not</strong> plan Step 8 training on iGPU / 8–16&nbsp;GB laptops</td></tr>
+        <tr><td>Python</td><td>3.12+ via <code>uv</code></td><td>Same</td><td>Prefer <code>uv run …</code>; install <code>requirements-ubuntu.txt</code> or <code>requirements-macos.txt</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Step fit by host class</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Step</th><th>Laptop/desktop 8–16&nbsp;GB</th><th>Raspberry Pi 5 (8&nbsp;GB)</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 · Install software</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes (64-bit)</td><td>Pi: use arm64 wheels; allow longer compile/sync times</td></tr>
+        <tr><td>2 · Program motor IDs</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes</td><td>Serial only — very light</td></tr>
+        <tr><td>3 · Assemble at neutral</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes</td><td>Physical step; host only runs helpers</td></tr>
+        <tr><td>4 · Calibrate</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes (CLI)</td><td>LeLab GUI is nicer on laptop; Pi → CLI calibrate</td></tr>
+        <tr><td>5 · Teleop + USB camera</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes*</td><td>*Pi: 640×480 @ 15–30 FPS; close desktop effects; powered hub recommended</td></tr>
+        <tr><td>6 · Sorting scene</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes</td><td>Physical only</td></tr>
+        <tr><td>7 · Record demos</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes*</td><td>*Pi: use fast SD/SSD; ~80–100 episodes OK if disk is fast enough</td></tr>
+        <tr><td>8 · Train ACT</td><td class="cmp-hw">Cloud</td><td class="cmp-hw">Cloud</td><td>HF Jobs / AWS GPU — not on Pi or low-RAM laptop</td></tr>
+        <tr><td>9 · Deploy / evaluate</td><td class="cmp-lelab">Yes</td><td class="cmp-lelab">Yes*</td><td>*Pi: ACT rollout is feasible; keep resolution modest; no heavy viz</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PLAN A -->
+    <h3 style="font-size:17px;margin:28px 0 12px">Plan A — Standard laptop / desktop (8–16&nbsp;GB) · recommended</h3>
+    <div class="cards" style="margin-bottom:16px">
+      <div class="card">
+        <h3>Role of the host</h3>
+        <p>Single machine for LeLab or CLI: calibrate, teleop with USB cam, record ~80–100 demos, push dataset, download ACT checkpoint, run rollout.</p>
+      </div>
+      <div class="card">
+        <h3>Training</h3>
+        <p>Always offload Step 8 to <strong>HF Jobs</strong> (<code>a10g-large</code>) or AWS <code>g5.xlarge</code> / <code>g5.2xlarge</code>. 8&nbsp;GB RAM is fine for control; 16&nbsp;GB is more comfortable with LeLab + camera.</p>
+      </div>
+      <div class="card">
+        <h3>OS tips</h3>
+        <p><strong>Ubuntu:</strong> <code>requirements-ubuntu.txt</code>, ports like <code>/dev/ttyUSB*</code> / <code>/dev/ttyACM*</code>, add user to <code>dialout</code>.
+        <strong>macOS:</strong> <code>requirements-macos.txt</code>, <code>/dev/tty.usbmodem*</code>, grant Camera permission.</p>
+      </div>
+      <div class="card">
+        <h3>When to choose this</h3>
+        <p>Default for MindGrip AI. Best UX for beginners; supports full GUI and MuJoCo viewer (macOS/Linux desktop).</p>
+      </div>
+    </div>
+    <div class="notice n-tip" style="margin-top:0">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Plan A workflow:</strong> record on laptop/desktop → push dataset to Hub → train ACT in cloud → pull checkpoint → rollout on the same host.
+        Close browsers/IDEs while recording on 8&nbsp;GB machines.
+      </div>
+    </div>
+
+    <!-- PLAN B -->
+    <h3 style="font-size:17px;margin:28px 0 12px">Plan B — Raspberry Pi 5 (8&nbsp;GB) as primary host</h3>
+    <div class="cards" style="margin-bottom:16px">
+      <div class="card">
+        <h3>Role of the Pi</h3>
+        <p>Compact control PC next to the arm: Feetech USB serial + USB camera + CLI teleop/record/rollout. Prefer <strong>Pi 5 · 8&nbsp;GB</strong> and a fast microSD (or NVMe if available).</p>
+      </div>
+      <div class="card">
+        <h3>What to skip on Pi</h3>
+        <p>Local ACT training, heavy Rerun layouts, MuJoCo interactive viewer, and comfortable LeLab desktop use. Use CLI scripts / <code>so101_cli_menu.sh</code> patterns instead.</p>
+      </div>
+      <div class="card">
+        <h3>Camera &amp; power</h3>
+        <p>Use an official 27&nbsp;W+ PSU for Pi 5. Prefer a <strong>powered USB hub</strong> for camera + two serial adapters. Record at 640×480; lower FPS if frames drop.</p>
+      </div>
+      <div class="card">
+        <h3>Training still in cloud</h3>
+        <p>Same as Plan A: push dataset from Pi (or copy via USB/SCP), train on HF Jobs / AWS GPU, copy checkpoint back for Step 9 on the Pi.</p>
+      </div>
+    </div>
+    <div class="notice n-warn" style="margin-top:0">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>Pi 4:</strong> usable for motor setup and light teleop, but recording + ACT rollout is tighter (RAM + USB bandwidth).
+        Prefer upgrading to Pi 5 8&nbsp;GB or using Plan A for data collection.
+      </div>
+    </div>
+
+    <!-- PLAN C -->
+    <h3 style="font-size:17px;margin:28px 0 12px">Plan C — Hybrid (laptop + Raspberry Pi)</h3>
+    <p class="lead" style="margin-bottom:12px">
+      Best when you want a desktop GUI for setup but a small always-on box by the robot.
+      The Pi owns the USB cables; the laptop is your console — not a remote USB bridge.
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Machine</th><th>Owns these steps</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Laptop / desktop (8–16&nbsp;GB)</strong></td><td>Docs, optional motor ID programming, LeLab calibrate/teleop dry-runs (when arms are plugged into the laptop), dataset review, cloud job launch, analysis</td></tr>
+        <tr><td><strong>Raspberry Pi (by the arm)</strong></td><td>Day-to-day teleop + record + ACT rollout with fixed USB cam; keep serial cables short — <strong>these processes run on the Pi</strong></td></tr>
+        <tr><td><strong>Cloud GPU</strong></td><td>Step 8 ACT training only</td></tr>
+      </tbody>
+    </table>
+
+    <h4 style="font-size:15px;margin:20px 0 8px">Operate Pi teleop / recording from the laptop?</h4>
+    <p class="lead" style="margin-bottom:12px;font-size:14px">
+      <strong>Yes</strong> — the laptop is a remote console. Arms and camera stay on the Pi; the teleop/record session still runs <strong>on the Pi</strong>.
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Approach</th><th>Works?</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SSH → CLI on Pi</strong></td>
+          <td class="cmp-lelab">Yes · recommended</td>
+          <td>From the laptop: <code>ssh pi@…</code> then <code>./so101_cli_menu.sh</code> or <code>uv run lerobot-*</code>. Best path for Pi 4/5.</td>
+        </tr>
+        <tr>
+          <td><strong>LeLab on Pi → browser on laptop</strong></td>
+          <td class="cmp-both">Maybe</td>
+          <td>If <code>lelab</code> is running on the Pi, open <code>http://&lt;pi-ip&gt;:…</code> from the laptop. UI is remote; control loop stays on the Pi. Heavy on Pi 4 — prefer Pi 5 or skip LeLab on Pi.</td>
+        </tr>
+        <tr>
+          <td><strong>LeLab on laptop driving Pi USB</strong></td>
+          <td class="cmp-hw">No</td>
+          <td>LeLab/LeRobot expect serial + camera on the <strong>same machine</strong> that runs the session. Not a supported remote-USB mode.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice n-info" style="margin-top:12px">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        Share calibration JSONs and datasets via Hugging Face Hub or SCP so both machines stay in sync.
+        Same <code>robot.id</code> / <code>teleop.id</code> and camera mount on the Pi so demos match rollout.
+        Typical hybrid day: calibrate once in LeLab on the laptop (or CLI on Pi) → copy <code>LeoArm.json</code> to the Pi → SSH in for long recording sessions.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SOLUTION CONTROL FLOW ════════════════ -->
+<section id="control-flow">
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2>Solution Control Flow</h2>
+    <p class="lead">
+      High-level algorithm design for the SO-101 binary sorter:
+      an LfD loop with policy <strong>ACT</strong>, fallback teleop / replay, and a match-box vs reject decision tree.
+      At every timestep the follower observes camera image <strong>I</strong> and joint state <strong>q</strong>;
+      policy <strong>π</strong> maps that to an action chunk; servos execute; a success check continues or recovers.
+    </p>
+
+    <div class="notice n-info" style="margin-bottom:20px">
+      <div class="notice-icon">🔁</div>
+      <div class="notice-body">
+        <strong>LfD loop:</strong> teleop demos → train ACT → deploy π on follower ·
+        <strong>Fallback:</strong> leader teleop or episode replay ·
+        <strong>No classical RL</strong> and <strong>no online IK</strong> — demos encode both skill and bin routing.
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Logical flowchart of robot function</h3>
+    <div class="flow-chart" aria-label="SO-101 LfD control flow">
+      <div class="flow-main">
+        <div class="flow-node start">
+          <span class="flow-tag">Start</span>
+          <span class="flow-detail">Workspace ready</span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node sense">
+          <span class="flow-tag">Sense</span>
+          <span class="flow-detail">Camera <strong>I</strong> + joints <strong>q</strong></span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node control">
+          <span class="flow-tag">Control</span>
+          <span class="flow-detail">π(a&nbsp;|&nbsp;I,&nbsp;q) / teleop</span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node actuate">
+          <span class="flow-tag">Actuate</span>
+          <span class="flow-detail">Joints + gripper</span>
+        </div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node check">
+          <span class="flow-tag">Check</span>
+          <span class="flow-detail">Correct bin?</span>
+        </div>
+      </div>
+
+      <div class="flow-branch">
+        <div class="flow-branch-card no">
+          <strong>NO → Recover / re-grasp</strong><br />
+          Loop back to <strong>SENSE</strong> and try again.
+        </div>
+        <div class="flow-branch-card yes">
+          <strong>YES → Next object (or END)</strong><br />
+          If workspace empty → stop.
+        </div>
+      </div>
+
+      <div class="flow-phases" aria-label="Motion phases inside Control to Actuate">
+        <div class="flow-phase"><span>A</span>Approach</div>
+        <div class="flow-phase"><span>B</span>Grasp</div>
+        <div class="flow-phase"><span>C</span>Transport</div>
+        <div class="flow-phase"><span>D</span>Place</div>
+        <div class="flow-phase"><span>E</span>Home</div>
+      </div>
+      <p class="flow-caption">
+        Motion phases run inside CONTROL → ACTUATE · Policy: ACT · Fallback: teleop / replay
+      </p>
+    </div>
+
+    <div class="cards" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(209,147,79,.12)">👁</div>
+        <h3>SENSE — (I, q)</h3>
+        <p><strong>I</strong> = USB camera image · <strong>q</strong> = joint state (shoulder, elbow, wrist, gripper). At teleop time this is logged as vision + proprioception; at deploy it is live frames + joint feedback.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(130,80,223,.12)">🧠</div>
+        <h3>CONTROL — π(a | I, q)</h3>
+        <p>Policy outputs the next action (joint targets + gripper). Here π = trained <strong>ACT</strong>. Alternatives: leader <strong>teleop</strong> or open-loop <strong>replay</strong> (no live decision).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(26,127,55,.12)">🦾</div>
+        <h3>ACTUATE</h3>
+        <p>Follower servos execute the action chunk — joints + gripper — on the physical SO-101.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(191,75,0,.12)">✅</div>
+        <h3>CHECK</h3>
+        <p>Correct bin? <strong>NO</strong> → recover / re-grasp → back to SENSE. <strong>YES</strong> → next object, or END when the workspace is clear.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Motion phases inside CONTROL → ACTUATE</h3>
+    <table class="spec-table" style="margin-bottom:24px">
+      <thead>
+        <tr><th>Phase</th><th>Name</th><th>What happens</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>A</strong></td><td>Approach</td><td>Move above / toward the object</td></tr>
+        <tr><td><strong>B</strong></td><td>Grasp</td><td>Close gripper on the object</td></tr>
+        <tr><td><strong>C</strong></td><td>Transport</td><td>Carry toward the chosen bin</td></tr>
+        <tr><td><strong>D</strong></td><td>Place</td><td>Release into match-box bin or reject bin</td></tr>
+        <tr><td><strong>E</strong></td><td>Home</td><td>Return to a ready pose for the next object</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="act-policy" style="font-size:17px;margin:0 0 12px">ACT policy — how autonomy is obtained</h3>
+    <div class="cards" style="margin-bottom:24px">
+      <div class="card">
+        <h3>Action Chunking Transformers</h3>
+        <p>Predicts a <strong>short chunk of future actions</strong>, not a single step. Trained by matching demo actions (often CVAE-style latent). Not classical RL — autonomy comes from cloning demos, then running π on the follower.</p>
+      </div>
+      <div class="card">
+        <h3>In one line</h3>
+        <p>Model maps <strong>(I, q) → action chunks</strong>. Inverse kinematics is <strong>implicit in the demos</strong> — never solved online. See also <a href="so101_kinematics.html">FK / IK notes</a> and <a href="policy_cheatsheet.html">policy cheatsheet</a>.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Decision tree — match box vs non–match box</h3>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 12px">
+      Binary sort · ACT learns <strong>both branches</strong> from teleop demos ·
+      no separate class tags — <strong>camera image + place action are the label</strong>.
+      Target ~40–50 successful demos per branch (~80–100 total).
+    </p>
+    <table class="spec-table" style="margin-bottom:16px">
+      <thead>
+        <tr><th>Question</th><th>Branch</th><th>Action / data</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Object in workspace? (camera overview)</td>
+          <td><strong>NO</strong></td>
+          <td>END — workspace clear · episode done</td>
+        </tr>
+        <tr>
+          <td rowspan="2">Is it a yellow match box? (from image I)</td>
+          <td><strong>YES</strong> — match box</td>
+          <td>Place in match-box bin (pose <code>p_match</code>) · ~40–50 demos</td>
+        </tr>
+        <tr>
+          <td><strong>NO</strong> — other object</td>
+          <td>Place in reject bin (pose <code>p_reject</code>) · ~40–50 demos</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice n-tip">
+      <div class="notice-icon">📦</div>
+      <div class="notice-body">
+        Either branch still runs the same motion phases: Approach → Grasp → Transport → Place &amp; release → Home.
+        Task string:
+        <code>Pick object: put match box in match-box bin; put other objects in reject bin</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SOFTWARE ════════════════ -->
+<section id="software">
+  <div class="container">
+    <div class="section-label">Software</div>
+    <h2>Software Stack for This Project</h2>
+    <p class="lead">
+      Everything you need on the control PC (and in the cloud) for the SO-101 binary sorter —
+      core LeRobot, the <strong>LeLab</strong> GUI path, the <strong>CLI / terminal</strong> path, Hub training, and optional MuJoCo tooling.
+    </p>
+
+    <h3 style="font-size:17px;margin:0 0 12px">Required — core stack</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Software</th><th>Role</th><th>Where / how</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Python 3.12+</strong></td>
+          <td>Runtime for LeRobot, plugins, and scripts</td>
+          <td>Via <a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener noreferrer"><code>uv</code></a> (preferred) — <code>uv run python --version</code></td>
+        </tr>
+        <tr>
+          <td><strong>uv</strong></td>
+          <td>Env + package manager; runs all <code>lerobot-*</code> CLIs</td>
+          <td><a href="https://docs.astral.sh/uv/" target="_blank" rel="noopener noreferrer">docs.astral.sh/uv</a></td>
+        </tr>
+        <tr>
+          <td><strong>LeRobot</strong></td>
+          <td>Core library: motors, teleop, record, train ACT, rollout</td>
+          <td>
+            Repo: <a href="https://github.com/huggingface/lerobot" target="_blank" rel="noopener noreferrer">github.com/huggingface/lerobot</a><br>
+            Docs: <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">huggingface.co/docs/lerobot</a><br>
+            Install extras: <code>uv sync --extra feetech --extra hardware --extra viz</code>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>so101-lab</strong> (this repo)</td>
+          <td>MindGrip overlay: CLI menu, plugins, patches, project docs</td>
+          <td>Sibling checkout next to <code>lerobot/</code> · <code>./so101_cli_menu.sh</code> · see <a href="directory_structure.html">directory structure</a></td>
+        </tr>
+        <tr>
+          <td><strong>OS</strong></td>
+          <td>Host for USB serial + camera</td>
+          <td>Ubuntu 22.04/24.04, macOS, or Raspberry Pi OS <strong>64-bit</strong> — see <a href="#host-computer">Host Computer</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="lelab" style="font-size:17px;margin:28px 0 12px">Recommended path — LeLab (GUI)</h3>
+    <p style="color:var(--muted);font-size:14.5px;margin:0 0 12px">
+      After motors and assembly, <strong>LeLab</strong> is the fastest way to finish this project: calibrate, teleop, record, train (local or HF Jobs), and deploy — without memorizing long CLI flags.
+      Prefer a <strong>laptop/desktop</strong> for the GUI; on Pi, use CLI or open LeLab remotely in a browser.
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Software</th><th>Role</th><th>Where / how</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>LeLab</strong></td>
+          <td>Official LeRobot GUI for SO-101</td>
+          <td>
+            Repo: <a href="https://github.com/huggingface/leLab" target="_blank" rel="noopener noreferrer">github.com/huggingface/leLab</a><br>
+            Official docs: <a href="https://huggingface.co/docs/lerobot/lelab" target="_blank" rel="noopener noreferrer">Hugging Face · LeLab</a><br>
+            Install: <code>uv tool install git+https://github.com/huggingface/leLab.git &amp;&amp; lelab</code><br>
+            Full project guide: <a href="lelab.html"><strong>LeLab for MindGrip AI</strong></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="cli-menu" style="font-size:17px;margin:28px 0 12px">Terminal path — CLI (no LeLab)</h3>
+    <p style="color:var(--muted);font-size:14.5px;margin:0 0 12px">
+      Use the terminal when you want full control, scripting, Pi hosts, or options LeLab does not expose yet.
+      Run <code>./so101_cli_menu.sh</code> from the repo root (config in <code>.so101_cli.env</code>).
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Software</th><th>Role</th><th>Where / how</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong><code>so101_cli_menu.sh</code></strong></td>
+          <td>Interactive menu wrapping <code>uv run lerobot-*</code> (options 0–21 + C / D / S / Q)</td>
+          <td>Repo root · full map: <a href="cli_menu.html"><strong>CLI Command Menu</strong></a></td>
+        </tr>
+        <tr>
+          <td><strong>LeRobot CLIs</strong></td>
+          <td><code>lerobot-find-port</code>, calibrate, teleop, record, train, rollout, dataset viz</td>
+          <td>Shipped with the LeRobot install · invoked via <code>uv run …</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Cloud &amp; Hub (Step 8 training)</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Software / service</th><th>Role</th><th>Where / how</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hugging Face Hub</strong></td>
+          <td>Push datasets, pull ACT checkpoints</td>
+          <td><a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">huggingface.co</a> · <code>hf auth login</code></td>
+        </tr>
+        <tr>
+          <td><strong>HF Jobs</strong> (preferred)</td>
+          <td>Cloud NVIDIA GPU for ACT training</td>
+          <td>e.g. <code>a10g-large</code> — not on laptop / Pi RAM</td>
+        </tr>
+        <tr>
+          <td><strong>AWS EC2</strong> (alt.)</td>
+          <td>Same: GPU train, then copy checkpoint home</td>
+          <td><code>g5.xlarge</code> / <code>g5.2xlarge</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="optional-tooling" style="font-size:17px;margin:28px 0 12px">Optional tooling — MuJoCo &amp; keyboard</h3>
+    <p style="color:var(--muted);font-size:14.5px;margin:0 0 12px">
+      <strong>Not required</strong> for <a href="roadmap.html#step-6">Steps 6–9</a>.
+      The primary path stays real LeRobot teleop → record → train ACT → rollout on the physical SO-101 + USB camera.
+      MuJoCo + keyboard plugins are <strong>install-ready</strong> under <code>packages/</code> (CLI · 16–18).
+      See purpose, install, CLI map, and future use cases on the full page.
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Software</th><th>Role</th><th>Where / how</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MuJoCo + SO-101 plugin</strong></td>
+          <td>Sim teleop / keyboard dry-runs without hardware</td>
+          <td>
+            <code>packages/lerobot_robot_so101_mujoco/</code> · CLI <strong>16–18</strong><br>
+            Guide: <a href="optional_tooling.html#mujoco">Optional Tooling · MuJoCo</a>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Keyboard teleop plugin</strong></td>
+          <td>Sim / fallback teleop without leader arm</td>
+          <td><code>packages/lerobot_teleoperator_so101_keyboard/</code> · install via CLI <strong>18</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="notice n-tip" style="margin-top:16px">
+      <div class="notice-icon">🛠️</div>
+      <div class="notice-body">
+        Full guidance (purpose · install · CLI map · future use cases · reference):
+        <a href="optional_tooling.html"><strong>Optional Tooling · MuJoCo</strong></a>
+        · <a href="optional_tooling.html#install">Install</a>
+        · <a href="optional_tooling.html#cli">CLI</a>
+        · <a href="optional_tooling.html#future">Future</a>
+        · <a href="optional_tooling.html#reference">Reference</a>
+      </div>
+    </div>
+
+    <div class="notice n-tip" style="margin-top:28px">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Minimum day-one install:</strong> <code>uv</code> + LeRobot (<code>feetech</code> / <code>hardware</code> / <code>viz</code>) + this <code>so101-lab</code> overlay.
+        Then either <a href="#lelab"><strong>LeLab</strong></a> (laptop/desktop) or <a href="#cli-menu"><code>./so101_cli_menu.sh</code></a>.
+        Train ACT in the cloud; keep <a href="#optional-tooling">MuJoCo</a> for later if you want sim practice.
+        · Host sizing: <a href="#host-computer">Host Computer</a>
+        · Roadmap: <a href="roadmap.html">9 steps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ ROADMAP / SUPPORT / REFERENCE ════════════════ -->
+<section id="steps">
+  <div class="container">
+    <div class="section-label">Roadmap</div>
+    <h2>Roadmap, Support &amp; Reference</h2>
+    <p class="lead">
+      The full 9-step roadmap, troubleshooting, and key scripts now live on their own page.
+    </p>
+    <div class="notice n-tip">
+      <div class="notice-icon">🗺️</div>
+      <div class="notice-body">
+        See <a href="roadmap.html"><strong>Roadmap · Support · Reference</strong></a>
+        · Jump: <a href="roadmap.html#step-1">Step 1</a> ·
+        <a href="roadmap.html#steps">all steps</a> ·
+        <a href="cli_menu.html">CLI menu</a> ·
+        <a href="lelab.html">LeLab</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ CHECKLIST ════════════════ -->
+<section id="checklist">
+  <div class="container">
+    <div class="section-label">Checklist</div>
+    <h2>Quick-Start Checklist</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,166,87,.15)">🔧</div>
+        <h3>Hardware Ready</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li>Both arms fully assembled</li>
+          <li>Motor IDs 1–6 programmed on each arm</li>
+          <li>Leader (5 V) &amp; follower (12 V) PSU connected</li>
+          <li>USB camera (640×480 @ 30 FPS) mounted on a fixed stand</li>
+          <li>Sorting bins positioned in workspace</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(88,166,255,.15)">💻</div>
+        <h3>Software Ready (any host)</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li>Host OS ready (Ubuntu / macOS / Pi <strong>64-bit</strong>) — see <a href="#host-computer">Host Computer</a></li>
+          <li><code>uv</code> installed · <code>uv run python --version</code> → <strong>3.12+</strong></li>
+          <li><strong>LeRobot</strong> synced with <code>--extra feetech --extra hardware --extra viz</code></li>
+          <li><strong>so101-lab</strong> overlay next to <code>lerobot/</code> (this repo)</li>
+          <li><strong>Either</strong> <a href="#lelab">LeLab</a> on laptop/desktop <strong>or</strong> <a href="#cli-menu"><code>./so101_cli_menu.sh</code></a> (prefer CLI on Pi)</li>
+          <li>~60–80+ GB free disk before long recording</li>
+          <li>USB ports found (LeLab setup or <code>lerobot-find-port</code>)</li>
+          <li>Both arms calibrated &amp; teleop verified</li>
+          <li><code>hf auth login</code> before Hub push / cloud train (Step 8)</li>
+          <li>Stack details: <a href="#software">Software</a> · MuJoCo later: <a href="#optional-tooling">optional</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(63,185,80,.15)">📊</div>
+        <h3>Data &amp; Training</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li>~80–100 balanced demonstrations recorded on the host</li>
+          <li>Dataset visualised &amp; bad episodes removed</li>
+          <li>Policy type chosen (<strong>ACT</strong> recommended)</li>
+          <li>Training on cloud: <strong>HF Jobs <code>a10g-large</code></strong> or AWS <code>g5.2xlarge</code> (not local 8–16&nbsp;GB / Pi)</li>
+          <li>Policy evaluated on real hardware from the host</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      Built on <a href="https://github.com/huggingface/lerobot">LeRobot</a> by HuggingFace &nbsp;·&nbsp;
+      SO-101 hardware by <a href="https://github.com/TheRobotStudio/SO-ARM100">The Robot Studio</a> &nbsp;·&nbsp;
+      Project: <strong>LeRobot SO-101 Pick &amp; Place Object Sorting</strong>
+    </p>
+    <p style="margin-top:8px;font-size:12px">Apache 2.0 License &nbsp;·&nbsp; Python 3.12+ (uv) &nbsp;·&nbsp; Host: laptop/desktop 8–16&nbsp;GB or Raspberry Pi &nbsp;·&nbsp; Feetech STS3215 Motors</p>
+  </div>
+</footer>
+</div>

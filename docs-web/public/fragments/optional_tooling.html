@@ -1,0 +1,526 @@
+<style>
+    .project-page {
+      --surface: var(--panel);
+      --surface2: var(--code-bg);
+      --accent: var(--mindgrip);
+      --accent2: #1a7f37;
+      --accent3: #cf222e;
+      --accent4: #8250df;
+      --accent5: #bf4b00;
+      --radius: 2px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: none !important;
+      width: 100%;
+    }
+    .project-page, .project-page * { box-sizing: border-box; }
+    .container { max-width: 1080px; margin: 0; padding: 0; }
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+    .section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--accent); margin-bottom: 8px;
+    }
+    h2 { font-size: 26px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 12px; font-family: var(--font-display); }
+    h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: var(--text); }
+    .lead { color: var(--muted); font-size: 16px; max-width: 720px; margin-bottom: 28px; }
+    .lead a { color: var(--accent); }
+    .notice {
+      display: flex; gap: 12px; padding: 14px 16px; border-radius: 8px; margin: 16px 0;
+    }
+    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-body { color: var(--muted); font-size: 14.5px; }
+    .notice-body strong { color: var(--text); }
+    .notice-body a { color: var(--accent); }
+    .n-info { background: rgba(209,147,79,.08); border: 1px solid rgba(209,147,79,.22); }
+    .n-warn { background: rgba(191,75,0,.08); border: 1px solid rgba(191,75,0,.22); }
+    .n-tip  { background: rgba(26,127,55,.08); border: 1px solid rgba(26,127,55,.22); }
+
+    .cli-jump {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px;
+    }
+    .cli-jump a {
+      display: inline-block; padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); text-decoration: none; font-size: 13px; font-weight: 500;
+    }
+    .cli-jump a:hover { background: rgba(209,147,79,.14); border-color: rgba(209,147,79,.35); }
+
+    .spec-table {
+      width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0 8px;
+    }
+    .spec-table th {
+      text-align: left; padding: 10px 14px; background: var(--surface2);
+      color: var(--muted); font-size: 12px; text-transform: uppercase;
+      letter-spacing: .06em; border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      color: var(--muted); vertical-align: top; line-height: 1.45;
+    }
+    .spec-table td strong { color: var(--text); }
+    .spec-table code {
+      font-family: var(--font-mono); font-size: 0.88em;
+      background: var(--accent-soft); color: var(--accent-hover);
+      padding: 0.1em 0.35em;
+    }
+    .table-scroll { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--border); }
+
+    .status-ready {
+      color: var(--accent2); font-weight: 600; font-size: 12.5px;
+    }
+    .status-manual {
+      color: var(--accent4); font-weight: 600; font-size: 12.5px;
+    }
+
+    pre {
+      background: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 8px;
+      padding: 14px 18px; font-size: 13px; overflow-x: auto; margin-top: 12px;
+      color: #e6edf3; font-family: var(--font-mono); line-height: 1.5;
+    }
+    pre .comment { color: #8b949e; }
+    pre .cmd { color: #79c0ff; }
+    pre .flag { color: #d2a8ff; }
+    pre .val { color: #a5d6ff; }
+
+    .use-case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .uc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .uc-item.future { border-left-color: var(--accent4); }
+    .uc-item h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: var(--text); }
+    .uc-item p { color: var(--muted); font-size: 13.5px; margin: 0; }
+    .uc-item a { color: var(--accent); }
+
+    .ref-list {
+      list-style: none; padding: 0; margin: 12px 0 0;
+    }
+    .ref-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted); font-size: 14.5px;
+    }
+    .ref-list li:last-child { border-bottom: none; }
+    .ref-list strong { color: var(--text); }
+    .ref-list a { color: var(--accent); }
+
+    footer {
+      text-align: center; padding: 40px 24px; color: var(--muted);
+      font-size: 13px; border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+
+<div class="project-page">
+<section style="border-bottom:none;padding-bottom:24px">
+  <div class="container">
+    <div class="section-label">Beyond Steps 6–9</div>
+    <h1 style="font-size:clamp(28px,5vw,42px);font-family:var(--font-display);letter-spacing:-.02em;margin-bottom:12px">Optional Tooling · MuJoCo</h1>
+    <p class="lead">
+      <strong>MuJoCo</strong> + <strong>keyboard teleop</strong> plugins ship in this overlay for sim practice.
+      They are <em>not</em> on the critical path — finish the binary sorter on real leader → follower + USB cam first
+      (<a href="roadmap.html#step-6">Steps 6–9</a>).
+    </p>
+    <div class="notice n-tip">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Project backbone stays LeRobot on hardware:</strong>
+        real teleop → <code>lerobot-record</code> → cloud ACT train → <code>lerobot-rollout</code>.
+        Optional plugins live under <code>packages/</code> and map to CLI · <strong>16–18</strong>.
+      </div>
+    </div>
+    <div class="notice n-info">
+      <div class="notice-icon">📖</div>
+      <div class="notice-body">
+        Overview: <a href="project_page.html"><strong>Pick &amp; Place Sorting</strong></a>
+        · <a href="roadmap.html"><strong>Roadmap</strong></a>
+        · <a href="so101_kinematics.html"><strong>FK / IK</strong></a>
+        · <a href="cli_menu.html#cli-16"><strong>CLI · 16–18</strong></a>
+        · <a href="lelab.html">LeLab</a>
+      </div>
+    </div>
+    <div class="cli-jump">
+      <a href="#purpose">Purpose</a>
+      <a href="#install">Install</a>
+      <a href="#cli">CLI map</a>
+      <a href="#mujoco">MuJoCo modes</a>
+      <a href="#future">Future use cases</a>
+      <a href="#reference">Reference</a>
+    </div>
+  </div>
+</section>
+
+<section id="purpose">
+  <div class="container">
+    <div class="section-label">Why these exist</div>
+    <h2>Purpose in the overall project</h2>
+    <p class="lead">
+      MindGrip’s milestone is a <strong>learned</strong> match-box vs reject sorter on physical SO-101.
+      MuJoCo fills gaps around that milestone — practice and pipeline dry-runs — without replacing real demos or ACT.
+    </p>
+
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Role in MindGrip</th>
+            <th>Required for Steps 6–9?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MuJoCo SO-101 plugin</strong></td>
+            <td>Simulated follower for pipeline practice, leader dry-runs, algorithm tests — without moving the real arm</td>
+            <td><strong>No</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Keyboard teleop plugin</strong></td>
+            <td>Drive sim (or headless) when no leader arm is available</td>
+            <td><strong>No</strong></td>
+          </tr>
+          <tr>
+            <td><strong>LeRobot core patches</strong></td>
+            <td>Optional recording / camera UX on sibling <code>lerobot/</code></td>
+            <td><strong>No</strong> — orthogonal to MuJoCo / keyboard</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice n-warn">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>Sim ≠ sorter.</strong> Policies trained only in MuJoCo will not transfer cleanly to the physical arm + USB cam.
+        Use real demos for the binary sorter (<a href="roadmap.html#step-7">Step 7</a> → <a href="roadmap.html#step-9">Step 9</a>).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="container">
+    <div class="section-label">Ready in-repo</div>
+    <h2>Installation &amp; readiness</h2>
+    <p class="lead">
+      MuJoCo and keyboard plugins are <strong>installable today</strong> from this overlay.
+      Roadmap Step 1 already shows the same <code>uv pip install -e</code> lines as optional.
+    </p>
+
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Location / how</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>lerobot_robot_so101_mujoco</code></td>
+            <td><span class="status-ready">Ready</span></td>
+            <td><code>packages/lerobot_robot_so101_mujoco/</code> · <code>--robot.type=so101_mujoco</code></td>
+          </tr>
+          <tr>
+            <td><code>lerobot_teleoperator_so101_keyboard</code></td>
+            <td><span class="status-ready">Ready</span></td>
+            <td><code>packages/lerobot_teleoperator_so101_keyboard/</code> · <code>--teleop.type=so101_keyboard</code></td>
+          </tr>
+          <tr>
+            <td>MuJoCo scene / meshes</td>
+            <td><span class="status-ready">Bundled</span></td>
+            <td><code>packages/.../assets/so101_scene.xml</code> (TheRobotStudio <code>so101_new_calib</code>)</td>
+          </tr>
+          <tr>
+            <td>LeRobot UX patches</td>
+            <td><span class="status-manual">Optional</span></td>
+            <td><code>patches/</code> · <strong>not required</strong> for MuJoCo / keyboard</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Canonical install (from so101-lab root)</h3>
+<pre><span class="comment"># After sibling lerobot is installed into this .venv</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_robot_so101_mujoco</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_teleoperator_so101_keyboard</span>
+
+<span class="comment"># Or let the CLI do it:</span>
+<span class="cmd">./so101_cli_menu.sh</span> <span class="val">18</span>   <span class="comment"># ensure MuJoCo + keyboard plugins</span></pre>
+
+    <div class="notice n-info">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        Prefer these editable installs over any older <code>uv sync --extra so101-mujoco</code> note —
+        that extra is <strong>not</strong> defined in this overlay’s <code>pyproject.toml</code>.
+      </div>
+    </div>
+
+    <h3>Patches (orthogonal)</h3>
+<pre><span class="comment"># Only if you want recording / camera UX tweaks on sibling lerobot — not for sim</span>
+<span class="cmd">./scripts/apply_lerobot_patches.sh</span> <span class="val">../lerobot</span></pre>
+    <p style="color:var(--muted);font-size:14px;margin-top:8px">
+      Details: <code>patches/README.md</code> · Docker: <code>APPLY_PATCHES=1</code>.
+    </p>
+  </div>
+</section>
+
+<section id="cli">
+  <div class="container">
+    <div class="section-label">Terminal path</div>
+    <h2>CLI command readiness &amp; mappings</h2>
+    <p class="lead">
+      From repo root: <code>./so101_cli_menu.sh</code>.
+      Full copy-paste map: <a href="cli_menu.html#cli-16">CLI Command Menu · 16–18</a>.
+    </p>
+
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Menu</th>
+            <th>What it does</th>
+            <th>Ready?</th>
+            <th>Needs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><a href="cli_menu.html#cli-16">16</a></strong> · MuJoCo viewer</td>
+            <td>Interactive 3D arm · native <strong>Control</strong> sliders (no keyboard teleop — avoids shortcut clashes)</td>
+            <td><span class="status-ready">Yes</span></td>
+            <td>Plugins installed · macOS prefers <code>mjpython</code></td>
+          </tr>
+          <tr>
+            <td><strong><a href="cli_menu.html#cli-17">17</a></strong> · Leader → sim</td>
+            <td><code>lerobot-teleoperate</code> · real <code>so101_leader</code> → <code>so101_mujoco</code> follower</td>
+            <td><span class="status-ready">Yes</span></td>
+            <td>Leader USB port · Feetech · plugins</td>
+          </tr>
+          <tr>
+            <td><strong><a href="cli_menu.html#cli-18">18</a></strong> · Install MuJoCo extra</td>
+            <td>Runs <code>ensure_mujoco_deps</code> — editable install of both plugins (+ viz/feetech if needed)</td>
+            <td><span class="status-ready">Yes</span></td>
+            <td>Network once · sibling <code>lerobot</code> already in venv</td>
+          </tr>
+          <tr>
+            <td>Keyboard → sim</td>
+            <td>Teleop / record with <code>--teleop.type=so101_keyboard</code></td>
+            <td><span class="status-manual">Copy-paste</span></td>
+            <td><strong>Not</strong> a menu number — use commands below</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice n-tip">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        Options <strong>16–18</strong> auto-call <code>ensure_mujoco_deps</code> if imports fail.
+        Main sorter path stays <strong>7–15</strong> (teleop, record, train, rollout, replay) — see
+        <a href="cli_menu.html">CLI menu</a>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mujoco">
+  <div class="container">
+    <div class="section-label">Simulation</div>
+    <h2>SO-101 MuJoCo modes</h2>
+    <p class="lead">
+      Simulated follower registered as <code>--robot.type=so101_mujoco</code>, id <code>sim_follower</code>.
+      Sim camera key <code>front</code> (640×480) mirrors the lab USB overview cam.
+    </p>
+
+    <h3>Modes</h3>
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Mode</th><th>Teleop</th><th>CLI</th><th>Use when</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Viewer only</strong></td>
+            <td>Control sliders</td>
+            <td><strong>16</strong></td>
+            <td>Inspect kinematics / mesh · no dataset</td>
+          </tr>
+          <tr>
+            <td><strong>A — Leader → sim</strong></td>
+            <td><code>so101_leader</code></td>
+            <td><strong>17</strong></td>
+            <td>Practice teleop without moving the real follower</td>
+          </tr>
+          <tr>
+            <td><strong>B — Keyboard → sim</strong></td>
+            <td><code>so101_keyboard</code></td>
+            <td>Manual</td>
+            <td>No arms · pipeline / algorithm dry-runs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Quick starts</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:8px"><strong>CLI · 16 / 17 / 18</strong></p>
+<pre><span class="cmd">./so101_cli_menu.sh</span> <span class="val">18</span>   <span class="comment"># install plugins once</span>
+<span class="cmd">./so101_cli_menu.sh</span> <span class="val">16</span>   <span class="comment"># Control-slider viewer</span>
+<span class="cmd">./so101_cli_menu.sh</span> <span class="val">17</span>   <span class="comment"># leader → sim (uses LEADER_PORT from config)</span></pre>
+
+    <p style="color:var(--muted);font-size:14px;margin:16px 0 8px"><strong>B — keyboard teleop</strong> (prefer headless or no open Control panel)</p>
+<pre><span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_keyboard</span> <span class="flag">--display_data=</span><span class="val">true</span></pre>
+
+    <p style="color:var(--muted);font-size:14px;margin:16px 0 8px"><strong>Record</strong> a sim dataset (pipeline practice only)</p>
+<pre><span class="cmd">uv run lerobot-record</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_keyboard</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/so101_mujoco_demo</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">10</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"Pick and place in sim"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+
+    <h3>Keyboard map</h3>
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Keys</th><th>Joint</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>q</code> / <code>w</code></td><td>shoulder_pan</td></tr>
+          <tr><td><code>a</code> / <code>s</code></td><td>shoulder_lift</td></tr>
+          <tr><td><code>z</code> / <code>x</code></td><td>elbow_flex</td></tr>
+          <tr><td><code>e</code> / <code>r</code></td><td>wrist_flex</td></tr>
+          <tr><td><code>d</code> / <code>f</code></td><td>wrist_roll</td></tr>
+          <tr><td><code>c</code> / <code>v</code></td><td>gripper close / open</td></tr>
+          <tr><td><code>ESC</code></td><td>disconnect</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice n-warn">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        When the MuJoCo 3D window is open, prefer CLI <strong>16</strong> (Control sliders).
+        Keyboard shortcuts collide with the viewer — use <code>so101_keyboard</code> for headless / no-viewer runs.
+        On macOS, interactive viewers often need <code>mjpython</code> (CLI 16/17 handle this).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="future">
+  <div class="container">
+    <div class="section-label">Looking ahead</div>
+    <h2>Specialized LeRobot arm use cases</h2>
+    <p class="lead">
+      After the binary sorter works, MuJoCo becomes useful for research and teaching variants —
+      still layered on LeRobot data + policies for real evaluation.
+    </p>
+
+    <div class="use-case-grid">
+      <div class="uc-item future">
+        <h4>Sim-first policy research</h4>
+        <p>Iterate ACT / Diffusion training loops on MuJoCo datasets, then fine-tune on real demos (domain gap remains real).</p>
+      </div>
+      <div class="uc-item future">
+        <h4>No-leader classroom kits</h4>
+        <p>Keyboard or phone teleop + real follower — or keyboard + MuJoCo when hardware is scarce.</p>
+      </div>
+      <div class="uc-item future">
+        <h4>Reachability / cell design</h4>
+        <p>Use the MuJoCo viewer (CLI · 16) to place bins inside the ~38&nbsp;cm workspace before locking the table layout.</p>
+      </div>
+      <div class="uc-item future">
+        <h4>Multi-task / language arms</h4>
+        <p>Same MuJoCo practice loop, then SmolVLA / VLA on real multi-task demos — see <a href="policy_cheatsheet.html">Policy Cheatsheet</a>.</p>
+      </div>
+      <div class="uc-item future">
+        <h4>Safety / recovery scripts</h4>
+        <p>Replay (CLI · 15) on real hardware after sim dry-runs — never skip real-cam evaluation.</p>
+      </div>
+      <div class="uc-item future">
+        <h4>Kinematics curriculum</h4>
+        <p>Teach FK/IK with the same lengths as the MuJoCo model — <a href="so101_kinematics.html">Forward &amp; Inverse Kinematics</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reference">
+  <div class="container">
+    <div class="section-label">Learn more</div>
+    <h2>Reference</h2>
+    <p class="lead">Canonical places to dig deeper — in-repo first, then upstream.</p>
+
+    <ul class="ref-list">
+      <li>
+        <strong>This overlay — CLI</strong> ·
+        <a href="cli_menu.html#cli-16">Command Menu · options 16–18</a>
+        · script <code>so101_cli_menu.sh</code>
+      </li>
+      <li>
+        <strong>This overlay — packages</strong> ·
+        <code>packages/lerobot_robot_so101_mujoco/</code>
+        · <code>packages/lerobot_teleoperator_so101_keyboard/</code>
+        · asset notes in <code>SO101_MUJOCO_SOURCE.md</code>
+      </li>
+      <li>
+        <strong>Patches</strong> ·
+        <code>patches/README.md</code>
+        · <code>./scripts/apply_lerobot_patches.sh</code>
+        (optional; not needed for sim plugins)
+      </li>
+      <li>
+        <strong>Kinematics</strong> ·
+        <a href="so101_kinematics.html">SO-101 Forward &amp; Inverse Kinematics</a>
+        (link lengths / limits from this MuJoCo model)
+      </li>
+      <li>
+        <strong>Policies</strong> ·
+        <a href="policy_cheatsheet.html">Policy Cheatsheet</a>
+        · <a href="roadmap.html#step-8">Roadmap · Step 8</a>
+      </li>
+      <li>
+        <strong>MuJoCo (physics)</strong> ·
+        <a href="https://mujoco.org/" target="_blank" rel="noopener noreferrer">mujoco.org</a>
+        · <a href="https://mujoco.readthedocs.io/" target="_blank" rel="noopener noreferrer">MuJoCo documentation</a>
+      </li>
+      <li>
+        <strong>SO-101 sim CAD</strong> ·
+        <a href="https://github.com/TheRobotStudio/SO-ARM100/tree/main/Simulation/SO101" target="_blank" rel="noopener noreferrer">TheRobotStudio / SO-ARM100 · Simulation/SO101</a>
+      </li>
+      <li>
+        <strong>LeRobot</strong> ·
+        <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">Hugging Face LeRobot docs</a>
+        · <a href="https://github.com/huggingface/lerobot" target="_blank" rel="noopener noreferrer">github.com/huggingface/lerobot</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      Built on <a href="https://github.com/huggingface/lerobot">LeRobot</a> by Hugging Face &nbsp;·&nbsp;
+      SO-101 hardware by <a href="https://github.com/TheRobotStudio/SO-ARM100">The Robot Studio</a> &nbsp;·&nbsp;
+      Optional MuJoCo tooling for <strong>MindGrip AI</strong>
+    </p>
+  </div>
+</footer>
+</div>

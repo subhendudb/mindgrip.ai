@@ -1,0 +1,254 @@
+diff --git a/src/lerobot/common/control_utils.py b/src/lerobot/common/control_utils.py
+index efbcc082..d17da741 100644
+--- a/src/lerobot/common/control_utils.py
++++ b/src/lerobot/common/control_utils.py
+@@ -18,6 +18,9 @@ from __future__ import annotations
+ # Utilities
+ ########################################################################################
+ import logging
++import sys
++import threading
++import time
+ import traceback
+ from contextlib import nullcontext
+ from copy import copy
+@@ -125,53 +128,210 @@ def init_keyboard_listener():
+     """
+     Initializes a non-blocking keyboard listener for real-time user interaction.
+ 
+-    This function sets up a listener for specific keys (right arrow, left arrow, escape) to control
+-    the program flow during execution, such as stopping recording or exiting loops. It gracefully
+-    handles headless environments where keyboard listening is not possible.
++    Uses two input paths:
++    1. ``pynput`` global hooks (needs macOS Accessibility for Terminal/Cursor/iTerm).
++    2. Stdin/TTY reader (works when the recording terminal is focused — no Accessibility).
++
++    Keys: right/n/Enter = next · left/r = re-record · Esc/q = stop.
+ 
+     Returns:
+         A tuple containing:
+-        - The `pynput.keyboard.Listener` instance, or `None` if in a headless environment.
+-        - A dictionary of event flags (e.g., `exit_early`) that are set by key presses.
++        - A listener object with ``.stop()``, or ``None`` if neither path is available.
++        - A dictionary of event flags (e.g., ``exit_early``) that are set by key presses.
+     """
+-    # Allow to exit early while recording an episode or resetting the environment,
+-    # by tapping the right arrow key '->'. This might require a sudo permission
+-    # to allow your terminal to monitor keyboard events.
+-    events = {}
+-    events["exit_early"] = False
+-    events["rerecord_episode"] = False
+-    events["stop_recording"] = False
++    events = {
++        "exit_early": False,
++        "rerecord_episode": False,
++        "stop_recording": False,
++        # Set when user presses next (n/→/Enter) so the recorder can skip the
++        # post-episode "Reset the environment" wait — that wait felt like a reset.
++        "episode_ended_early": False,
++    }
+ 
+     if is_headless():
+         logging.warning(
+             "Headless environment detected. On-screen cameras display and keyboard inputs will not be available."
+         )
+-        listener = None
+-        return listener, events
++        return None, events
+ 
+-    # Only import pynput if not in a headless environment
+     from pynput import keyboard
+ 
++    last_key_t = 0.0
++    last_kind: str | None = None
++
++    def _apply_key(kind: str) -> None:
++        nonlocal last_key_t, last_kind
++        now = time.perf_counter()
++        # pynput + stdin both see the same key — debounce duplicate fires
++        if kind == last_kind and (now - last_key_t) < 0.35:
++            return
++        last_key_t = now
++        last_kind = kind
++
++        if kind == "next":
++            print("Ending episode (n / → / Enter)…")
++            events["exit_early"] = True
++            events["episode_ended_early"] = True
++        elif kind == "rerecord":
++            print("Discarding episode — will re-record (r / ←)…")
++            events["rerecord_episode"] = True
++            events["exit_early"] = True
++            events["episode_ended_early"] = False
++        elif kind == "stop":
++            print("Stopping recording session (q / Esc)…")
++            events["stop_recording"] = True
++            events["exit_early"] = True
++            events["episode_ended_early"] = False
++
++    def _char(key) -> str | None:
++        return key.char.lower() if hasattr(key, "char") and key.char else None
++
+     def on_press(key):
+         try:
+-            if key == keyboard.Key.right:
+-                print("Right arrow key pressed. Exiting loop...")
+-                events["exit_early"] = True
+-            elif key == keyboard.Key.left:
+-                print("Left arrow key pressed. Exiting loop and rerecord the last episode...")
+-                events["rerecord_episode"] = True
+-                events["exit_early"] = True
+-            elif key == keyboard.Key.esc:
+-                print("Escape key pressed. Stopping data recording...")
+-                events["stop_recording"] = True
+-                events["exit_early"] = True
++            ch = _char(key)
++            if key in (keyboard.Key.right, keyboard.Key.enter) or ch == "n":
++                _apply_key("next")
++            elif key == keyboard.Key.left or ch == "r":
++                _apply_key("rerecord")
++            elif key == keyboard.Key.esc or ch == "q":
++                _apply_key("stop")
+         except Exception as e:
+             print(f"Error handling key press: {e}")
+ 
+-    listener = keyboard.Listener(on_press=on_press)
+-    listener.start()
++    pynput_listener = keyboard.Listener(on_press=on_press)
++    pynput_listener.start()
++
++    stdin_listener = _StdinKeyboardListener(on_key=_apply_key)
++    stdin_listener.start()
++
++    print(
++        "\nRecording keyboard controls (focus THIS terminal window):\n"
++        "  →  or  n  or  Enter  : END episode and save (skips reset wait)\n"
++        "  ←  or  r            : discard episode and re-record\n"
++        "  Esc or  q           : stop recording session\n"
++        "Put the object back after n, before the next episode starts.\n"
++    )
++
++    return _CompositeKeyboardListener(pynput_listener, stdin_listener), events
+ 
+-    return listener, events
++
++class _StdinKeyboardListener:
++    """Read episode-control keys from the TTY without macOS Accessibility."""
++
++    def __init__(self, on_key):
++        self._on_key = on_key
++        self._stop = threading.Event()
++        self._thread: threading.Thread | None = None
++        self._fd: int | None = None
++        self._old_term = None
++
++    def start(self) -> None:
++        if not sys.stdin.isatty():
++            logging.warning(
++                "stdin is not a TTY — terminal key fallback disabled. "
++                "Run recording from an interactive terminal, or grant Accessibility for pynput."
++            )
++            return
++        try:
++            import termios
++            import tty
++        except ImportError:
++            return
++
++        self._fd = sys.stdin.fileno()
++        self._old_term = termios.tcgetattr(self._fd)
++        tty.setcbreak(self._fd)
++        self._thread = threading.Thread(target=self._run, name="stdin-keys", daemon=True)
++        self._thread.start()
++
++    def _run(self) -> None:
++        import select
++
++        buf = ""
++        while not self._stop.is_set():
++            try:
++                ready, _, _ = select.select([sys.stdin], [], [], 0.05)
++            except (ValueError, OSError):
++                break
++            if not ready:
++                # Flush a lone Esc after a short idle gap
++                if buf == "\x1b":
++                    self._on_key("stop")
++                    buf = ""
++                continue
++            try:
++                chunk = sys.stdin.read(1)
++            except OSError:
++                break
++            if not chunk:
++                continue
++            buf += chunk
++            kind, buf = self._consume(buf)
++            if kind:
++                self._on_key(kind)
++
++    @staticmethod
++    def _consume(buf: str) -> tuple[str | None, str]:
++        # CSI arrow sequences
++        if buf.startswith("\x1b["):
++            if len(buf) < 3:
++                return None, buf
++            code = buf[2]
++            rest = buf[3:]
++            if code == "C":
++                return "next", rest
++            if code == "D":
++                return "rerecord", rest
++            return None, rest  # ignore other CSI
++        if buf.startswith("\x1bO"):  # application-mode arrows
++            if len(buf) < 3:
++                return None, buf
++            code = buf[2]
++            rest = buf[3:]
++            if code == "C":
++                return "next", rest
++            if code == "D":
++                return "rerecord", rest
++            return None, rest
++        ch = buf[0]
++        rest = buf[1:]
++        if ch in ("\n", "\r", "n", "N"):
++            return "next", rest
++        if ch in ("r", "R"):
++            return "rerecord", rest
++        if ch in ("q", "Q"):
++            return "stop", rest
++        if ch == "\x1b":
++            return None, buf  # wait for more / timeout in _run
++        return None, rest
++
++    def stop(self) -> None:
++        self._stop.set()
++        if self._thread is not None:
++            self._thread.join(timeout=1.0)
++            self._thread = None
++        if self._fd is not None and self._old_term is not None:
++            try:
++                import termios
++
++                termios.tcsetattr(self._fd, termios.TCSADRAIN, self._old_term)
++            except Exception:
++                pass
++            self._fd = None
++            self._old_term = None
++
++
++class _CompositeKeyboardListener:
++    def __init__(self, pynput_listener, stdin_listener: _StdinKeyboardListener):
++        self._pynput = pynput_listener
++        self._stdin = stdin_listener
++
++    def stop(self) -> None:
++        try:
++            self._pynput.stop()
++        except Exception:
++            pass
++        self._stdin.stop()
+ 
+ 
+ def sanity_check_dataset_name(repo_id, policy_cfg):

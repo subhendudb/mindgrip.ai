@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Directory Structure · MindGrip AI</title>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">MindGrip AI project docs</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html">MindGrip AI Home</a></li><li><a href="project_page.html">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html" class="active">Directory Structure</a></li><li><a href="acronyms.html">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+<h1 id="repository-directory-structure">Repository Directory Structure</h1>
+<p>This page maps the LeRobot application layout: what each top-level folder is for, what lives under <code>src/lerobot/</code>, and which root files matter day to day.</p>
+<blockquote>
+<p><strong>Note:</strong> The <code>docs/</code> tree is summarized only (no full file list). Browse the sidebar for all HTML chapters, or open <code>docs/source/</code> for Hugging Face MDX sources.</p>
+</blockquote>
+<h2 id="top-level-tree">Top-level tree</h2>
+<pre class="text"><code>lerobot/
+├── src/lerobot/          # Python package (library + CLI)
+├── tests/                # Pytest suite
+├── examples/             # End-user scripts &amp; notebooks
+├── docker/               # Docker images (user, CI, benchmarks)
+├── docs/                 # Documentation (MDX + local HTML site)
+├── images/               # Photos used by the SO-101 setup guide
+├── media/                # Media assets
+├── scripts/              # Extra helper scripts (repo root)
+├── .github/              # CI workflows, issue/PR templates
+├── pyproject.toml        # Deps, extras, CLI entry points, tool config
+├── uv.lock               # Locked dependency versions (uv)
+├── Makefile              # E2E / make targets
+├── README.md             # SO-101 setup &amp; teleoperation guide (this fork)
+├── set_middle_positions.py
+├── start.sh              # Serve local HTML docs
+├── control_arm.py
+└── test_arm.py</code></pre>
+<hr />
+<h2 id="top-level-folders">Top-level folders</h2>
+<table>
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Folder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>src/</code></strong></td>
+<td>Installable Python package. Everything under <code>src/lerobot/</code> is the library you import and the CLIs you run (<code>lerobot-train</code>, <code>lerobot-record</code>, …).</td>
+</tr>
+<tr class="even">
+<td><strong><code>tests/</code></strong></td>
+<td>Automated tests (unit, integration, hardware-skipped). Fixtures in <code>tests/fixtures/</code>, mocks in <code>tests/mocks/</code>.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>examples/</code></strong></td>
+<td>Copy-pasteable tutorials: training, datasets, phone teleop, OMX, LeKiwi, RTC, notebooks, etc.</td>
+</tr>
+<tr class="even">
+<td><strong><code>docker/</code></strong></td>
+<td>Container images: CPU (<code>Dockerfile.user</code>), GPU (<code>Dockerfile.internal</code>), and per-sim-benchmark eval images (<code>Dockerfile.benchmark.*</code>). See detailed <a href="#docker"><code>docker/</code></a> section below.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>docs/</code></strong></td>
+<td>Human documentation. <code>docs/source/</code> = Hugging Face MDX; <code>docs/html/</code> = local browsable site; helpers <code>build_html.py</code>, <code>serve_html.py</code>.</td>
+</tr>
+<tr class="even">
+<td><strong><code>images/</code></strong></td>
+<td>Assembly / teleop photos referenced by the SO-101 setup guide.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>media/</code></strong></td>
+<td>Additional media assets for docs or demos.</td>
+</tr>
+<tr class="even">
+<td><strong><code>scripts/</code></strong></td>
+<td>Repo-level helper scripts (outside the packaged CLI).</td>
+</tr>
+<tr class="odd">
+<td><strong><code>.github/</code></strong></td>
+<td>GitHub Actions CI (quality, tests, security, release), issue/PR templates.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="docs-summary-only"><code>docs/</code> (summary only)</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>docs/source/</code></strong></td>
+<td>Official doc pages (<code>.mdx</code> / <code>.md</code>) + <code>_toctree.yml</code> sidebar order.</td>
+</tr>
+<tr class="even">
+<td><strong><code>docs/html/</code></strong></td>
+<td>Generated static HTML for local browsing (<code>./start.sh</code>).</td>
+</tr>
+<tr class="odd">
+<td><strong><code>docs/build_html.py</code></strong></td>
+<td>Converts <code>docs/source</code> → <code>docs/html</code>.</td>
+</tr>
+<tr class="even">
+<td><strong><code>docs/serve_html.py</code></strong></td>
+<td>Local HTTP server for <code>docs/html</code>.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>docs-requirements.txt</code></strong></td>
+<td>Extra packages for Hugging Face <code>doc-builder</code> (upstream site build).</td>
+</tr>
+</tbody>
+</table>
+<p>Do not treat <code>docs/html/</code> as hand-edited source — rebuild it with <code>uv run python docs/build_html.py</code>.</p>
+<hr />
+<h2 id="srclerobot-package-layout"><code>src/lerobot/</code> — package layout</h2>
+<pre class="text"><code>src/lerobot/
+├── scripts/           # CLI entry points (train, eval, record, teleoperate, …)
+├── configs/           # Dataclass configs (draccus); TrainPipelineConfig, policies, …
+├── policies/          # Policy implementations (ACT, SmolVLA, π0, …)
+├── processor/         # Observation/action transform pipelines
+├── datasets/          # LeRobotDataset + Hub/video helpers
+├── envs/              # Simulation env configs &amp; factories
+├── robots/            # Real robot drivers (SO-101, Koch, LeKiwi, …)
+├── teleoperators/     # Leader arms, phone, keyboard, …
+├── motors/            # Low-level motor buses (Feetech, Dynamixel, …)
+├── cameras/           # OpenCV, RealSense, etc.
+├── optim/             # Optimizers / schedulers
+├── model/             # Shared model building blocks
+├── rl/                # Reinforcement learning utilities
+├── rewards/           # Reward models
+├── async_inference/   # Async policy inference
+├── rollout/           # Deployment / rollout helpers
+├── transport/         # Client/server transport for remote inference
+├── transforms/        # Data transforms
+├── data_processing/   # Dataset processing utilities
+├── templates/         # Model card templates
+├── utils/             # Shared helpers
+├── common/            # Common constants/helpers
+├── types.py           # Core type aliases
+└── __version__.py</code></pre>
+<table>
+<colgroup>
+<col style="width: 66%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subfolder / file</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>scripts/</code></strong></td>
+<td>Implements CLIs mapped in <code>pyproject.toml</code> → <code>lerobot-train</code>, <code>lerobot-eval</code>, <code>lerobot-record</code>, <code>lerobot-teleoperate</code>, <code>lerobot-calibrate</code>, …</td>
+</tr>
+<tr class="even">
+<td><strong><code>configs/</code></strong></td>
+<td>Typed configs for training, policies, robots, datasets. Choice registries select policy/robot types from CLI flags.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>policies/</code></strong></td>
+<td>One subdirectory per policy; each inherits <code>PreTrainedPolicy</code> and can push/pull from the Hub.</td>
+</tr>
+<tr class="even">
+<td><strong><code>processor/</code></strong></td>
+<td>Chains of <code>ProcessorStep</code>s between dataset ↔︎ policy ↔︎ robot.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>datasets/</code></strong></td>
+<td>Episode-aware datasets, video decoding, Hub sync.</td>
+</tr>
+<tr class="even">
+<td><strong><code>envs/</code></strong></td>
+<td>Gymnasium-style sim environments (PushT, LIBERO, MetaWorld, …).</td>
+</tr>
+<tr class="odd">
+<td><strong><code>robots/</code></strong></td>
+<td>Hardware robots (followers): SO-100/101, Koch, Hope Jr, Reachy, …</td>
+</tr>
+<tr class="even">
+<td><strong><code>teleoperators/</code></strong></td>
+<td>Input devices / leader arms used to control robots.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>motors/</code></strong></td>
+<td>Servo bus communication (IDs, baud, read/write positions).</td>
+</tr>
+<tr class="even">
+<td><strong><code>cameras/</code></strong></td>
+<td>Camera backends used during teleop and recording.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>rl/</code></strong>, <strong><code>rewards/</code></strong></td>
+<td>RL training loops and reward-model support (e.g. HIL-SERL).</td>
+</tr>
+<tr class="even">
+<td><strong><code>async_inference/</code></strong>, <strong><code>rollout/</code></strong>, <strong><code>transport/</code></strong></td>
+<td>Serving and running policies (including remote/async setups).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tests"><code>tests/</code></h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>tests/&lt;module&gt;/</code></strong></td>
+<td>Mirrors package areas (<code>policies</code>, <code>datasets</code>, <code>robots</code>, …).</td>
+</tr>
+<tr class="even">
+<td><strong><code>tests/fixtures/</code></strong></td>
+<td>Shared pytest fixtures.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>tests/mocks/</code></strong></td>
+<td>Fake hardware / lightweight stand-ins.</td>
+</tr>
+<tr class="even">
+<td><strong><code>tests/artifacts/</code></strong></td>
+<td>Test data (often via Git LFS).</td>
+</tr>
+<tr class="odd">
+<td><strong><code>tests/utils.py</code></strong>, <strong><code>conftest.py</code></strong></td>
+<td>Skip helpers for hardware, shared setup.</td>
+</tr>
+</tbody>
+</table>
+<p>Run: <code>uv run pytest tests -svv --maxfail=10</code></p>
+<hr />
+<h2 id="examples"><code>examples/</code></h2>
+<table>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Subfolder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>tutorial/</code></strong>, <strong><code>training/</code></strong></td>
+<td>Learning paths and training examples.</td>
+</tr>
+<tr class="even">
+<td><strong><code>dataset/</code></strong>, <strong><code>port_datasets/</code></strong></td>
+<td>Creating and porting datasets.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>phone_to_so100/</code></strong>, <strong><code>so100_to_so100_EE/</code></strong>, <strong><code>lekiwi/</code></strong>, <strong><code>omx/</code></strong></td>
+<td>Hardware-specific demos.</td>
+</tr>
+<tr class="even">
+<td><strong><code>rtc/</code></strong>, <strong><code>backward_compatibility/</code></strong></td>
+<td>Advanced / migration examples.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>notebooks/</code></strong></td>
+<td>Jupyter notebooks (also linked from docs).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="docker"><code>docker/</code></h2>
+<p>Container images for running LeRobot without installing every native dependency on your host. Nightly builds from <code>main</code> are also published to Docker Hub (<code>huggingface/lerobot-cpu</code>, <code>huggingface/lerobot-gpu</code>).</p>
+<h3 id="layout">Layout</h3>
+<pre class="text"><code>docker/
+├── README.md                         # How to pull / build / run images
+├── Dockerfile.user                   # CPU image (explore, robots, light use)
+├── Dockerfile.internal               # GPU image (training, CI)
+├── Dockerfile.benchmark.libero       # Sim eval: LIBERO
+├── Dockerfile.benchmark.libero_plus  # Sim eval: LIBERO+
+├── Dockerfile.benchmark.metaworld    # Sim eval: Meta-World
+├── Dockerfile.benchmark.robocasa     # Sim eval: RoboCasa
+├── Dockerfile.benchmark.robocerebra  # Sim eval: RoboCerebra
+├── Dockerfile.benchmark.robomme      # Sim eval: RoboMME
+├── Dockerfile.benchmark.robotwin     # Sim eval: RoboTwin
+└── Dockerfile.benchmark.vlabench     # Sim eval: VLABench</code></pre>
+<h3 id="core-images-general-use">Core images (general use)</h3>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Role</th>
+<th>Base / notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>Dockerfile.user</code></strong></td>
+<td>Lightweight <strong>CPU</strong> image for exploring the codebase, running scripts, or working with robots. <strong>Not</strong> meant for serious GPU training.</td>
+<td><code>python:3.12-slim</code> → published as <code>huggingface/lerobot-cpu</code></td>
+</tr>
+<tr class="even">
+<td><strong><code>Dockerfile.internal</code></strong></td>
+<td><strong>GPU / CUDA</strong> image used for training and CI. Batteries-included environment matching Hugging Face’s GPU workflows.</td>
+<td><code>nvidia/cuda</code> → published as <code>huggingface/lerobot-gpu</code></td>
+</tr>
+</tbody>
+</table>
+<p>Typical pull/run:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull huggingface/lerobot-cpu:latest</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull huggingface/lerobot-gpu:latest</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--rm</span> huggingface/lerobot-cpu:latest</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--rm</span> <span class="at">--gpus</span> all <span class="at">--shm-size</span> 16gb huggingface/lerobot-gpu:latest</span></code></pre></div>
+<p>USB robots/cameras from a container (example):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--device</span><span class="op">=</span>/dev/ <span class="at">-v</span> /dev/:/dev/ <span class="at">--rm</span> huggingface/lerobot-cpu:latest</span></code></pre></div>
+<h3 id="benchmark-images-dockerfile.benchmark.">Benchmark images (<code>Dockerfile.benchmark.*</code>)</h3>
+<p>These are <strong>not</strong> for SO-101 teleoperation. They are <strong>pre-baked evaluation images for simulation benchmarks</strong>.</p>
+<p>Each sim suite (LIBERO, MetaWorld, …) needs heavy native deps (MuJoCo, scene assets, extra Python packages). Installing them on a laptop is fragile. Each <code>Dockerfile.benchmark.*</code>:</p>
+<ol type="1">
+<li>Starts from <strong><code>huggingface/lerobot-gpu:latest</code></strong></li>
+<li>Pre-downloads that benchmark’s assets/config into the image (so CI/runtime does not fetch them live)</li>
+<li>Copies this repo’s source on top</li>
+<li>Lets you run <strong><code>lerobot-eval</code></strong> in a reproducible environment</li>
+</ol>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 33%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Benchmark</th>
+<th>What it is for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>Dockerfile.benchmark.libero</code></strong></td>
+<td><strong>LIBERO</strong></td>
+<td>Lifelong / manipulation task suite used for policy eval</td>
+</tr>
+<tr class="even">
+<td><strong><code>Dockerfile.benchmark.libero_plus</code></strong></td>
+<td><strong>LIBERO+</strong></td>
+<td>Extended LIBERO variant</td>
+</tr>
+<tr class="odd">
+<td><strong><code>Dockerfile.benchmark.metaworld</code></strong></td>
+<td><strong>Meta-World</strong></td>
+<td>Multi-task MuJoCo manipulation benchmark</td>
+</tr>
+<tr class="even">
+<td><strong><code>Dockerfile.benchmark.robocasa</code></strong></td>
+<td><strong>RoboCasa</strong></td>
+<td>Large-scale kitchen / household simulation</td>
+</tr>
+<tr class="odd">
+<td><strong><code>Dockerfile.benchmark.robocerebra</code></strong></td>
+<td><strong>RoboCerebra</strong></td>
+<td>Simulation benchmark environment</td>
+</tr>
+<tr class="even">
+<td><strong><code>Dockerfile.benchmark.robomme</code></strong></td>
+<td><strong>RoboMME</strong></td>
+<td>Multi-modal evaluation suite</td>
+</tr>
+<tr class="odd">
+<td><strong><code>Dockerfile.benchmark.robotwin</code></strong></td>
+<td><strong>RoboTwin</strong></td>
+<td>Dual-arm / twin-robot simulation tasks</td>
+</tr>
+<tr class="even">
+<td><strong><code>Dockerfile.benchmark.vlabench</code></strong></td>
+<td><strong>VLABench</strong></td>
+<td>Vision-language-action benchmark</td>
+</tr>
+</tbody>
+</table>
+<p>Example (LIBERO):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-f</span> docker/Dockerfile.benchmark.libero <span class="at">-t</span> lerobot-bench-libero .</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--gpus</span> all <span class="at">--rm</span> <span class="at">-it</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-v</span> <span class="va">$HOME</span>/.cache/huggingface:/root/.cache/huggingface <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  lerobot-bench-libero <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  lerobot-eval <span class="at">--policy.path</span><span class="op">=&lt;</span>your_policy<span class="op">&gt;</span> --env.type=libero <span class="at">--eval.n_episodes</span><span class="op">=</span>50</span></code></pre></div>
+<h3 id="when-to-use-which">When to use which</h3>
+<table>
+<colgroup>
+<col style="width: 54%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Goal</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Explore code / CPU scripts / robot USB access</td>
+<td><code>Dockerfile.user</code> / <code>lerobot-cpu</code></td>
+</tr>
+<tr class="even">
+<td>Train policies on GPU</td>
+<td><code>Dockerfile.internal</code> / <code>lerobot-gpu</code></td>
+</tr>
+<tr class="odd">
+<td>Score a policy on a <strong>sim benchmark</strong></td>
+<td>Matching <code>Dockerfile.benchmark.*</code></td>
+</tr>
+<tr class="even">
+<td>SO-101 assemble / calibrate / teleop on bare metal</td>
+<td>No Docker required — follow <a href="project_page.html">SO-101 Pick &amp; Place Sorting</a></td>
+</tr>
+</tbody>
+</table>
+<p>More detail: <a href="https://github.com/huggingface/lerobot/blob/main/docker/README.md">docker/README.md</a> in the repo, and the <strong>Benchmarks</strong> section in the sidebar (<a href="libero.html">LIBERO</a>, <a href="metaworld.html">Meta-World</a>, …).</p>
+<hr />
+<h2 id="important-root-files">Important root files</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><code>pyproject.toml</code></strong></td>
+<td>Package metadata, optional extras (<code>feetech</code>, <code>viz</code>, …), console scripts, ruff/mypy tool config.</td>
+</tr>
+<tr class="even">
+<td><strong><code>uv.lock</code></strong></td>
+<td>Reproducible dependency lockfile for <code>uv sync --locked</code>.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>setup.py</code></strong></td>
+<td>Legacy/setuptools shim (prefer <code>uv</code> + <code>pyproject.toml</code>).</td>
+</tr>
+<tr class="even">
+<td><strong><code>Makefile</code></strong></td>
+<td>Convenience targets, including end-to-end tests.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>requirements-*.txt</code></strong>, <strong><code>requirements.in</code></strong></td>
+<td>Alternate / OS-specific requirement pins.</td>
+</tr>
+<tr class="even">
+<td><strong><code>README.md</code></strong></td>
+<td>This fork’s SO-101 hardware setup guide → also <a href="project_page.html">SO-101 Pick &amp; Place Sorting</a>.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>SECURITY.md</code></strong></td>
+<td>Vulnerability reporting → <a href="security.html">Security Policy</a>.</td>
+</tr>
+<tr class="even">
+<td><strong><code>set_middle_positions.py</code></strong></td>
+<td>Program Feetech motor IDs and move to encoder midpoint before assembly.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>start.sh</code></strong></td>
+<td>Builds HTML docs if needed and serves them at <code>http://127.0.0.1:8000/</code>.</td>
+</tr>
+<tr class="even">
+<td><strong><code>control_arm.py</code></strong>, <strong><code>test_arm.py</code></strong></td>
+<td>Fork helper scripts for arm bring-up / smoke tests.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>LICENSE</code></strong></td>
+<td>Project license.</td>
+</tr>
+<tr class="even">
+<td><strong><code>.pre-commit-config.yaml</code></strong></td>
+<td>Lint/format hooks (ruff, typos, …).</td>
+</tr>
+<tr class="odd">
+<td><strong><code>.dockerignore</code></strong>, <strong><code>.gitignore</code></strong>, <strong><code>.gitattributes</code></strong></td>
+<td>Ignore rules; LFS attributes for large test artifacts.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="quick-mental-model">Quick mental model</h2>
+<ol type="1">
+<li><strong>Control &amp; data collection</strong> → <code>robots/</code>, <code>teleoperators/</code>, <code>cameras/</code>, <code>motors/</code> + CLIs in <code>scripts/</code></li>
+<li><strong>Learn a policy</strong> → <code>datasets/</code> + <code>policies/</code> + <code>lerobot-train</code></li>
+<li><strong>Evaluate</strong> → sim <code>envs/</code> or real robot via <code>lerobot-eval</code> / <code>lerobot-record</code> with <code>--policy.path</code></li>
+<li><strong>Docs &amp; onboarding</strong> → <code>docs/</code> (this site) and <code>examples/</code></li>
+</ol>
+<p>For contributor-oriented architecture notes, see also <a href="agents.html">Repository architecture for AI agents</a>.</p>
+
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>

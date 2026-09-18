@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Policy Cheatsheet · MindGrip AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .project-page {
+      --surface: var(--panel);
+      --surface2: var(--code-bg);
+      --accent: var(--mindgrip);
+      --accent2: #1a7f37;
+      --accent3: #cf222e;
+      --accent4: #8250df;
+      --accent5: #bf4b00;
+      --radius: 2px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: none !important;
+      width: 100%;
+    }
+    .project-page, .project-page * { box-sizing: border-box; }
+.container { max-width: 1080px; margin: 0; padding: 0; }
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+    .section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--accent); margin-bottom: 8px;
+    }
+    h2 { font-size: 26px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 12px; font-family: var(--font-display); }
+    h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: var(--text); }
+    .lead { color: var(--muted); font-size: 16px; max-width: 720px; margin-bottom: 28px; }
+    .lead a { color: var(--accent); }
+    .notice {
+      display: flex; gap: 12px; padding: 14px 16px; border-radius: 8px; margin: 16px 0;
+    }
+    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-body { color: var(--muted); font-size: 14.5px; }
+    .notice-body strong { color: var(--text); }
+    .notice-body a { color: var(--accent); }
+    .n-info { background: rgba(209,147,79,.08); border: 1px solid rgba(209,147,79,.22); }
+    .n-warn { background: rgba(191,75,0,.08); border: 1px solid rgba(191,75,0,.22); }
+    .n-tip  { background: rgba(26,127,55,.08); border: 1px solid rgba(26,127,55,.22); }
+
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 8px 0 24px;
+    }
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: left;
+    }
+    .policy-card .pname { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .policy-card .pdesc { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0; }
+    .policy-card .meta {
+      margin-top: 10px; font-size: 12px; color: var(--text-faint, var(--muted));
+      font-family: var(--font-mono);
+    }
+    .policy-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .pb-rec { background: rgba(26,127,55,.12); color: var(--accent2); }
+    .pb-adv { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .pb-exp { background: rgba(191,75,0,.12); color: var(--accent5); }
+
+    .spec-table {
+      width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0 8px;
+    }
+    .spec-table th {
+      text-align: left; padding: 10px 14px; background: var(--surface2);
+      color: var(--muted); font-size: 12px; text-transform: uppercase;
+      letter-spacing: .06em; border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      color: var(--muted); vertical-align: top; line-height: 1.45;
+    }
+    .spec-table td strong { color: var(--text); }
+    .spec-table code {
+      font-family: var(--font-mono); font-size: 0.88em;
+      background: var(--accent-soft); color: var(--accent-hover);
+      padding: 0.1em 0.35em;
+    }
+    .table-scroll { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--border); }
+
+    pre {
+      background: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 8px;
+      padding: 14px 18px; font-size: 13px; overflow-x: auto; margin-top: 12px;
+      color: #e6edf3; font-family: var(--font-mono); line-height: 1.5;
+    }
+    pre .comment { color: #8b949e; }
+    pre .cmd { color: #79c0ff; }
+    pre .flag { color: #d2a8ff; }
+    pre .val { color: #a5d6ff; }
+
+    .use-case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .uc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .uc-item h4 { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: var(--text); }
+    .uc-item p { color: var(--muted); font-size: 13.5px; margin: 0; }
+    .uc-item a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">Lab overlay for imitation-learning robot arms — SO-101 and beyond.</div>
+      <!--NAV-->
+    </nav>
+    <main class="content project-page">
+
+<section style="border-bottom:none;padding-bottom:24px">
+  <div class="container">
+    <div class="section-label">Reference</div>
+    <h1 style="font-size:clamp(28px,5vw,42px);font-family:var(--font-display);letter-spacing:-.02em;margin-bottom:12px">Policy Cheatsheet</h1>
+    <p class="lead">
+      Which LeRobot policy to train for the MindGrip <strong>binary sorter</strong>
+      (match-box → match-box bin; other → reject) on SO-101 — and when to try the next option.
+    </p>
+    <div class="notice n-tip">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        <strong>Default for this lab:</strong> <strong>ACT</strong> + one fixed USB cam named <code>front</code>
+        (640×480 @ 30 FPS) · ~40–50 episodes per class (~80–100 total) · train on
+        <strong>HF Jobs</strong> (<code>a10g-small</code> / <code>a10g-large</code>) or AWS <code>g5</code> —
+        not on a typical laptop/desktop or Pi.
+        Example run:
+        <a href="https://huggingface.co/SUBHENDU/act_2026-09-11_13-54-04" target="_blank" rel="noopener noreferrer"><code>SUBHENDU/act_2026-09-11_13-54-04</code></a>
+        from
+        <a href="https://huggingface.co/datasets/SUBHENDU/pick_place_sorting_20260911_184643" target="_blank" rel="noopener noreferrer">this dataset</a>.
+      </div>
+    </div>
+    <div class="notice n-info">
+      <div class="notice-icon">📖</div>
+      <div class="notice-body">
+        Train steps: <a href="roadmap.html#step-8"><strong>Roadmap · Step 8</strong></a>
+        · Deploy: <a href="roadmap.html#step-9"><strong>Step 9</strong></a>
+        · GUI: <a href="lelab.html"><strong>LeLab</strong></a>
+        · Terminal: <a href="cli_menu.html#cli-12"><strong>CLI · 12 / 13</strong></a>
+        · Words: <a href="acronyms.html"><strong>Acronyms</strong></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="decide">
+  <div class="container">
+    <div class="section-label">Decide</div>
+    <h2>60-second decision</h2>
+    <p class="lead">Match your goal to a policy. Vision sorting always needs the follower USB cam.</p>
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Your situation</th>
+            <th>Pick</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>First binary sorter</strong> · cam · cloud GPU</td>
+            <td><strong>ACT</strong></td>
+            <td>Fast, data-efficient, light VRAM — this lab’s path</td>
+          </tr>
+          <tr>
+            <td>Same task, demos have many valid grasps / want smoother motion</td>
+            <td><strong>Diffusion</strong></td>
+            <td>Multi-modal actions; heavier / slower than ACT</td>
+          </tr>
+          <tr>
+            <td>One model, many verbal task strings</td>
+            <td><strong>SmolVLA</strong></td>
+            <td>Needs language in <code>dataset.task</code> / demos</td>
+          </tr>
+          <tr>
+            <td>Research / foundation VLA · large GPU</td>
+            <td><strong>π₀ / π₀-FAST / π₀.₅</strong></td>
+            <td>Overkill for simple binary sort; A100-class</td>
+          </tr>
+          <tr>
+            <td><strong>No USB camera</strong></td>
+            <td><strong>Don’t train a vision sorter</strong></td>
+            <td>Use teleop / replay only, or add <code>front</code> cam first</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notice n-warn">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>Without a USB camera:</strong> ACT / Diffusion / SmolVLA / π-family will not solve match-box vs reject.
+        Joint-only teleop and <code>lerobot-replay</code> still work for hardware checks (CLI · 7 / 15).
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="policies">
+  <div class="container">
+    <div class="section-label">Policies</div>
+    <h2>Cards for this lab</h2>
+    <p class="lead">Primary stack first; advanced options only after ACT works on your table.</p>
+
+    <div class="policy-grid">
+      <div class="policy-card">
+        <div class="policy-badge pb-rec">Recommended</div>
+        <div class="pname">ACT</div>
+        <p class="pdesc">Action Chunking Transformer — predicts short action chunks from <code>front</code> images + joint state. Best first policy for binary sort.</p>
+        <div class="meta">type=<code>act</code> · ~2–6 GB VRAM · HF <code>a10g-small</code></div>
+      </div>
+      <div class="policy-card">
+        <div class="policy-badge pb-rec">Recommended</div>
+        <div class="pname">Diffusion Policy</div>
+        <p class="pdesc">Denoising over action sequences — better when demos have several valid grasps / place paths.</p>
+        <div class="meta">type=<code>diffusion</code> · ~8–14 GB · longer than ACT</div>
+      </div>
+      <div class="policy-card">
+        <div class="policy-badge pb-adv">Advanced</div>
+        <div class="pname">SmolVLA</div>
+        <p class="pdesc">Small vision–language–action. Use when one policy must follow different task strings.</p>
+        <div class="meta">type=<code>smolvla</code> · language required · cloud GPU</div>
+      </div>
+      <div class="policy-card">
+        <div class="policy-badge pb-exp">Explore</div>
+        <div class="pname">π₀ / FAST / π₀.₅</div>
+        <p class="pdesc">Large flow-matching VLAs. Research / transfer — not the first MindGrip milestone.</p>
+        <div class="meta">type=<code>pi0</code> / <code>pi0_fast</code> / <code>pi05</code> · A100-class</div>
+      </div>
+    </div>
+
+    <h3>ACT detail</h3>
+    <ul style="color:var(--muted);font-size:14.5px;padding-left:1.25rem;margin:0 0 16px">
+      <li><strong>With cam:</strong> best default for match-box vs reject, then colour / shape extensions.</li>
+      <li><strong>Without cam:</strong> not a practical visual sorter.</li>
+      <li><strong>Train length (this lab):</strong> ~10k steps on ~50 episodes worked on HF Jobs <code>a10g-small</code> (~1–2 h class on A10G/L4 for 50–100 demos).</li>
+      <li><strong>Rule of thumb:</strong> think ~5–10 epochs over the dataset; if loss is flat early, collect better / more demos before chasing huge step counts.</li>
+    </ul>
+<pre><span class="comment"># Cloud CUDA host — or ./so101_cli_menu.sh → 12 · LeLab → Training → ACT</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">act</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">SUBHENDU/pick_place_sorting_20260911_184643</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_act</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span></pre>
+
+    <h3>Diffusion detail</h3>
+    <ul style="color:var(--muted);font-size:14.5px;padding-left:1.25rem;margin:0 0 16px">
+      <li>Same camera / scene rules as ACT.</li>
+      <li>Prefer after ACT already sorts well and you need smoother or multi-modal behaviour.</li>
+      <li>CLI menu <strong>13</strong> · heavier than ACT on the same GPU.</li>
+    </ul>
+<pre><span class="comment"># Or ./so101_cli_menu.sh → 13</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">diffusion</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">SUBHENDU/pick_place_sorting_20260911_184643</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span></pre>
+  </div>
+</section>
+
+<section id="matrix">
+  <div class="container">
+    <div class="section-label">Matrix</div>
+    <h2>Master matrix (SO-101 sorting)</h2>
+    <div class="table-scroll">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th><code>policy.type</code></th>
+            <th>USB cam sorting</th>
+            <th>Language?</th>
+            <th>Train on laptop/Pi?</th>
+            <th>Cloud starter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ACT</strong></td>
+            <td><code>act</code></td>
+            <td><strong>Best</strong></td>
+            <td>No</td>
+            <td>Tiny experiments only</td>
+            <td><code>a10g-small</code> / <code>g5.xlarge</code></td>
+          </tr>
+          <tr>
+            <td><strong>Diffusion</strong></td>
+            <td><code>diffusion</code></td>
+            <td>Excellent</td>
+            <td>No</td>
+            <td>No</td>
+            <td>A10G / L4</td>
+          </tr>
+          <tr>
+            <td><strong>SmolVLA</strong></td>
+            <td><code>smolvla</code></td>
+            <td>Multi-task text</td>
+            <td><strong>Yes</strong></td>
+            <td>No</td>
+            <td>A10G / L4+</td>
+          </tr>
+          <tr>
+            <td><strong>π₀ / FAST / π₀.₅</strong></td>
+            <td><code>pi0</code> / <code>pi0_fast</code> / <code>pi05</code></td>
+            <td>Advanced</td>
+            <td><strong>Yes</strong></td>
+            <td>No</td>
+            <td>A100-class</td>
+          </tr>
+          <tr>
+            <td>VQ-BeT / others</td>
+            <td><code>vqbet</code> · see upstream</td>
+            <td>Possible alt</td>
+            <td>Varies</td>
+            <td>No</td>
+            <td>See <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">LeRobot docs</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="scenarios">
+  <div class="container">
+    <div class="section-label">Scenarios</div>
+    <h2>Use case → policy</h2>
+    <p class="lead">Primary MindGrip task first; extensions after ACT works.</p>
+    <div class="use-case-grid">
+      <div class="uc-item">
+        <h4>Binary match-box vs reject</h4>
+        <p><strong>ACT</strong> (+ cam). Diffusion only if demos are highly multi-modal. No cam → not solvable.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Colour / shape sorting</h4>
+        <p>Same pipeline as binary · <strong>ACT</strong> first · keep one fixed <code>front</code> view.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Recycling / warehouse pick-to-bin</h4>
+        <p><strong>ACT</strong>; <strong>SmolVLA</strong> if the bin is chosen by language instruction.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Many verbal tasks, one model</h4>
+        <p><strong>SmolVLA</strong> (or larger VLA). Needs task text in every episode.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Hardware bring-up only</h4>
+        <p>No train yet — teleop (CLI · 7/8) and replay (CLI · 15).</p>
+      </div>
+      <div class="uc-item">
+        <h4>Hub pretrained → your arm</h4>
+        <p>Advanced (π-family / X-VLA). Still need the camera views the checkpoint expects.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="host">
+  <div class="container">
+    <div class="section-label">Host</div>
+    <h2>Where to train vs deploy</h2>
+    <div class="notice n-warn">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>8–16&nbsp;GB laptop/desktop or Raspberry Pi:</strong> record + roll out here.
+        Do <strong>not</strong> plan comfortable local ACT training — use LeLab → HF Jobs or a CUDA cloud box
+        (see <a href="project_page.html#host-computer">Host Computer</a> · <a href="roadmap.html#step-8">Step 8</a>).
+      </div>
+    </div>
+    <div class="notice n-tip">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Standard loop:</strong> demos on host → push dataset → train ACT on cloud →
+        <code>--policy.path=SUBHENDU/…</code> (or local checkpoint) → Step 9 rollout with the same scene and <code>front</code> cam.
+      </div>
+    </div>
+  </div>
+</section>
+
+    </main>
+  </div>
+</body>
+</html>

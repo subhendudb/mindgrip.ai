@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindGrip AI Home · MindGrip AI</title>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">MindGrip AI project docs</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html" class="active">MindGrip AI Home</a></li><li><a href="project_page.html">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html">Directory Structure</a></li><li><a href="acronyms.html">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+<h1 id="mindgrip-ai">MindGrip AI</h1>
+<p><strong>MindGrip AI</strong> emphasizes cognitive decision-making for complex object targeting and handling.</p>
+<p>This site hosts <strong>custom project documentation</strong> for the SO-101 pick &amp; place sorting lab.</p>
+<h2 id="start-here">Start here</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Page</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="project_page.html">Pick &amp; Place Sorting</a></td>
+<td>End-to-end hardware → teleop → train → deploy guide</td>
+</tr>
+<tr class="even">
+<td><a href="so101_kinematics.html">Forward &amp; Inverse Kinematics</a></td>
+<td>FK/IK derivation for the SO-101 arm</td>
+</tr>
+<tr class="odd">
+<td><a href="so101_mujoco.html">MuJoCo Simulation</a></td>
+<td>Simulated follower + keyboard / leader teleop</td>
+</tr>
+<tr class="even">
+<td><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></td>
+<td>Diagnose leader–follower sync issues</td>
+</tr>
+<tr class="odd">
+<td><a href="policy_cheatsheet.html">Policy Cheatsheet</a></td>
+<td>Which policy to train (ACT, Diffusion, SmolVLA, …)</td>
+</tr>
+<tr class="even">
+<td><a href="agent_guide.html">Agent Guide</a></td>
+<td>Training &amp; agent notes for this project</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stack">Stack</h2>
+<ul>
+<li><strong>Application:</strong> MindGrip AI</li>
+<li><strong>Arm:</strong> SO-101 (Feetech STS3215)</li>
+<li><strong>Framework:</strong> <a href="https://huggingface.co/docs/lerobot">LeRobot</a> (Hugging Face)</li>
+<li><strong>Overlay:</strong> <code>so101-lab</code> plugins (MuJoCo robot + keyboard teleop)</li>
+</ul>
+<h2 id="original-lerobot-documentation">Original LeRobot documentation</h2>
+<p>Upstream library docs are <strong>not</strong> mirrored here. Use the official Hugging Face site:</p>
+<p><strong>https://huggingface.co/docs/lerobot</strong></p>
+
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+diff --git a/src/lerobot/cameras/opencv/camera_opencv.py b/src/lerobot/cameras/opencv/camera_opencv.py
+index 3e92eaf0..d3c0f3be 100644
+--- a/src/lerobot/cameras/opencv/camera_opencv.py
++++ b/src/lerobot/cameras/opencv/camera_opencv.py
+@@ -239,9 +239,14 @@ class OpenCVCamera(Camera):
+ 
+         success = self.videocapture.set(cv2.CAP_PROP_FPS, float(self.fps))
+         actual_fps = self.videocapture.get(cv2.CAP_PROP_FPS)
+-        # Use math.isclose for robust float comparison
++        # Use math.isclose for robust float comparison.
++        # OBS Virtual Camera often advertises a fixed FPS (e.g. 60) that cannot be
++        # changed via CAP_PROP — warn and continue; real frame timing still works.
+         if not success or not math.isclose(self.fps, actual_fps, rel_tol=1e-3):
+-            raise RuntimeError(f"{self} failed to set fps={self.fps} ({actual_fps=}).")
++            logger.warning(
++                f"{self} failed to set fps={self.fps} ({actual_fps=}, {success=}). "
++                "Continuing anyway (common with OBS Virtual Camera)."
++            )
+ 
+     def _validate_fourcc(self) -> None:
+         """Validates and sets the camera's FOURCC code."""
+@@ -276,16 +281,21 @@ class OpenCVCamera(Camera):
+         width_success = self.videocapture.set(cv2.CAP_PROP_FRAME_WIDTH, float(self.capture_width))
+         height_success = self.videocapture.set(cv2.CAP_PROP_FRAME_HEIGHT, float(self.capture_height))
+ 
++        # OBS Virtual Camera on macOS often advertises 1920x1080 via CAP_PROP while
++        # the actual frames match the OBS output size (e.g. 640x480). Do not fail
++        # on CAP_PROP mismatch; _postprocess_image validates real frame shapes.
+         actual_width = int(round(self.videocapture.get(cv2.CAP_PROP_FRAME_WIDTH)))
+         if not width_success or self.capture_width != actual_width:
+-            raise RuntimeError(
+-                f"{self} failed to set capture_width={self.capture_width} ({actual_width=}, {width_success=})."
++            logger.warning(
++                f"{self} CAP_PROP width mismatch: requested={self.capture_width} "
++                f"({actual_width=}, {width_success=}). Continuing (common with OBS)."
+             )
+ 
+         actual_height = int(round(self.videocapture.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+         if not height_success or self.capture_height != actual_height:
+-            raise RuntimeError(
+-                f"{self} failed to set capture_height={self.capture_height} ({actual_height=}, {height_success=})."
++            logger.warning(
++                f"{self} CAP_PROP height mismatch: requested={self.capture_height} "
++                f"({actual_height=}, {height_success=}). Continuing (common with OBS)."
+             )
+ 
+     @staticmethod
+@@ -414,17 +424,24 @@ class OpenCVCamera(Camera):
+ 
+         h, w, c = image.shape
+ 
+-        if h != self.capture_height or w != self.capture_width:
+-            raise RuntimeError(
+-                f"{self} frame width={w} or height={h} do not match configured width={self.capture_width} or height={self.capture_height}."
+-            )
+-
+         if c != 3:
+             raise RuntimeError(f"{self} frame channels={c} do not match expected 3 channels (RGB/BGR).")
+ 
+         processed_image = image
++        # OBS may advertise a different size than the real frames. Resize so the
++        # dataset feature shape (from configured width/height) stays consistent.
++        if h != self.capture_height or w != self.capture_width:
++            logger.warning(
++                f"{self} frame {w}x{h} != configured {self.capture_width}x{self.capture_height}; resizing."
++            )
++            processed_image = cv2.resize(
++                processed_image,
++                (self.capture_width, self.capture_height),
++                interpolation=cv2.INTER_AREA,
++            )
++
+         if self.color_mode == ColorMode.RGB:
+-            processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
++            processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
+ 
+         if self.rotation in [cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE, cv2.ROTATE_180]:
+             processed_image = cv2.rotate(processed_image, self.rotation)

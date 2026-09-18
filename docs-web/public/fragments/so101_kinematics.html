@@ -1,0 +1,1596 @@
+<style>
+    .kin {
+      --ok: #1a7f37;
+      --warn: #bf4b00;
+      --info: var(--mindgrip);
+      --fail: #cf222e;
+      line-height: 1.6;
+    }
+    .kin > h1 { margin-top: 0.25rem; }
+    .kin > h2 { margin-top: 2.5rem; padding-top: 0.35rem; border-top: 1px solid var(--border); }
+    .kin > h2:first-of-type { border-top: 0; padding-top: 0; }
+    .kin > h3 { margin-top: 1.65rem; }
+    .kin > h4 { margin-top: 1.35rem; font-size: 1.05rem; }
+    .kin p { margin: 0.7rem 0; max-width: 48rem; }
+    .kin ul, .kin ol { max-width: 48rem; }
+    .kin .katex { color: var(--text); font-size: 1.05em; }
+    .kin-lead { color: var(--muted); font-size: 1.05rem; margin-top: 0.35rem; max-width: 48rem; }
+    .toc {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.9rem 1.1rem 1rem; margin: 1.25rem 0 1.75rem;
+      max-width: 48rem;
+    }
+    .toc strong { display: block; margin-bottom: 0.4rem; color: var(--text); }
+    .toc ol { margin: 0; padding-left: 1.25rem; }
+    .toc li { margin: 0.25rem 0; }
+    .callout {
+      margin: 1.1rem 0; padding: 0.75rem 1rem;
+      border-left: 4px solid var(--accent); background: var(--callout-warn-bg); border-radius: 0 8px 8px 0;
+      max-width: 48rem;
+    }
+    .callout.info { border-left-color: var(--mindgrip); background: var(--callout-info-bg); }
+    .callout.ok { border-left-color: #1a7f37; background: var(--callout-ok-bg); }
+    .callout.fail { border-left-color: #cf222e; background: var(--callout-fail-bg); }
+    .step-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      margin: 1.35rem 0; overflow: hidden; background: var(--nav-root-bg);
+      max-width: 48rem;
+    }
+    .step-card header {
+      display: flex; gap: 0.75rem; align-items: center;
+      padding: 0.75rem 1rem; background: var(--panel); border-bottom: 1px solid var(--border);
+    }
+    .step-badge {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 999px;
+      background: rgba(255,159,28,.18); color: var(--accent); white-space: nowrap;
+    }
+    .step-card header h3 { margin: 0; font-size: 1.05rem; }
+    .step-card .body { padding: 0.9rem 1rem 1.05rem; }
+    .sym { font-family: var(--font-display); font-style: italic; }
+    .eq-box {
+      background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.85rem 1rem; margin: 0.85rem 0; overflow-x: auto;
+      max-width: 48rem;
+    }
+    .eq-caption { font-size: 0.82rem; color: var(--muted); margin-top: 0.55rem; }
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0;
+      max-width: 48rem;
+    }
+    @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+    .mini {
+      border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; background: var(--panel);
+    }
+    .mini h4 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+    .mini p:last-child { margin-bottom: 0; }
+    .arm-svg { width: 100%; height: auto; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; }
+    .legend { font-size: 0.82rem; color: var(--muted); margin: 0.4rem 0 0; }
+    .widget {
+      border: 1px solid var(--border); border-radius: 10px; padding: 1rem;
+      background: var(--surface-elevated); margin: 1rem 0 1.4rem;
+      max-width: 48rem;
+    }
+    .widget label { display: block; font-size: 0.88rem; font-weight: 600; margin: 0.55rem 0 0.2rem; color: var(--text); }
+    .widget input[type="range"] { width: 100%; accent-color: var(--accent); }
+    .readout {
+      font-family: var(--font-mono); font-size: 0.82rem;
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.7rem 0.85rem; overflow-x: auto; white-space: pre; line-height: 1.45;
+      color: var(--text);
+    }
+    .num-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.65rem; }
+    .chip {
+      font-size: 0.8rem; padding: 0.25rem 0.55rem; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--code-bg);
+      font-variant-numeric: tabular-nums; color: var(--text);
+    }
+    .flow {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: 0.8rem 0;
+    }
+    .flow .box {
+      border: 1px solid var(--border); background: var(--surface-elevated); border-radius: 6px;
+      padding: 0.4rem 0.65rem; font-size: 0.85rem; color: var(--text);
+    }
+    .flow .arrow { color: var(--muted); }
+    .kin table {
+      margin: 1.1rem 0;
+      max-width: 48rem;
+    }
+    .kin th, .kin td {
+      color: var(--text);
+    }
+    .symbol-table td:first-child { white-space: nowrap; font-family: var(--font-display); }
+    .check-list { margin: 0.4rem 0 0; padding-left: 1.15rem; }
+    .check-list li { margin: 0.35rem 0; }
+    .arm-svg.drag { cursor: crosshair; touch-action: none; user-select: none; }
+    .toggle-row, .btn-row {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0 0.35rem; align-items: center;
+    }
+    .toggle-row button, .btn-row button {
+      font-family: inherit; font-size: 0.85rem; cursor: pointer;
+      border: 1px solid var(--border); background: var(--code-bg);
+      color: var(--text); border-radius: 6px; padding: 0.4rem 0.7rem;
+    }
+    .toggle-row button:hover, .btn-row button:hover { background: var(--hover-btn); }
+    .toggle-row button.on {
+      background: var(--accent); border-color: var(--accent); font-weight: 600; color: var(--accent-contrast);
+    }
+    .chip.ok { background: var(--chip-ok-bg); border-color: var(--chip-ok-border); color: var(--chip-ok-text); }
+    .chip.fail { background: var(--chip-fail-bg); border-color: var(--chip-fail-border); color: var(--chip-fail-text); }
+    .chip.info { background: var(--chip-info-bg); border-color: var(--chip-info-border); color: var(--chip-info-text); }
+    .readout.iter-log { max-height: 150px; overflow-y: auto; white-space: pre; }
+
+    /* Finished 4×4 map — theme tokens (no hard-coded light fills) */
+    .kin .matrix-map {
+      margin: 0;
+      width: 100%;
+      font-size: 0.92rem;
+      border-collapse: collapse;
+    }
+    .kin .matrix-map th,
+    .kin .matrix-map td {
+      border: 1px solid var(--border-strong);
+      padding: 0.65rem 0.75rem;
+      vertical-align: middle;
+      background: transparent;
+      text-transform: none;
+      letter-spacing: normal;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .kin .matrix-map thead th {
+      background: var(--panel);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.84rem;
+    }
+    .kin .matrix-map tbody th {
+      background: var(--code-bg);
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .kin .matrix-map .hl-orient {
+      text-align: center;
+      background: var(--hl-orient-bg);
+      color: var(--text);
+    }
+    .kin .matrix-map .hl-pos {
+      background: var(--hl-pos-bg);
+      color: var(--text);
+    }
+    .kin .matrix-map .col-hint {
+      display: block;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 0.15rem;
+      font-size: 0.8rem;
+    }
+  </style>
+
+<div class="kin">
+<p style="margin:0 0 0.4rem;font-size:0.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600">MindGrip AI · SO-101 Binary Sort</p>
+      <h1>SO-101 Forward &amp; Inverse Kinematics</h1>
+      <p class="kin-lead">A step-by-step unpacking of the forward and inverse kinematics equations — what each symbol means, why matrices are multiplied, and how this relates to the pick / match-box / reject sorter. Existing docs only mention FK/IK as processor APIs; this page is the missing derivation.</p>
+
+      <div class="callout info">
+        <strong>Start here if the slides feel dense.</strong> Read “The two questions” and the 2-joint warm-up first. The 6-DOF formulas are the same idea repeated, not a new kind of math.
+        Related pages: <a href="project_page.html">Pick &amp; Place Sorting</a> ·
+        <a href="https://huggingface.co/docs/lerobot/action_representations" target="_blank" rel="noopener noreferrer">Action representations</a> ·
+        <a href="optional_tooling.html#mujoco">MuJoCo SO-101</a> ·
+        <a href="acronyms.html">Acronyms</a>.
+      </div>
+
+      <nav class="toc" aria-label="On this page">
+        <strong>On this page</strong>
+        <ol>
+          <li><a href="#two-questions">The two questions (FK vs IK)</a></li>
+          <li><a href="#joint-chain">SO-101 joint chain and numbers</a></li>
+          <li><a href="#warmup">Warm-up: a 2-joint planar arm</a> (<a href="#ik-live">live IK drag</a>)</li>
+          <li><a href="#homogeneous">What a 4×4 homogeneous transform does (and why it matters)</a> — <a href="#a-and-t">what \(A\) vs \(T\) means</a></li>
+          <li><a href="#step-a">Step A — one joint’s matrix \(A_i\) (what is on one sticky note)</a></li>
+          <li><a href="#step-b">Step B — chain product (full FK)</a> (<a href="#read-pose">read the pose off \(T\)</a>)</li>
+          <li><a href="#step-c">Step C — use-case checks with FK</a></li>
+          <li><a href="#step-d">Step D — IK problem for this sorter (what we would solve)</a></li>
+          <li><a href="#step-e">Step E — numerical IK, slowly</a> (<a href="#ik-jacobian-live">step-through solver</a>)</li>
+          <li><a href="#step-f">Step F — joint-space motion vs ACT</a> (neither is “FK modelling”)</li>
+          <li><a href="#lerobot">Where this lives in LeRobot code</a></li>
+          <li><a href="#symbols">Symbol cheat-sheet</a></li>
+          <li><a href="#which-applies">Which applies here: FK, not online IK</a></li>
+          <li><a href="#final-takeaways">Final takeaways (ACT route)</a></li>
+        </ol>
+      </nav>
+
+      <h2 id="two-questions">1. The two questions</h2>
+      <p>Every motor on the SO-101 is a <strong>revolute joint</strong>: it rotates about a fixed axis. The gripper (end-effector, EE) is the last link in that chain. Kinematics answers two inverse questions:</p>
+      <div class="two-col">
+        <div class="mini">
+          <h4>Forward kinematics (FK)</h4>
+          <p><strong>Given</strong> the six joint angles \(q\), <strong>where is the gripper</strong> in the table / base frame?</p>
+          <p>Input \(q \rightarrow\) output pose \(T_0^{\mathrm{EE}}(q)\) which holds position \((x,y,z)\) and orientation \(R\).</p>
+          <p>This map is <strong>unique</strong>: one set of angles produces one pose. You just multiply transforms.</p>
+        </div>
+        <div class="mini">
+          <h4>Inverse kinematics (IK)</h4>
+          <p><strong>Given</strong> a desired gripper pose \(p^*\) (object, match bin, or reject bin), <strong>which joint angles</strong> put the gripper there?</p>
+          <p>Input \(p^* \rightarrow\) output \(q^*\). This map may have <strong>many</strong> solutions, <strong>one</strong>, or <strong>none</strong> (out of reach or past joint limits).</p>
+        </div>
+      </div>
+      <div class="callout ok">
+        <strong>This project’s ACT path:</strong> you never have to solve IK online. Human teleop already produced joint trajectories \(q(t)\) that reach the object and the bins. ACT copies those joints from camera + proprioception. FK is still useful to <em>check</em> that a demo actually grasped at the right height and finished over the right bin.
+        Full write-up at the end: <a href="#which-applies">Which applies here: FK, not online IK</a>.
+      </div>
+
+      <h2 id="joint-chain">2. The SO-101 joint chain</h2>
+      <p>Source of the lengths and limits: URDF / MuJoCo under <code>src/lerobot/robots/so101_mujoco/assets/</code> (same numbers as the slides). LeRobot’s UI stores angles in <strong>degrees</strong>; the URDF and MuJoCo use <strong>radians</strong>. Convert with \(\theta_{\mathrm{rad}} = \theta_{\mathrm{deg}}\cdot\pi/180\).</p>
+      <p>State vector (proprioception):</p>
+      <div class="eq-box">
+        \[
+          q = [q_1,\; q_2,\; q_3,\; q_4,\; q_5,\; q_6]^\top
+        \]
+        <p class="eq-caption">Six numbers, one per motor. \(q_6\) is the jaw; it does not move the gripper frame much, it opens/closes the fingers.</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>\(i\)</th>
+            <th>Joint (LeRobot name)</th>
+            <th>What it does</th>
+            <th>Link offset (approx.)</th>
+            <th>Joint limit \(q_i\)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><code>shoulder_pan</code></td><td>Yaw about the vertical axis (which way the arm faces)</td><td>\(d_1 \approx 95\)–\(100\,\mathrm{mm}\) base height</td><td>\(\pm 110^\circ\)</td></tr>
+          <tr><td>2</td><td><code>shoulder_lift</code></td><td>Pitch of the upper arm</td><td>\(a_2 \approx 65\,\mathrm{mm}\)</td><td>\(\pm 100^\circ\)</td></tr>
+          <tr><td>3</td><td><code>elbow_flex</code></td><td>Pitch of the forearm</td><td>\(a_3 \approx 116\,\mathrm{mm}\)</td><td>\(\approx \pm 97^\circ\)</td></tr>
+          <tr><td>4</td><td><code>wrist_flex</code></td><td>Pitch of the wrist</td><td>\(a_4 \approx 135\,\mathrm{mm}\)</td><td>\(\pm 95^\circ\)</td></tr>
+          <tr><td>5</td><td><code>wrist_roll</code></td><td>Roll of the gripper</td><td>\(a_5 \approx 64\,\mathrm{mm}\)</td><td>\(\approx \pm 160^\circ\)</td></tr>
+          <tr><td>6</td><td><code>gripper</code> (jaw)</td><td>Open / close</td><td>\(\approx 36\,\mathrm{mm}\) jaw offset</td><td>\(-10^\circ\ldots +100^\circ\)</td></tr>
+        </tbody>
+      </table>
+      <p>Effective planar reach (sum of the long links, ignoring pan):</p>
+      <div class="eq-box">
+        \[
+          L_{\max} \approx 65 + 116 + 135 + 64 = 380\,\mathrm{mm} = 0.38\,\mathrm{m}
+        \]
+        <p class="eq-caption">Keep \(p_{\mathrm{pick}}\), \(p_{\mathrm{match}}\), and \(p_{\mathrm{reject}}\) inside about \(0.25\)–\(0.35\,\mathrm{m}\) of the base so the arm is not fully stretched.</p>
+      </div>
+      <svg class="arm-svg" viewBox="0 0 720 280" role="img" aria-label="Side-view sketch of SO-101 links">
+        <text x="16" y="24" font-size="13" fill="#5c5c5c" font-family="Inter, sans-serif">Side view (pan q1 is into/out of the page)</text>
+        <line x1="60" y1="230" x2="680" y2="230" stroke="#cfcfc8" stroke-width="2"/>
+        <text x="64" y="248" font-size="11" fill="#5c5c5c" font-family="Inter, sans-serif">table</text>
+        <rect x="48" y="198" width="36" height="32" fill="#e8e7e2" stroke="#8a8a84"/>
+        <text x="44" y="190" font-size="11" fill="#5c5c5c" font-family="Inter, sans-serif">base</text>
+        <line x1="66" y1="198" x2="66" y2="150" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>
+        <text x="74" y="168" font-size="11" fill="#d1934f" font-family="Inter, sans-serif">d1</text>
+        <circle cx="66" cy="150" r="7" fill="#ff9f1c" stroke="#bf4b00"/>
+        <text x="78" y="142" font-size="12" fill="#bf4b00" font-family="Inter, sans-serif">q2 lift</text>
+        <line x1="66" y1="150" x2="200" y2="95" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+        <text x="110" y="108" font-size="11" fill="#d1934f" font-family="Inter, sans-serif">a2 ≈ 65 mm</text>
+        <circle cx="200" cy="95" r="7" fill="#ff9f1c" stroke="#bf4b00"/>
+        <text x="212" y="88" font-size="12" fill="#bf4b00" font-family="Inter, sans-serif">q3 elbow</text>
+        <line x1="200" y1="95" x2="390" y2="130" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>
+        <text x="260" y="100" font-size="11" fill="#d1934f" font-family="Inter, sans-serif">a3 ≈ 116 mm</text>
+        <circle cx="390" cy="130" r="7" fill="#ff9f1c" stroke="#bf4b00"/>
+        <text x="402" y="122" font-size="12" fill="#bf4b00" font-family="Inter, sans-serif">q4 wrist flex</text>
+        <line x1="390" y1="130" x2="560" y2="155" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+        <text x="440" y="130" font-size="11" fill="#d1934f" font-family="Inter, sans-serif">a4 ≈ 135 mm</text>
+        <circle cx="560" cy="155" r="6" fill="#8250df"/>
+        <text x="548" y="142" font-size="12" fill="#8250df" font-family="Inter, sans-serif">q5 roll</text>
+        <line x1="560" y1="155" x2="630" y2="168" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"/>
+        <rect x="622" y="156" width="28" height="22" rx="3" fill="#1a7f37"/>
+        <text x="618" y="198" font-size="12" fill="#1a7f37" font-family="Inter, sans-serif">EE / gripper</text>
+      </svg>
+      <p class="legend">Orange dots are revolute joints. Lengths are millimetres along the links (DH-style \(a_i\), \(d_i\)), not CAD mesh bounding boxes. They are close enough for reachability; the URDF is the source of truth for simulation.</p>
+
+      <h2 id="warmup">3. Warm-up: a 2-joint planar arm</h2>
+      <p>The 6-DOF formulas look intimidating because they are \(4\times 4\) matrices. On a <strong>flat table</strong> with only two hinges, the same FK is just high-school trig. Do this example on paper once; the rest of the page is this idea in 3D.</p>
+      <p>Put the shoulder at the origin. Link 1 has length \(L_1 = 65\,\mathrm{mm}\), link 2 has \(L_2 = 116\,\mathrm{mm}\). Joint 1 rotates by \(\theta_1\), joint 2 by \(\theta_2\) (relative to link 1). The tip is:</p>
+      <div class="eq-box">
+        \[
+          \begin{aligned}
+            x &= L_1\cos\theta_1 + L_2\cos(\theta_1+\theta_2) \\
+            y &= L_1\sin\theta_1 + L_2\sin(\theta_1+\theta_2)
+          \end{aligned}
+        \]
+        <p class="eq-caption">Why add? Because the second link starts where the first link ends. The first term is the elbow location; the second term is elbow \(\rightarrow\) tip.</p>
+      </div>
+      <p><strong>Worked numbers</strong> with \(\theta_1 = 30^\circ\), \(\theta_2 = 45^\circ\):</p>
+      <ul>
+        <li>\(\cos 30^\circ = 0.8660\), \(\sin 30^\circ = 0.5000\)</li>
+        <li>\(\theta_1+\theta_2 = 75^\circ\), \(\cos 75^\circ = 0.2588\), \(\sin 75^\circ = 0.9659\)</li>
+        <li>\(x = 65\cdot 0.8660 + 116\cdot 0.2588 = 56.29 + 30.02 = 86.31\,\mathrm{mm}\)</li>
+        <li>\(y = 65\cdot 0.5000 + 116\cdot 0.9659 = 32.50 + 112.04 = 144.54\,\mathrm{mm}\)</li>
+      </ul>
+      <p>Drag the sliders to see that formula live. The printed \(x,y\) should match the drawing. Inverse kinematics is the opposite: <a href="#ik-live">drag the target</a> and the angles come out of the formula.</p>
+      <div class="widget">
+        <svg id="arm2r" class="arm-svg" viewBox="-20 -20 280 220" aria-label="Interactive 2-joint arm"></svg>
+        <label for="th1">\(\theta_1\) (shoulder) = <span id="th1v">30</span>°</label>
+        <input id="th1" type="range" min="-90" max="90" value="30" />
+        <label for="th2">\(\theta_2\) (elbow) = <span id="th2v">45</span>°</label>
+        <input id="th2" type="range" min="-140" max="140" value="45" />
+        <div class="num-row">
+          <span class="chip" id="xy-chip">x, y</span>
+          <span class="chip" id="reach-chip">reach</span>
+        </div>
+        <p style="margin:0.7rem 0 0.3rem;font-weight:600;font-size:0.88rem">The same answer as a matrix (this is FK)</p>
+        <div class="readout" id="mat-out"></div>
+      </div>
+      <p>IK for this 2-joint arm has a closed form (law of cosines). Let \(r^2 = x^2 + y^2\):</p>
+      <div class="eq-box">
+        \[
+          \cos\theta_2 = \frac{x^2 + y^2 - L_1^2 - L_2^2}{2 L_1 L_2}
+          \qquad
+          \theta_2 = \pm \arccos(\cdot)
+        \]
+        <p class="eq-caption">The \(\pm\) is elbow-up vs elbow-down — two ways to put the tip at the same \((x,y)\). If \(|\cos\theta_2| &gt; 1\), the point is outside the reachable ring and IK fails.</p>
+      </div>
+      <p>Plug in the numbers above: \(x^2+y^2-L_1^2-L_2^2 = 10660\), denominator \(2\cdot 65\cdot 116 = 15080\), so \(\cos\theta_2 \approx 0.707\) and \(\theta_2 \approx \pm 45^\circ\). Then \(\theta_1\) follows from \(\mathrm{atan2}\) of the remaining angle. That is already “inverse kinematics”: pose in, angles out.</p>
+      <p id="ik-live"><strong>Drag the green target</strong> (or use the \(x,y\) sliders). The arm solves IK live. The grey dashed arm is the other elbow solution — two joint pairs can share one tip pose. Drag outside the rings and IK fails (\(|\cos\theta_2| &gt; 1\)).</p>
+      <div class="widget">
+        <svg id="arm-ik" class="arm-svg drag" viewBox="0 0 380 270" aria-label="Interactive inverse kinematics: drag the target"></svg>
+        <p class="legend">Grey rings = reachable workspace (inner \(|L_1-L_2|\), outer \(L_1+L_2\)). Click or drag anywhere in the plot.</p>
+        <div class="toggle-row">
+          <span style="font-size:0.85rem;color:var(--muted)">Elbow</span>
+          <button type="button" id="elbow-up" class="on">Elbow up (+)</button>
+          <button type="button" id="elbow-down">Elbow down (−)</button>
+          <span style="font-size:0.85rem;color:var(--muted);margin-left:0.4rem">Presets</span>
+          <button type="button" id="ik-preset-ex">Worked example</button>
+          <button type="button" id="ik-preset-pick">Pick</button>
+          <button type="button" id="ik-preset-match">Match bin</button>
+          <button type="button" id="ik-preset-reject">Reject bin</button>
+        </div>
+        <label for="ikx">Target \(x\) = <span id="ikxv">86</span> mm</label>
+        <input id="ikx" type="range" min="-180" max="180" value="86" />
+        <label for="iky">Target \(y\) = <span id="ikyv">145</span> mm</label>
+        <input id="iky" type="range" min="-40" max="180" value="145" />
+        <div class="num-row">
+          <span class="chip ok" id="ik-status">reachable</span>
+          <span class="chip" id="ik-angles">θ1, θ2</span>
+          <span class="chip" id="ik-err">|e|</span>
+        </div>
+        <p style="margin:0.7rem 0 0.3rem;font-weight:600;font-size:0.88rem">The cosine formula, live</p>
+        <div class="readout" id="ik-out"></div>
+      </div>
+      <p>A 6-DOF arm has no equally simple cosine formula for all joints, so we use the matrix chain (FK) and a Jacobian solver (IK). The meaning does not change — you still ask “which angles put the gripper here?” See the <a href="#ik-jacobian-live">step-through Jacobian demo</a> in Step E.</p>
+
+      <h2 id="homogeneous">4. What a 4×4 homogeneous transform does</h2>
+
+      <div class="callout info">
+        <strong>Where this sits in the story.</strong> Section 3 already <em>did</em> forward kinematics, just in 2D: “given \(\theta_1,\theta_2\), add the two sticks to get \((x,y)\).”
+        Section 4 is <strong>not a third kind of kinematics</strong>. It is the same FK idea, rewritten so it still works when the SO-101 leaves the page (shoulder pan, wrist roll, 3D).
+        <br><br>
+        <strong>FK or IK?</strong> The 4×4 belongs to <strong>FK first</strong> — FK <em>is</em> multiplying these crates from the base to the gripper.
+        IK uses them only <em>indirectly</em>: a numerical solver (Step E) keeps calling FK (“where is the gripper now?”) and nudging the angles. The 2-joint IK sliders in §3 did not need 4×4s because a flat arm has a cosine shortcut.
+      </div>
+
+      <h3>Purpose, in plain language</h3>
+      <p>A robot arm is a stack of rigid pieces. Each piece has its own “here”: the shoulder’s here, the elbow’s here, the gripper’s here. Those heres differ in two ways only:</p>
+      <ul>
+        <li><strong>Where</strong> that piece sits (it has been slid along the table) — a <em>translation</em>.</li>
+        <li><strong>Which way</strong> it is facing (it has been twisted by a motor) — a <em>rotation</em>.</li>
+      </ul>
+      <p>A <strong>4×4 homogeneous transform</strong> is just a compact label for one of those “heres.” Think of it as a sticky note on a link that says:</p>
+      <div class="callout">
+        “If you are standing at the previous joint, take this many millimetres in this direction, then spin this many degrees — now you are standing at <em>me</em>.”
+      </div>
+      <p>That sticky note is a table of 16 numbers. You do not need to love matrices to use the idea: <strong>one note = one joint’s pose relative to the joint before it.</strong></p>
+      <p>Why 4×4, not 3×3? A 3×3 matrix can spin a point but cannot slide it. A 3-vector can slide a point but cannot spin it. Gluing spin and slide into one 4×4 object means “move from this joint to the next” is a <em>single</em> operation. Walking the whole arm is then “apply the shoulder note, then the elbow note, then the wrist note…” — which in algebra is just multiplying those notes in order.</p>
+      <p>The 2-joint warm-up already did this without the fancy name: \(x = L_1\cos\theta_1 + L_2\cos(\theta_1+\theta_2)\) is “go along the first stick, then along the second.” The 4×4 form is the same recipe when the arm is no longer flat on a page (pan, lift, wrist roll all in 3D).</p>
+
+      <h3>Why this section is important</h3>
+      <p>Skip it and Steps A–B look like a wall of \(A_i\) and \(T_0^{\mathrm{EE}}\). This section is the dictionary those later equations use.</p>
+      <table>
+        <thead>
+          <tr><th>If you skip this</th><th>What goes wrong later</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>You treat \(A_1 A_2 A_3\ldots\) as mysterious symbols</td>
+            <td>You cannot see that FK is only “stick the notes together from the table up to the gripper.”</td>
+          </tr>
+          <tr>
+            <td>You add poses instead of multiplying them</td>
+            <td>Angles do not add like lengths. Rotate 30° then 45° is a product of two notes, not \(30+45\) in 3D.</td>
+          </tr>
+          <tr>
+            <td>You mix up order (\(A_2 A_1\) vs \(A_1 A_2\))</td>
+            <td>The gripper flies to the wrong place. Parent-then-child order is the physical chain: base → shoulder → elbow → …</td>
+          </tr>
+          <tr>
+            <td>You cannot read \((x,y,z)\) out of \(T\)</td>
+            <td>You cannot check pick height or bin alignment (Step C). The gripper position is simply the right-hand column of \(T\).</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>So the purpose of the 4×4 is not “linear algebra for its own sake.” It is the <strong>common language</strong> for:</p>
+      <ul>
+        <li><strong>FK</strong> — multiply the six joint notes; read where the gripper is.</li>
+        <li><strong>IK</strong> — search for notes (angles) whose product lands on the pick / match / reject point.</li>
+        <li><strong>URDF / MuJoCo / Pinocchio</strong> — they store each joint as this same 4×4; LeRobot’s <code>RobotKinematics</code> is that product, not a different kind of math.</li>
+      </ul>
+      <div class="callout ok">
+        <strong>One-sentence takeaway:</strong> the 4×4 is a packing crate for “slide + spin.” We need it because the SO-101 is a chain of six such moves, and multiplying crates is how you ask “where did the gripper end up?”
+      </div>
+      <div class="callout">
+        <strong>Full arm: still 4×4, not bigger.</strong> Six motors does <em>not</em> mean a 6×6 or 24×24 pose matrix.
+        Each joint has its own \(4\times 4\) (\(A_1,\ldots,A_6\)). Multiply them and the answer is <em>still</em> \(4\times 4\):
+        \(T_0^{\mathrm{EE}} = A_1 A_2 A_3 A_4 A_5 A_6\).
+        Why? Because 4×4 describes a pose in <em>3D space</em> (where + which way), not “how many hinges.”
+        Two sticks or six sticks, the gripper still has one position and one orientation.
+        The matrix that <em>does</em> grow with joint count is the <strong>Jacobian</strong> in IK (Step E): \(3\times 6\) or \(6\times 6\), because it maps six motor twitches onto gripper motion.
+      </div>
+
+      <h3 id="a-and-t">What \(A\) is and what \(T\) is</h3>
+      <p><strong>\(A\)</strong> is <em>one joint</em>. <strong>\(T\)</strong> is the <em>whole chain</em> after you multiply those joints. Both are 4×4. They are not two different kinds of math.</p>
+      <table>
+        <thead>
+          <tr><th>Symbol</th><th>Plain meaning</th><th>Everyday picture</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>\(A_i(q_i)\)</td>
+            <td>The 4×4 sticky note for motor \(i\) only: from the previous joint, slide this far and spin by this motor’s angle \(q_i\).</td>
+            <td>One step of a walking route. \(A_1\) = shoulder pan, \(A_2\) = shoulder lift, … \(A_6\) = gripper jaw.</td>
+          </tr>
+          <tr>
+            <td>\(T\)</td>
+            <td>Also 4×4, but it is <strong>several \(A\)’s multiplied</strong>. It answers: starting from some frame, where did I end up and which way am I facing?</td>
+            <td>The whole route written as a single instruction: “you are now here, facing this way.”</td>
+          </tr>
+          <tr>
+            <td>\(T = A_1 A_2\)</td>
+            <td>Toy 2-joint arm from §3: base → stick 1 → stick 2 (the tip).</td>
+            <td>Two steps, one destination.</td>
+          </tr>
+          <tr>
+            <td>\(T_0^{\mathrm{EE}} = A_1 A_2 A_3 A_4 A_5 A_6\)</td>
+            <td>Full SO-101 FK. Subscripts mean <strong>from → to</strong>: from the base (frame 0) to the end-effector (gripper).</td>
+            <td>Six steps, still one destination: the gripper in table coordinates.</td>
+          </tr>
+          <tr>
+            <td>\(T_0^{3} = A_1 A_2 A_3\)</td>
+            <td>Partial product: pose of joint 3 (elbow) as seen from the base. Same idea, shorter walk.</td>
+            <td>You can stop mid-route and still have a \(T\).</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Rule of thumb: if the letter has a joint index \(i\) and depends on one angle \(q_i\), it is an <strong>\(A\)</strong>. If it has a from-to pair (like \(0\) and EE) and is a product, it is a <strong>\(T\)</strong>.</p>
+
+      <h3>The same idea written as a matrix</h3>
+      <p>A 3D rigid motion has two parts: <strong>rotate</strong> the axes, then <strong>translate</strong> the origin. Packing both into one \(4\times 4\) matrix lets us compose motions by multiplication (the same way we composed \(L_1\) then \(L_2\) by adding vectors).</p>
+      <div class="eq-box">
+        \[
+          T =
+          \begin{bmatrix}
+            R_{11} &amp; R_{12} &amp; R_{13} &amp; t_x \\
+            R_{21} &amp; R_{22} &amp; R_{23} &amp; t_y \\
+            R_{31} &amp; R_{32} &amp; R_{33} &amp; t_z \\
+            0 &amp; 0 &amp; 0 &amp; 1
+          \end{bmatrix}
+          =
+          \begin{bmatrix}
+            R &amp; t \\
+            0^\top &amp; 1
+          \end{bmatrix}
+        \]
+        <p class="eq-caption">Map of the crate: the top-left \(3\times 3\) (\(R\)) is “which way am I facing.” The right column \(t = (t_x,t_y,t_z)\) is “where is my origin.” The bottom row is always \((0,0,0,1)\) — a bookkeeping trick so slide and spin stay in one multiply. You never choose those four numbers; they are fixed.</p>
+      </div>
+      <p>Apply \(T\) to a point \(p\) written as a 4-vector. In words: <em>spin the point, then slide it.</em></p>
+      <div class="eq-box">
+        \[
+          \begin{bmatrix} p' \\ 1 \end{bmatrix}
+          = T
+          \begin{bmatrix} p \\ 1 \end{bmatrix}
+          \quad\Rightarrow\quad
+          p' = R p + t
+        \]
+      </div>
+      <p>If \(T_A^B\) is the sticky note “frame \(B\) as seen from frame \(A\),” and \(T_B^C\) is “frame \(C\) as seen from \(B\),” then the note for \(C\) as seen from \(A\) is the product — walk \(A \rightarrow B \rightarrow C\):</p>
+      <div class="eq-box">
+        \[
+          T_A^C = T_A^B \, T_B^C
+        \]
+        <p class="eq-caption">Order matters and is <em>not</em> commutative: putting on a coat then spinning is not spinning then putting on a coat. Always multiply parent-to-child from the left as you walk out the chain (base, then joint 1, then joint 2, …).</p>
+      </div>
+      <p>That is all Step A needs: each motor gets its own crate \(A_i(q_i)\). Step B multiplies them. The gripper pose is the last crate’s \(t\) and \(R\).</p>
+
+      <h2 id="step-a">5. Step A — one joint’s matrix \(A_i(q_i)\)</h2>
+
+      <div class="callout info">
+        <strong>Purpose of this section.</strong> Section 4 told you that each joint has a 4×4 sticky note called \(A\).
+        Step A answers the next obvious question: <em>what is actually written on that note?</em>
+        It builds <strong>one</strong> joint’s crate from four tiny moves (slide a bit, twist a bit, …).
+        You are not computing the gripper yet — that is Step B, where six of these crates are multiplied into a \(T\).
+      </div>
+
+      <h3>In plain language</h3>
+      <p>Pick any motor on the SO-101, say the elbow. Between “the joint before it” and “this joint” there is a short piece of plastic with a known length, and a servo that can spin. Step A writes that fact as one 4×4, \(A_i(q_i)\).</p>
+      <ul>
+        <li><strong>Input:</strong> this motor’s angle \(q_i\) (plus fixed lengths from the CAD/URDF).</li>
+        <li><strong>Output:</strong> one 4×4 matrix — “if you were standing at the previous joint, here is how to get to me.”</li>
+        <li><strong>Not the output:</strong> the gripper’s \((x,y,z)\). One \(A\) is only <em>one step</em> of the walking route.</li>
+      </ul>
+      <p>The long formula on the slides looks like four names glued together. Those names are just the four tiny moves that make one step:</p>
+      <table>
+        <thead>
+          <tr><th>Piece of \(A_i\)</th><th>What it does in English</th><th>Does it change when you teleop?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>\(\mathrm{Trans}_x(a_i)\)</td>
+            <td>Walk along the link (the 65 mm, 116 mm, … sticks from §2).</td>
+            <td>No — the plastic length is fixed.</td>
+          </tr>
+          <tr>
+            <td>\(\mathrm{Rot}_x(\alpha_i)\)</td>
+            <td>Twist so the next hinge points the right way (often 0° or 90° from how the arm was designed).</td>
+            <td>No — built into the mechanical design.</td>
+          </tr>
+          <tr>
+            <td>\(\mathrm{Trans}_z(d_i)\)</td>
+            <td>Slide along the hinge axis (base height \(d_1\) is this kind of offset).</td>
+            <td>No — also a fixed CAD number.</td>
+          </tr>
+          <tr>
+            <td>\(\mathrm{Rot}_z(q_i)\)</td>
+            <td><strong>The motor turning.</strong> This is the only piece that moves in a video of the arm.</td>
+            <td><strong>Yes</strong> — this is \(q_i\).</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>So \(A_i(q_i)\) is “fixed geometry of this link” × “this motor’s current angle.” If you freeze every motor, all six \(A\)’s freeze. If you move only the elbow, only \(A_3\) changes; the other five notes stay put until Step B multiplies them again.</p>
+      <div class="callout ok">
+        <strong>Why Step A exists:</strong> without it, \(A_1 A_2 \cdots A_6\) in Step B is a slogan. With it, you can point at one motor and say “that 4×4 is just this link’s length plus this servo’s spin.” It is still FK (building the route), not IK (searching for angles).
+      </div>
+
+      <div class="step-card">
+        <header><span class="step-badge">Slide 2 · Step A</span><h3>The same four moves as a formula</h3></header>
+        <div class="body">
+          <p>Standard Denavit–Hartenberg (DH) writes those four moves as a product of 4×4 crates. Each revolute joint \(i\) contributes one matrix:</p>
+          <div class="eq-box">
+            \[
+              A_i(q_i)
+              = \mathrm{Rot}_z(q_i)\;
+                \mathrm{Trans}_z(d_i)\;
+                \mathrm{Rot}_x(\alpha_i)\;
+                \mathrm{Trans}_x(a_i)
+            \]
+            <p class="eq-caption">Read the English table above first. This line is the same four rows, packed so a computer can multiply them.</p>
+          </div>
+          <p>When this product is applied to a point, the order on the page is “motor first, then offsets,” which matches walking <em>out</em> from the previous joint. You do not need to expand this by hand for the sorter; URDF / MuJoCo already store the same four numbers.</p>
+          <p>The rotation the motor actually applies, written out (with \(c = \cos q_i\), \(s = \sin q_i\)):</p>
+          <div class="eq-box">
+            \[
+              \mathrm{Rot}_z(q_i) =
+              \begin{bmatrix}
+                c &amp; -s &amp; 0 &amp; 0 \\
+                s &amp;  c &amp; 0 &amp; 0 \\
+                0 &amp;  0 &amp; 1 &amp; 0 \\
+                0 &amp;  0 &amp; 0 &amp; 1
+              \end{bmatrix}
+            \]
+            <p class="eq-caption">This is the only 4×4 in Step A that depends on the live joint angle. Column 1 = where local \(x\) points after the spin; column 3 (unchanged) is the hinge axis.</p>
+          </div>
+          <p>A pure slide by link length \(a_i\) along \(x\) (the “walk along the stick” row):</p>
+          <div class="eq-box">
+            \[
+              \mathrm{Trans}_x(a_i) =
+              \begin{bmatrix}
+                1 &amp; 0 &amp; 0 &amp; a_i \\
+                0 &amp; 1 &amp; 0 &amp; 0 \\
+                0 &amp; 0 &amp; 1 &amp; 0 \\
+                0 &amp; 0 &amp; 0 &amp; 1
+              \end{bmatrix}
+            \]
+            <p class="eq-caption">No spin — identity in the top-left 3×3. The length \(a_i\) sits in the right-hand column, same place \(t_x\) lives in section 4.</p>
+          </div>
+          <div class="callout">
+            <strong>Why not one giant formula for \((x,y,z)\)</strong> like the 2-joint warm-up? You can, after multiplying all six \(A_i\). It becomes a mess of nested sines. Keeping six small crates is shorter, matches the URDF, and is what Pinocchio / MuJoCo do. Step B is that multiply.
+          </div>
+        </div>
+      </div>
+
+      <h2 id="step-b">6. Step B — chain product (full FK)</h2>
+      <div class="step-card">
+        <header><span class="step-badge">Slide 2 · Step B</span><h3>Accumulate transforms from base to gripper</h3></header>
+        <div class="body">
+          <p>Walk from the table (frame 0) out to the gripper, multiplying one \(A_i\) at a time. Each line below is a <strong>\(T\)</strong>: the route so far, still a 4×4. The last line is the full FK answer \(T_0^{\mathrm{EE}}\).</p>
+          <div class="eq-box">
+            \[
+              \begin{aligned}
+                T_0^{1} &amp;= A_1(q_1) \\
+                T_0^{2} &amp;= T_0^{1}\, A_2(q_2) = A_1 A_2 \\
+                T_0^{3} &amp;= T_0^{2}\, A_3(q_3) = A_1 A_2 A_3 \\
+                T_0^{4} &amp;= T_0^{3}\, A_4(q_4) \\
+                T_0^{5} &amp;= T_0^{4}\, A_5(q_5) \\
+                T_0^{\mathrm{EE}} &amp;= T_0^{5}\, A_6(q_6) = A_1 A_2 A_3 A_4 A_5 A_6
+              \end{aligned}
+            \]
+            <p class="eq-caption">This is the slide’s core FK equation: \(T_0^{\mathrm{EE}}(q) = A_1(q_1)\cdots A_6(q_6)\).</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="read-pose">After the product: read the pose (do not invert)</h3>
+      <div class="callout info">
+        <strong>What this block is doing.</strong> Step B just finished multiplying six \(A\)’s. You now hold one 4×4 named \(T_0^{\mathrm{EE}}\).
+        That crate already <em>is</em> the gripper’s pose. This subsection only <strong>looks inside the crate</strong> and copies out two human-readable pieces:
+        “where is the gripper?” \(p_{\mathrm{EE}}\) and “which way do the fingers point?” \(R_{\mathrm{EE}}\).
+        No new physics. No inverse kinematics. You are reading numbers that are already sitting in the matrix.
+      </div>
+
+      <p>Map of the finished 4×4 (same layout as section 4). After the product, the boxes are filled with actual numbers:</p>
+      <div class="eq-box" style="overflow-x:auto">
+        <table class="matrix-map">
+          <thead>
+            <tr>
+              <th></th>
+              <th>col 1<span class="col-hint">gripper \(x\)-axis</span></th>
+              <th>col 2<span class="col-hint">gripper \(y\)-axis</span></th>
+              <th>col 3<span class="col-hint">gripper \(z\)-axis (approach)</span></th>
+              <th>col 4<span class="col-hint">where the origin sits</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>row 1 (table \(x\))</th>
+              <td class="hl-orient" rowspan="3" colspan="3"><strong>\(R_{\mathrm{EE}}\)</strong><br>3×3 orientation — copy this block as-is</td>
+              <td class="hl-pos"><strong>\(t_x\)</strong> = gripper \(x\) on the table</td>
+            </tr>
+            <tr>
+              <th>row 2 (table \(y\))</th>
+              <td class="hl-pos"><strong>\(t_y\)</strong> = gripper \(y\)</td>
+            </tr>
+            <tr>
+              <th>row 3 (table \(z\))</th>
+              <td class="hl-pos"><strong>\(t_z\)</strong> = gripper height</td>
+            </tr>
+            <tr>
+              <th>row 4</th>
+              <td>0</td><td>0</td><td>0</td>
+              <td>1 (always — ignore)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="eq-caption">Orange column = position \(p_{\mathrm{EE}} = (t_x, t_y, t_z)\). Blue block = orientation \(R_{\mathrm{EE}}\). Bottom row is bookkeeping, not a measurement.</p>
+      </div>
+
+      <h4>Why “do not invert anything”</h4>
+      <p>Inverting a matrix would reverse the arrow: from gripper back to the base. FK already pointed the arrow the useful way (<strong>from</strong> table <strong>to</strong> gripper). If you invert, you are asking a different question (“where is the table, as seen from the fingers?”). For pick-height and bin checks you want the gripper in table coordinates, so you <em>read</em> \(T_0^{\mathrm{EE}}\), you do not solve or invert it. (IK is the search for angles; that comes in Steps D–E.)</p>
+
+      <h4>Position \(p_{\mathrm{EE}}\) — “where is the gripper?”</h4>
+      <p>The gripper has its own origin (a point glued to the jaws). In the gripper’s own coordinates that origin is \((0,0,0)\). Written as a 4-vector it is \((0,0,0,1)\). Sending that point through \(T_0^{\mathrm{EE}}\) asks: <em>where does that same point sit on the table?</em></p>
+      <div class="eq-box">
+        \[
+          p_{\mathrm{EE}} = T_0^{\mathrm{EE}}
+          \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix}
+          =
+          \begin{bmatrix} t_x \\ t_y \\ t_z \end{bmatrix}
+        \]
+        <p class="eq-caption">Shortcut you will use in code: do not even multiply. The answer is already the right-hand column (first three numbers). Units match the link lengths: if \(a_i,d_i\) were in metres, \(p_{\mathrm{EE}}\) is in metres.</p>
+      </div>
+      <p>In the 2-joint warm-up this was the green tip \((x,y)\). Same idea, now with a \(z\) as well.</p>
+
+      <h4>Orientation \(R_{\mathrm{EE}}\) — “which way do the fingers point?”</h4>
+      <p>The notation \(T_0^{\mathrm{EE}}[1{:}3,\, 1{:}3]\) is programming-slice language for “take rows 1–3 and columns 1–3” — the top-left 3×3. That block is \(R_{\mathrm{EE}}\). Each of its three columns is a unit arrow glued to the gripper, written in table coordinates:</p>
+      <ul>
+        <li><strong>Column 1</strong> — gripper’s local \(x\) (often along the fingers’ “side”).</li>
+        <li><strong>Column 2</strong> — gripper’s local \(y\).</li>
+        <li><strong>Column 3</strong> — gripper’s local \(z\), the <strong>approach axis</strong>: the direction the jaws move toward the object when you lower onto a cube. For a top-down grasp this column should point mostly downward (table \(-z\) or \(+z\) depending on your URDF).</li>
+      </ul>
+      <div class="eq-box">
+        \[
+          R_{\mathrm{EE}} = T_0^{\mathrm{EE}}[1{:}3,\, 1{:}3]
+        \]
+      </div>
+      <p>You need \(R_{\mathrm{EE}}\) when orientation matters (cube vs matchbox sitting on a side). For “is the gripper over the bin?” the position \(p_{\mathrm{EE}}\) is usually enough.</p>
+
+      <h4>Sanity checks — what they are actually testing</h4>
+      <p>These are not extra kinematics. They are “did I wire FK the right way?” tests you run on a known pose before you trust pick/bin numbers in Step C.</p>
+      <table>
+        <thead>
+          <tr><th>Check</th><th>What you do</th><th>What you should see</th><th>If it fails, you probably…</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rest pose</td>
+            <td>Set every \(q_i\) to the URDF zero.</td>
+            <td>\(p_{\mathrm{EE}}\) matches a known parked pose. On this SO-101, <em>new-calib</em> zero is <strong>mid-range</strong> of each joint — the arm is not stretched out straight.</td>
+            <td>Used the wrong zero (old “arm fully extended” calib), or swapped joint order in the product.</td>
+          </tr>
+          <tr>
+            <td>Pure pan</td>
+            <td>Move only \(q_1\) (shoulder pan). Leave lift/elbow/wrist fixed.</td>
+            <td>The gripper rides a horizontal circle: \(x^2 + y^2\) stays almost constant, height \(z\) barely changes. Like a lazy Susan.</td>
+            <td>Assigned pan to the wrong \(A_i\), or mixed a pitch joint into \(q_1\).</td>
+          </tr>
+          <tr>
+            <td>Reach cap</td>
+            <td>Compute the distance from the base origin to the gripper: \(\|p_{\mathrm{EE}}\|_2 = \sqrt{t_x^2 + t_y^2 + t_z^2}\).</td>
+            <td>It cannot beat the stick budget \(L_{\max} \approx 0.38\,\mathrm{m}\) (380 mm).</td>
+            <td>Mixed <strong>mm and metres</strong> (380 mm read as 0.38 vs 380) or <strong>degrees and radians</strong> (FK then reports ~0.6 m or a wild pose). Fix units; do not “tune” \(L_{\max}\).</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Once these three pass, \(p_{\mathrm{EE}}\) is trustworthy enough for Step C (grasp height, match bin, reject bin).</p>
+
+      <h2 id="step-c">7. Step C — use-case checks with FK</h2>
+
+      <div class="callout info">
+        <strong>Purpose of this section.</strong> Steps A–B told you <em>where the gripper is</em> (\(p_{\mathrm{EE}}\)).
+        Step C asks a practical question for <strong>this sorter</strong>: given that location, did the human demo actually pick the object and drop it in the right bin?
+        You are <strong>grading a recording</strong> with FK. You are not moving the arm, and you are not doing IK.
+      </div>
+
+      <h3>In plain language</h3>
+      <p>Imagine you already know three spots on the table (measured with a ruler, or from CAD), all in the same base frame as \(p_{\mathrm{EE}}\):</p>
+      <ul>
+        <li>\(p_{\mathrm{pick}}\) — where the cube / matchbox should be grasped</li>
+        <li>\(p_{\mathrm{match}}\) — mouth of the “match box” bin</li>
+        <li>\(p_{\mathrm{reject}}\) — mouth of the other bin</li>
+      </ul>
+      <p>A teleop episode is a movie of joint angles \(q(t)\). For any frame you care about (the grasp frame, the drop frame), run FK:</p>
+      <div class="eq-box">
+        \[
+          p_{\mathrm{EE}}(t) = \text{read the orange column of } T_0^{\mathrm{EE}}\bigl(q(t)\bigr)
+        \]
+      </div>
+      <p>Then compare that point to the spots you care about. “Close enough” uses a slack \(\varepsilon\) because bins are wide and cubes are not infinitely small. If a check fails, the demo never showed the skill — ACT cannot invent a grasp you never performed. Re-record that episode.</p>
+      <p><strong>Step B sanity checks vs Step C:</strong> Step B asks “is my FK code wired correctly?” Step C asks “is this <em>demonstration</em> any good?” Same \(p_{\mathrm{EE}}\), different job.</p>
+
+      <h3>What the bars in the formulas mean</h3>
+      <p>Two kinds of “how far” appear. They are ordinary distances, not new kinematics.</p>
+      <table>
+        <thead>
+          <tr><th>Writing</th><th>English</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>\(|z_{\mathrm{EE}} - z_{\mathrm{object}}|\)</td>
+            <td>Absolute value: how far apart two <em>heights</em> are (ignore which is higher).</td>
+            <td>Gripper at 42 mm, cube top at 30 mm → 12 mm too high.</td>
+          </tr>
+          <tr>
+            <td>\(\|p_{\mathrm{EE}} - p_{\mathrm{match}}\|_2\)</td>
+            <td>Straight-line 3D distance between two points: \(\sqrt{(x_1-x_2)^2+(y_1-y_2)^2+(z_1-z_2)^2}\). The 2 means “ordinary Pythagoras,” not “squared.”</td>
+            <td>Gripper 25 mm left of the bin mouth → distance 25 mm if height matches.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>The five checks, one by one</h3>
+      <p>Run them on the <em>right frame</em> of the episode (grasp moment vs drop moment). You do not need every check on every frame.</p>
+
+      <h4>1. Grasp height — did the jaws actually reach the object?</h4>
+      <div class="eq-box">
+        \[
+          |z_{\mathrm{EE}} - z_{\mathrm{object}}| &lt; \varepsilon_z
+        \]
+        <p class="eq-caption">Typical slack: \(\varepsilon_z \approx 8\)–\(15\,\mathrm{mm}\). Compare at the frame where the gripper closes.</p>
+      </div>
+      <p>If the gripper is \(3\,\mathrm{cm}\) above the cube when the jaw closes, that episode never grasped. The policy will copy “close in mid-air.”</p>
+
+      <h4>2. Match-box bin — did we drop over the match bin?</h4>
+      <div class="eq-box">
+        \[
+          \| p_{\mathrm{EE}} - p_{\mathrm{match}} \|_2 &lt; \varepsilon_{xy}
+        \]
+        <p class="eq-caption">Typical slack: \(\varepsilon_{xy} \approx 20\)–\(40\,\mathrm{mm}\) (bin mouths are large). Compare at the frame where the jaw opens to release.</p>
+      </div>
+      <p>Only required on episodes whose object <em>is</em> a match box. A reject episode should fail this on purpose.</p>
+
+      <h4>3. Reject bin — same idea, other mouth</h4>
+      <div class="eq-box">
+        \[
+          \| p_{\mathrm{EE}} - p_{\mathrm{reject}} \|_2 &lt; \varepsilon_{xy}
+        \]
+      </div>
+      <p>Required on non–match-box episodes. Same slack as the match bin.</p>
+
+      <h4>4. Reachability — is this pose even possible?</h4>
+      <div class="eq-box">
+        \[
+          \| p_{\mathrm{EE}} \|_2 \le L_{\max} \approx 0.38\,\mathrm{m}
+        \]
+      </div>
+      <p>Distance from the base origin to the gripper cannot exceed the sum of the long links. If a “drop” pose fails this, the bin is too far — move the bin, do not force IK later. This is the same cap as Step B, reused as a scene-layout check.</p>
+
+      <h4>5. Lift clearance — did we pick up, or drag?</h4>
+      <div class="eq-box">
+        \[
+          z_{\mathrm{pick}} &gt; z_{\mathrm{table}} + h_{\mathrm{object}}
+        \]
+      </div>
+      <p>After the grasp, the gripper (and object) should rise above table + object height. If \(z\) stays on the table while the arm moves sideways, the demo dragged the cube. ACT will copy dragging.</p>
+
+      <h3>A tiny picture of one episode</h3>
+      <div class="flow">
+        <span class="box">home</span>
+        <span class="arrow">→</span>
+        <span class="box">check 1 + 5<br>at grasp</span>
+        <span class="arrow">→</span>
+        <span class="box">lift</span>
+        <span class="arrow">→</span>
+        <span class="box">check 2 or 3<br>at drop</span>
+        <span class="arrow">→</span>
+        <span class="box">home</span>
+      </div>
+      <p>Check 4 can run on grasp and drop. Camera image \(I\) only decides <em>which</em> bin check (2 vs 3) you apply; FK does not look at pixels.</p>
+      <div class="callout ok">
+        <strong>Why Step C matters for this project:</strong> ACT copies whatever you showed. FK is how you prove the demo was over the object and over the bin <em>before</em> you spend GPU time training. Failed check → re-teleop. Passed checks → that episode is worth keeping.
+      </div>
+      <div class="callout">
+        <strong>Still not IK.</strong> These tests use \(p_{\mathrm{EE}}\) from joints you already have. Finding new joints that would reach \(p_{\mathrm{pick}}\) is Step D.
+      </div>
+
+      <div class="step-card">
+        <header><span class="step-badge">Slide 2 · Step C</span><h3>The slide’s five tests (summary)</h3></header>
+        <div class="body">
+          <p>After reading live joints \(q\) (or one frame of a recorded episode), compute \(p_{\mathrm{EE}} = \mathrm{FK}(q)\) and test the scene:</p>
+          <ol>
+            <li><strong>Grasp height.</strong> \(|z_{\mathrm{EE}} - z_{\mathrm{object}}| &lt; \varepsilon_z\). If the gripper is \(3\,\mathrm{cm}\) above the cube, the demo never grasped.</li>
+            <li><strong>Match-box bin.</strong> \(\|p_{\mathrm{EE}} - p_{\mathrm{match}}\|_2 &lt; \varepsilon_{xy}\) at the drop frame.</li>
+            <li><strong>Reject bin.</strong> \(\|p_{\mathrm{EE}} - p_{\mathrm{reject}}\|_2 &lt; \varepsilon_{xy}\) at the drop frame.</li>
+            <li><strong>Reachability.</strong> \(\|p_{\mathrm{EE}}\|_2 \le L_{\max} \approx 0.38\,\mathrm{m}\).</li>
+            <li><strong>Lift clearance.</strong> \(z_{\mathrm{pick}} &gt; z_{\mathrm{table}} + h_{\mathrm{object}}\) so the cube is not dragged.</li>
+          </ol>
+          <p>Typical tolerances for this desktop sorter: \(\varepsilon_z \approx 8\)–\(15\,\mathrm{mm}\), \(\varepsilon_{xy} \approx 20\)–\(40\,\mathrm{mm}\) (bin mouths are large). If a check fails, re-teleop that episode rather than hoping ACT will invent a grasp you never showed.</p>
+        </div>
+      </div>
+
+      <h2 id="step-d">8. Step D — IK problem for this sorter</h2>
+
+      <div class="callout info">
+        <strong>Purpose of this section.</strong> Steps A–C used FK: joints in, gripper location out.
+        Step D flips the question: <em>we already know where we want the gripper</em> (object, match bin, or reject bin) — which joint angles would put it there?
+        That reverse question is inverse kinematics. This project’s ACT path does not solve it online
+        (<a href="#which-applies">§13</a>), but the slides still pose it for the sorter, and it is what a scripted or phone-EE robot would run. Read it as “the problem IK would solve,” not “a step you must code for teleop.”
+      </div>
+
+      <h3>In plain language</h3>
+      <p>FK is unique: one set of motor angles → one gripper pose. IK is the awkward reverse. Many angle combinations can put the gripper in the same spot (elbow up vs elbow down — you already saw that on the <a href="#ik-live">drag-the-target</a> demo). Sometimes <em>no</em> angles work (bin too far, behind the base, or past a joint limit).</p>
+      <p>For this table the desired spots are fixed. You would measure them once (ruler or CAD), in the same base frame as \(p_{\mathrm{EE}}\):</p>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>What it is</th><th>When you would need those joints</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>\(p_{\mathrm{pick}}\)</td><td>Where the object should be grasped</td><td>Go there and close the jaw</td></tr>
+          <tr><td>\(p_{\mathrm{match}}\)</td><td>Mouth of the match-box bin</td><td>Drop if the camera says “match box”</td></tr>
+          <tr><td>\(p_{\mathrm{reject}}\)</td><td>Mouth of the other bin</td><td>Drop if the camera says “not a match box”</td></tr>
+        </tbody>
+      </table>
+      <p>The camera image \(I\) does <strong>not</strong> invent XYZ. It only picks <em>which</em> of the two bin points to use after the pick. The three coordinates themselves are scene geometry, like the bins sitting on the table.</p>
+
+      <h3>What “solve IK” means in one sentence</h3>
+      <p>Find joint angles \(q^*\) such that if you ran FK on them, the gripper would land on (or very near) the chosen point \(p^*\), without breaking motor limits.</p>
+      <div class="eq-box">
+        \[
+          q^* = \arg\min_q \; \| p_{\mathrm{EE}}(q) - p^* \|_2
+          \quad\text{s.t.}\quad
+          q_{\min} \le q \le q_{\max}
+        \]
+        <p class="eq-caption">In English: try angles \(q\), compute FK, measure the miss distance to \(p^*\), pick the \(q\) with the smallest miss, but stay inside each servo’s allowed range. \(p^*\) is whichever of pick / match / reject you asked for.</p>
+      </div>
+      <p>You would run that three times in a classical sorter: \(q_{\mathrm{pick}}^*\), then \(q_{\mathrm{match}}^*\) or \(q_{\mathrm{reject}}^*\). The jaw is not part of this position puzzle. Open/close is a separate map (\(\theta_g\) on the URDF, or LeRobot’s \(0\) = closed … \(100\) = open).</p>
+      <div class="two-col">
+        <div class="mini">
+          <h4>What you already know (inputs)</h4>
+          <p>The three table points, joint limits from §2, and a starting guess for \(q\) (usually “where the arm is now”).</p>
+        </div>
+        <div class="mini">
+          <h4>What you want (outputs)</h4>
+          <p>Six numbers \(q^*\) to send to the motors so the gripper sits at \(p^*\). Step E is <em>how</em> a computer hunts for those numbers. Step F is how you move from today’s \(q\) to \(q^*\).</p>
+        </div>
+      </div>
+      <div class="callout fail">
+        <strong>IK can honestly fail.</strong> Outside \(L_{\max} \approx 0.38\,\mathrm{m}\), behind the pedestal, or needing wrist flex past \(\pm 95^\circ\): there is no \(q^*\). That is a layout problem — slide the bins inward — not a bug in the formula. A good solver must say “no” rather than invent a pose that would snap a servo.
+      </div>
+      <p>On the 2-joint arm, this hunt had a cosine shortcut. Six joints in 3D do not. That is why Step E exists.</p>
+
+      <div class="step-card">
+        <header><span class="step-badge">Slide 3 · Step D</span><h3>The slide’s problem statement (summary)</h3></header>
+        <div class="body">
+          <p>KNOWN SCENE POSES: \(p_{\mathrm{pick}}\), \(p_{\mathrm{match}}\), \(p_{\mathrm{reject}}\). SOLVE: \(q_{\mathrm{pick}}^* = \mathrm{IK}(p_{\mathrm{pick}})\), and \(q_{\mathrm{match}}^*\) or \(q_{\mathrm{reject}}^*\) according to the camera. The decision from image \(I\) selects which bin IK to use.</p>
+        </div>
+      </div>
+
+      <h2 id="step-e">9. Step E — numerical IK (Jacobian), slowly</h2>
+
+      <div class="callout info">
+        <strong>Purpose of this section.</strong> Step D named the problem (“find \(q^*\)”). Step E is the usual computer method: do not magically invert FK; <strong>nudge the motors a little, ask FK where you landed, repeat</strong> until the gripper is close enough to \(p^*\).
+        That loop is numerical IK. The Jacobian is only a cheat sheet for “if I twitch this motor, which way does the gripper move?”
+        You can watch it on the 2-joint widget below. On the real SO-101, Pinocchio does the same loop in 3D. This project’s ACT path still skips it at runtime; the section is here so the slide’s \(e\), \(J\), and \(\Delta q = J^{+} e\) are not opaque.
+      </div>
+
+      <h3>In plain language — a game of hot and cold</h3>
+      <p>You stand the arm somewhere. FK tells you the gripper is, say, 3 cm left of the bin. You need to know <em>which motors to turn, and by how much</em>, to walk those 3 cm. Turning the wrong joint might lift the gripper instead of sliding it sideways.</p>
+      <p>The <strong>error</strong> is that leftover miss, as a 3D arrow from where you are to where you want to be:</p>
+      <div class="eq-box">
+        \[
+          e = p^* - p_{\mathrm{EE}}(q)
+        \]
+        <p class="eq-caption">If \(e = (0.01,\, 0,\, 0)\) metres, you are 1 cm short in table-\(x\), and already good in \(y\) and \(z\). Shrink \(e\) toward zero and you have solved IK (for position).</p>
+      </div>
+      <p>The <strong>Jacobian</strong> \(J(q)\) is a table of “what if I twitch one motor?” Each column is one servo: “a tiny turn of this motor moves the gripper in this \(x,y,z\) direction.” For position-only IK on six motors, \(J\) is \(3\times 6\): three rows (Cartesian directions), six columns (motors). It is <em>not</em> another 4×4 pose crate. It grows with the number of joints; \(T_0^{\mathrm{EE}}\) does not.</p>
+      <p>You can fill \(J\) by calculus on the FK product, or by brute force: bump \(q_i\) by a hair, rerun FK, see how \(p_{\mathrm{EE}}\) moved, put that motion in column \(i\).</p>
+      <p>On the 2-joint warm-up the same table is small enough to write out. Column 1 = twitching the shoulder swings <em>both</em> sticks; column 2 = twitching the elbow swings only the second stick:</p>
+      <div class="eq-box">
+        \[
+          J =
+          \begin{bmatrix}
+            -L_1\sin\theta_1 - L_2\sin(\theta_1+\theta_2) &amp;
+            -L_2\sin(\theta_1+\theta_2) \\
+             L_1\cos\theta_1 + L_2\cos(\theta_1+\theta_2) &amp;
+             L_2\cos(\theta_1+\theta_2)
+          \end{bmatrix}
+        \]
+      </div>
+      <p>We want a small joint change \(\Delta q\) such that \(J\,\Delta q \approx e\) — “those twitches should add up to the miss arrow.” For six motors, \(J\) is wide (\(3\times 6\)): more knobs than directions, so many \(\Delta q\) could work, and none is a simple inverse. The slides use a <strong>damped least-squares</strong> (DLS) compromise: the smallest reasonable \(\Delta q\) that reduces \(e\), without yanking the arm when two columns of \(J\) look alike (arm stretched — a singularity).</p>
+      <div class="eq-box">
+        \[
+          \Delta q = J^{+} e,
+          \qquad
+          J^{+} = J^\top \bigl(J J^\top + \lambda^2 I\bigr)^{-1}
+        \]
+        <p class="eq-caption">\(J^{+}\) is a softened “almost inverse.” \(\lambda\) is a small cushion (about \(10^{-3}\) to \(10^{-2}\)). If \(\lambda = 0\) and the arm is stretched, \(\Delta q\) can explode. Think of \(\lambda\) as “don’t panic when the cheat sheet is unclear.”</p>
+      </div>
+
+      <h3>One iteration — then repeat</h3>
+      <p>Each pass is the same four chores. None of them is IK by itself; the loop is IK.</p>
+      <div class="flow">
+        <span class="box">start from current \(q\)</span>
+        <span class="arrow">→</span>
+        <span class="box">FK: where is the gripper?</span>
+        <span class="arrow">→</span>
+        <span class="box">\(e =\) miss arrow to \(p^*\)</span>
+        <span class="arrow">→</span>
+        <span class="box">\(\Delta q = J^{+} e\) (how to twitch)</span>
+        <span class="arrow">→</span>
+        <span class="box">\(q \leftarrow q + \Delta q\)</span>
+        <span class="arrow">→</span>
+        <span class="box">clip to joint limits</span>
+      </div>
+      <p>Stop when the miss is tiny (\(\|e\|_2 &lt; \varepsilon\), slides: \(2\)–\(5\,\mathrm{mm}\)) or you have tried too many times. If you still have centimetres of error, <strong>fail</strong> — do not send that \(q\) to the motors. That is Step D’s “IK can fail,” implemented as a loop that gives up.</p>
+      <p>The starting \(q\) matters. From “arm folded,” the solver may pick the other elbow or get stuck. LeRobot’s <code>InverseKinematicsEEToJoints</code> can start from the measured joints each frame (closed loop: record/eval) or from the last IK answer (open loop: replay). Use the measured joints when the real arm is in the loop; use the previous solution when you are replaying without feedback.</p>
+
+      <div class="step-card">
+        <header><span class="step-badge">Slide 3 · Step E</span><h3>Watch the loop (2-joint stand-in for SO-101)</h3></header>
+        <div class="body">
+          <p id="ik-jacobian-live"><strong>Drag the target</strong>, then <em>Step once</em> to apply one \(\Delta q = J^{+} e\), or <em>Solve</em> until the miss is under \(2\,\mathrm{mm}\). The log prints iteration, error, and the twitch. This is the same recipe Pinocchio uses on six joints; here \(J\) is \(2\times 2\) so you can read every number. Reset guess folds the arm so you can see it walk toward \(p^*\) again.</p>
+          <div class="widget">
+            <svg id="arm-dls" class="arm-svg drag" viewBox="0 0 380 270" aria-label="Jacobian IK step-through"></svg>
+            <div class="btn-row">
+              <button type="button" id="dls-step">Step once</button>
+              <button type="button" id="dls-solve">Solve</button>
+              <button type="button" id="dls-reset">Reset guess</button>
+            </div>
+            <label for="dlsx">Target \(x\) = <span id="dlsxv">86</span> mm</label>
+            <input id="dlsx" type="range" min="-180" max="180" value="86" />
+            <label for="dlsy">Target \(y\) = <span id="dlsyv">145</span> mm</label>
+            <input id="dlsy" type="range" min="-40" max="180" value="145" />
+            <div class="num-row">
+              <span class="chip info" id="dls-iter">iter 0</span>
+              <span class="chip" id="dls-err">|e|</span>
+              <span class="chip" id="dls-angles">θ1, θ2</span>
+              <span class="chip" id="dls-status">idle</span>
+            </div>
+            <p style="margin:0.7rem 0 0.3rem;font-weight:600;font-size:0.88rem">Iteration log (newest last)</p>
+            <div class="readout iter-log" id="dls-out">Reset, then Step or Solve.</div>
+          </div>
+          <div class="callout">
+            <strong>How this maps to the full arm.</strong> Replace the two sliders with six motors, \(e\) with a 3-vector (or 6 if you also match orientation), and \(J\) with \(3\times 6\) (or \(6\times 6\)). The chores in the flow diagram do not change. After \(q^*\) exists, Step F interpolates from the current joints to that goal — unless you skip the whole classical path and let ACT copy teleop, which is this repo’s sorter.
+          </div>
+        </div>
+      </div>
+
+      <h2 id="step-f">10. Step F — joint-space motion, and ACT</h2>
+
+      <div class="callout info">
+        <strong>Purpose of this section.</strong> Steps D–E, if you used them, would give a <em>goal</em> \(q^*\). Step F is what happens <em>next</em>: how the arm actually travels from “here” to “there.”
+        The slides then contrast that classical travel plan with <strong>ACT</strong>, which never computes \(q^*\) at all.
+        This section is therefore about <strong>motion / control</strong>, not a third kinematics formula. It sits <em>after</em> IK on the textbook path, and <em>instead of</em> IK on this project’s path.
+      </div>
+
+      <h3>Is Step F FK or IK? Is ACT “modelling FK”?</h3>
+      <p>Short answers:</p>
+      <ul>
+        <li><strong>Classical half of Step F</strong> (the \(q(t)\) interpolation) is the sequel to <strong>IK</strong>. You already have start joints and goal joints from Step E; you blend them. You are not multiplying \(A_i\) (that is FK) and you are not hunting for a new \(q^*\) (that is IK).</li>
+        <li><strong>ACT half of Step F</strong> uses <strong>neither</strong> FK nor IK to produce actions. It copies the human’s joint commands from camera + current joints.</li>
+        <li>You are <strong>right</strong> that ACT does not take the IK route. You are <strong>not quite right</strong> that it is “modelling based on FK.” ACT does not learn \(T_0^{\mathrm{EE}}\) or the DH product. It is behaviour cloning in <strong>joint space</strong>. FK is only how <em>you</em> later check whether those joints put the gripper in a sensible place (Step C, §13).</li>
+      </ul>
+      <table>
+        <thead>
+          <tr><th>Path</th><th>Uses FK to move?</th><th>Uses IK to move?</th><th>What actually moves the motors</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Textbook sorter</td>
+            <td>Only inside the IK loop (“where am I?”)</td>
+            <td>Yes — \(p^* \rightarrow q^*\)</td>
+            <td>Interpolate \(q_{\mathrm{start}} \rightarrow q^*\)</td>
+          </tr>
+          <tr>
+            <td>This repo (ACT)</td>
+            <td>No, not in the policy</td>
+            <td>No — skipped online</td>
+            <td>Network \(\pi(I_t, q_t) \approx a_t\) (joints)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout ok">
+        <strong>Corrected one-liner:</strong> ACT is not FK-based modelling and not IK-based planning. It is <em>imitation of joint teleop</em>. The human already did the reaching; FK is your audit tool, not the model’s backbone.
+      </div>
+
+      <h3>Classical half — blend joints, don’t blend XYZ</h3>
+      <p>Suppose IK succeeded: you have \(q_{\mathrm{start}}\) (now) and \(q_{\mathrm{goal}}\) (the pick or the bin). You still need a smooth movie of angles, not a jump. Blend in <strong>joint space</strong>:</p>
+      <div class="eq-box">
+        \[
+          q(t) = q_{\mathrm{start}} + (q_{\mathrm{goal}} - q_{\mathrm{start}})\, s(t),
+          \qquad s\in[0,1]
+        \]
+        <p class="eq-caption">\(s(t)\) is a knob from 0 (start) to 1 (goal): linear, cubic, or trapezoidal speed. Every in-between \(q(t)\) is a legal motor command because you interpolated angles, not metres.</p>
+      </div>
+      <p>Why not draw a straight line in \((x,y,z)\) and hope? That Cartesian line can pass through a singularity or outside reach. To follow it you would have to re-run IK at every sample (expensive and brittle). Blending \(q\) keeps every frame inside the same elbow “family” as the two endpoints.</p>
+      <p>A scripted sorting episode would chain several of those blends:</p>
+      <div class="flow">
+        <span class="box">\(q_{\mathrm{home}}\)</span>
+        <span class="arrow">→</span>
+        <span class="box">\(q_{\mathrm{pick}}^*\)</span>
+        <span class="arrow">→</span>
+        <span class="box">\(q_{\mathrm{lift}}\)</span>
+        <span class="arrow">→</span>
+        <span class="box">\(q_{\mathrm{bin}}^*\)</span>
+        <span class="arrow">→</span>
+        <span class="box">release</span>
+        <span class="arrow">→</span>
+        <span class="box">\(q_{\mathrm{home}}\)</span>
+      </div>
+      <p>\(q_{\mathrm{bin}}^*\) is \(q_{\mathrm{match}}^*\) or \(q_{\mathrm{reject}}^*\) from Step D. Grasp is OK when the jaw is near closed and FK shows \(z_{\mathrm{EE}}\) rising with the object (no slip) — that last check is FK again, used as a <em>test</em>, not as the motion generator.</p>
+
+      <h3>ACT half — the human already interpolated (and “IK’d”) by hand</h3>
+      <p>When you teleoperate, you do not think \(A_1 A_2 \cdots A_6\). You look at the cube and move the leader; the follower’s joints \(q(t)\) already include timing, lift, and which bin. The dataset stores \((I_t, q_t, a_t)\). Training fits a policy that, given the same view and current joints, emits a short future of joint commands:</p>
+      <div class="eq-box">
+        \[
+          \hat{a}_t = \pi(I_t, q_t) \approx a_t
+        \]
+        <p class="eq-caption">\(I_t\) = camera, \(q_t\) = proprioception (the six angles), \(a_t\) = the action chunk (future joint targets). No \(p^*\), no \(J\), no \(T_0^{\mathrm{EE}}\) inside \(\pi\).</p>
+      </div>
+      <p>That is why people say “IK is implicit in the demonstrations.” The reaching was done by a person, once, in joint space. ACT models <em>that mapping</em>, not the geometry of the links. If the demos never reached the bin, the network cannot invent IK; it will copy the miss. That is why Step C (FK checks on the recording) still matters before you train.</p>
+
+      <h3>Where FK still sits on the ACT path</h3>
+      <p>Optional, after the fact:</p>
+      <ul>
+        <li>Grade demos (Step C).</li>
+        <li>Log <code>observation.state.ee.*</code> if you want Cartesian plots.</li>
+        <li>Train a policy in end-effector space (then you <em>would</em> need FK on observations and IK on actions) — that is a different LeRobot setup, not this sorter’s default.</li>
+      </ul>
+      <p>Default here: joint in, joint out. FK does not sit inside ACT’s forward pass.</p>
+
+      <div class="step-card">
+        <header><span class="step-badge">Slide 3 · Step F</span><h3>The slide in one paragraph</h3></header>
+        <div class="body">
+          <p>Classical: after IK, \(q(t) = q_{\mathrm{start}} + (q_{\mathrm{goal}}-q_{\mathrm{start}})\,s(t)\). ACT: teleop already solved IK + timing; \(\hat{a}_t = \pi(I_t, q_t)\); at deploy there is no explicit IK solver; FK remains for evaluation and safety checks, not for generating actions.</p>
+        </div>
+      </div>
+
+      <h2 id="lerobot">11. Where this lives in LeRobot</h2>
+      <p>You do not have to multiply DH matrices yourself at runtime. The library loads the URDF and uses Pinocchio (via Placo) for FK/IK:</p>
+<pre><code>from lerobot.model.kinematics import RobotKinematics
+from lerobot.robots.so_follower.robot_kinematic_processor import (
+    ForwardKinematicsJointsToEE,
+    InverseKinematicsEEToJoints,
+)
+
+kinematics = RobotKinematics(
+    urdf_path="./SO101/so101_new_calib.urdf",
+    target_frame_name="gripper_frame_link",
+    joint_names=["shoulder", "elbow", "wrist_pitch", "wrist_roll", "wrist_yaw"],
+)
+
+fk_step = ForwardKinematicsJointsToEE(kinematics=kinematics, motor_names=[...])
+ik_step = InverseKinematicsEEToJoints(kinematics=kinematics, motor_names=[...])</code></pre>
+      <ul>
+        <li><strong>FK processor</strong> — joints in the observation \(\rightarrow\) <code>observation.state.ee.*</code> for logging or EE-space training.</li>
+        <li><strong>IK processor</strong> — a desired EE action \(\rightarrow\) joint targets the motors understand.</li>
+        <li>Worked wiring: <a href="https://huggingface.co/docs/lerobot/action_representations" target="_blank" rel="noopener noreferrer">Action representations</a>, <a href="https://huggingface.co/docs/lerobot/phone_teleop" target="_blank" rel="noopener noreferrer">Phone teleop</a>, <a href="https://huggingface.co/docs/lerobot/processors_robots_teleop" target="_blank" rel="noopener noreferrer">Processors for robots and teleoperators</a>.</li>
+        <li>Simulation model used for the lengths on this page: <a href="optional_tooling.html#mujoco">SO-101 MuJoCo</a>.</li>
+      </ul>
+      <div class="callout ok">
+        For the binary sorter you can ignore the IK processor entirely if you teleoperate in joint space (leader–follower). Use this chapter to understand reach, to debug bad demos, and if you later switch a policy to end-effector actions.
+      </div>
+
+      <h2 id="symbols">12. Symbol cheat-sheet</h2>
+      <table class="symbol-table">
+        <thead>
+          <tr><th>Symbol</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>\(q,\; q_i\)</td><td>Joint vector / \(i\)-th motor angle. Degrees in the LeRobot UI, radians in URDF, MuJoCo, and these formulas.</td></tr>
+          <tr><td>\(a_i,\; d_i,\; \alpha_i\)</td><td>DH link length, joint offset, twist. Only \(q_i\) changes while moving.</td></tr>
+          <tr><td>\(A_i(q_i)\)</td><td><strong>One joint.</strong> \(4\times 4\) sticky note of motor \(i\) relative to the joint before it. \(A_1\) = pan, \(A_2\) = lift, … \(A_6\) = jaw. One step of the walking route.</td></tr>
+          <tr><td>\(T\)</td><td><strong>The chain so far.</strong> Also \(4\times 4\), but a product of \(A\)’s. “You are now here, facing this way.”</td></tr>
+          <tr><td>\(T_0^{\mathrm{EE}}\)</td><td>Full FK: \(A_1 A_2 \cdots A_6\). Subscripts = <strong>from</strong> base (0) <strong>to</strong> gripper (EE).</td></tr>
+          <tr><td>\(p_{\mathrm{EE}},\; R_{\mathrm{EE}}\)</td><td>Gripper position \((x,y,z)\) and \(3\times 3\) orientation.</td></tr>
+          <tr><td>\(p^*,\; p_{\mathrm{pick}},\; p_{\mathrm{match}},\; p_{\mathrm{reject}}\)</td><td>Desired Cartesian goals for grasp and the two bins.</td></tr>
+          <tr><td>\(L_{\max}\)</td><td>\(\approx 0.38\,\mathrm{m}\) stretched planar reach. Hard geometric limit.</td></tr>
+          <tr><td>\(e\)</td><td>IK pose error \(p^* - p_{\mathrm{EE}}(q)\).</td></tr>
+          <tr><td>\(J(q),\; J^{+}\)</td><td>Jacobian \(\partial p_{\mathrm{EE}}/\partial q\) and its damped pseudoinverse.</td></tr>
+          <tr><td>\(\lambda\)</td><td>Damping so IK does not blow up near singularities.</td></tr>
+          <tr><td>\(s(t)\)</td><td>Scalar interpolant from \(0\) to \(1\) along a joint-space segment.</td></tr>
+          <tr><td>\(\pi(I_t, q_t)\)</td><td>ACT (or other) policy: image + joints → action chunk. Replaces online IK in this project.</td></tr>
+          <tr><td>\(\varepsilon_z,\; \varepsilon_{xy}\)</td><td>Acceptable grasp-height and bin-alignment error when auditing demos with FK.</td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--muted);font-size:0.9rem">Lengths in the table are DH-style approximations, cross-checked against the IITD / TheRobotStudio URDF joint origins. Use the URDF for any code that commands the real or simulated arm.</p>
+
+      <h2 id="which-applies">13. Which applies to this sorter: FK, not online IK</h2>
+      <div class="callout ok">
+        <strong>The observation.</strong> For the SO-101 match-box / reject sorter in this repo, <strong>forward kinematics is the one you actually use</strong>.
+        Inverse kinematics is the textbook way to <em>generate</em> joint goals from bin coordinates. This project does not run that loop at record time or at deploy time.
+      </div>
+
+      <h3>What this use case actually is</h3>
+      <p>The pipeline is <strong>leader–follower teleop → dataset of joints → ACT</strong> (see the <a href="project_page.html">pick &amp; place project page</a>). A person already moves the follower (via the leader) to the object and then to a bin. Every frame stores camera image \(I_t\), measured joints \(q_t\), and the next joint command \(a_t\). Training fits</p>
+      <div class="eq-box">
+        \[
+          \hat{a}_t = \pi(I_t, q_t) \approx a_t
+        \]
+      </div>
+      <p>At rollout the policy emits joint chunks the way the demonstrator did. The motors never receive a Cartesian target that has to be converted. So the live control path is: <strong>pixels + joints → joints</strong>, not “pixels → \((x,y,z)\) → IK → joints.”</p>
+
+      <h3>Why FK still matters (and is more applicable)</h3>
+      <p>You already have \(q\). FK is the cheap question “where was the gripper when we did that?” That is exactly Step C:</p>
+      <ul>
+        <li>Did this episode actually close on the object (grasp height)?</li>
+        <li>Did the drop happen over the match bin or the reject bin?</li>
+        <li>Is the layout inside \(L_{\max}\)? Did we lift instead of drag?</li>
+      </ul>
+      <p>Those checks need \(p_{\mathrm{EE}} = \mathrm{FK}(q)\). They do not need a solver for \(q^*\). If a demo fails Step C, you re-teleop; you do not run IK to “fix” a bad recording.</p>
+      <p>The same FK read is useful after training: overlay gripper \((x,y,z)\) in Rerun, catch a policy that closes in mid-air, or confirm the arm is not commanded past reach.</p>
+
+      <h3>Where IK would apply (and why this sorter skips it)</h3>
+      <p>Classical sorting would be: measure \(p_{\mathrm{pick}}\), \(p_{\mathrm{match}}\), \(p_{\mathrm{reject}}\) → solve IK for \(q^*\) → interpolate joints (Steps D–F). That is the right tool when:</p>
+      <ul>
+        <li>you teleoperate in <em>end-effector</em> space (phone, spacemouse), or</li>
+        <li>a script or planner says “go to this XYZ,” or</li>
+        <li>you use an external planner (e.g. MoveIt) to reach a Cartesian waypoint — outside this lab’s LeRobot path.</li>
+      </ul>
+      <p>Here the human already solved “IK + timing + gripper” with their hands. Encoding that again as an online Jacobian loop would duplicate the demo and fight ACT (two controllers wanting different \(q\)).</p>
+      <p>LeRobot still ships <code>InverseKinematicsEEToJoints</code> for those other setups. For this binary sorter, if you stay in joint-space leader–follower, you can ignore that processor. Learn IK on this page so the slides and the 2-joint drag demo make sense; do not expect to call it in <code>lerobot-record</code> / <code>lerobot-rollout</code> for this project.</p>
+
+      <h3>Side-by-side</h3>
+      <table>
+        <thead>
+          <tr><th></th><th>FK on this sorter</th><th>IK on this sorter</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Question</td>
+            <td>Given the joints we already have, where is the gripper?</td>
+            <td>Given a desired bin pose, which joints would get us there?</td>
+          </tr>
+          <tr>
+            <td>When it runs</td>
+            <td>While auditing demos and evaluating a trained policy (Step C).</td>
+            <td>Not in the ACT record / train / rollout loop.</td>
+          </tr>
+          <tr>
+            <td>Who “solved” reaching the bin</td>
+            <td>—</td>
+            <td>The human, once, during teleop. ACT copies that.</td>
+          </tr>
+          <tr>
+            <td>LeRobot object</td>
+            <td><code>ForwardKinematicsJointsToEE</code> (optional logging)</td>
+            <td><code>InverseKinematicsEEToJoints</code> (not required here)</td>
+          </tr>
+          <tr>
+            <td>If it fails</td>
+            <td>Bad demo or unit bug — re-record or fix FK wiring.</td>
+            <td>Would mean a Cartesian goal is out of reach; we never send those goals in this pipeline.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>One-sentence takeaway:</strong> IK is how a textbook robot would <em>plan</em> the sort. <strong>FK is how you audit and understand this ACT pipeline.</strong> Learn both so \(A_i\) and \(T_0^{\mathrm{EE}}\) are not mystery symbols; day-to-day, FK is the one you apply.
+      </div>
+      <p>Related: <a href="project_page.html">SO-101 Pick &amp; Place Sorting</a> · <a href="https://huggingface.co/docs/lerobot/action_representations" target="_blank" rel="noopener noreferrer">Action representations</a> · <a href="#step-c">Step C</a> · <a href="#step-f">Step F (ACT vs joint interpolation)</a>.</p>
+
+      <h2 id="final-takeaways">14. Final takeaways (this project, ACT route)</h2>
+      <p>Compact wrap-up of this page, checked against the sorter code path: leader–follower joints in <code>SOFollower</code> / <code>SO101Mujoco</code>, ACT via <code>lerobot-record</code> / <code>lerobot-train</code> / <code>lerobot-rollout</code>. <code>RobotKinematics</code> lives in <code>robot_kinematic_processor.py</code> for phone/EE/HIL — it is <strong>not</strong> on this record/rollout path.</p>
+      <table>
+        <thead>
+          <tr><th>Topic</th><th>Takeaway</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>What this HTML is</td>
+            <td>Unpack \(A_i\), \(T_0^{\mathrm{EE}}\), FK read-out, demo checks, and textbook IK/Jacobian so the slides are readable — then contrast with ACT.</td>
+          </tr>
+          <tr>
+            <td>Control (ACT)</td>
+            <td><strong>Pixels + joints → joint chunks.</strong> No \(p^*\), no \(J^{+}\), no DH product inside the policy. Human teleop already “solved” reaching.</td>
+          </tr>
+          <tr>
+            <td>FK inference</td>
+            <td><strong>Audit tool, not the controller.</strong> Use it to grade demos (grasp height, bin, lift, reach) and to understand the URDF. Optional: log EE pose. Not used to generate actions.</td>
+          </tr>
+          <tr>
+            <td>IK inference</td>
+            <td><strong>Do not run online.</strong> Needed only if you later switch to phone/EE teleop or scripted XYZ. Default sorter: ignore <code>InverseKinematicsEEToJoints</code>.</td>
+          </tr>
+          <tr>
+            <td>Parameters that still design the scene</td>
+            <td><strong>\(L_{\max}\approx 0.38\,\mathrm{m}\)</strong> and project-page workspace <strong>≈ 30×30 cm</strong> in front of the base: keep pick + both bins inside that disk. Joint limits (\(\pm110^\circ\) pan, \(\pm100^\circ\) lift, …) from URDF/MJCF/calibration — home pose mid-range (<code>so101_new_calib</code>). Gripper map \(0\)–\(100\) ↔ jaw radians in MuJoCo. Degrees in LeRobot UI, radians in URDF.</td>
+          </tr>
+          <tr>
+            <td>If layout ignores kinematics</td>
+            <td>Bins too far → demos stretch or miss; ACT copies the miss. Fix the table, do not add an IK node to “save” the policy.</td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    function initSo101Kinematics() {
+      if (window.renderMathInElement) {
+        var mathRoot =
+          document.querySelector(".html-fragment .kin") ||
+          document.querySelector("main.content.kin") ||
+          document.querySelector(".kin") ||
+          document.querySelector("main.content") ||
+          document.body;
+        renderMathInElement(mathRoot, {
+          delimiters: [
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          throwOnError: false
+        });
+      }
+
+      const L1 = 65, L2 = 116;
+      const LMAX = L1 + L2, LMIN = Math.abs(L1 - L2);
+      const OX = 190, OY = 200, S = 0.85;
+      const X = (x) => OX + x * S;
+      const Y = (y) => OY - y * S;
+
+      function deg(r) { return r * 180 / Math.PI; }
+      function rad(d) { return d * Math.PI / 180; }
+
+      function fk(t1, t2) {
+        const e1x = L1 * Math.cos(t1), e1y = L1 * Math.sin(t1);
+        return {
+          e1x: e1x, e1y: e1y,
+          x: e1x + L2 * Math.cos(t1 + t2),
+          y: e1y + L2 * Math.sin(t1 + t2)
+        };
+      }
+
+      function ikClosed(x, y, elbowSign) {
+        const r2 = x * x + y * y;
+        const r = Math.sqrt(r2);
+        const c2 = (r2 - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+        if (Math.abs(c2) > 1.0000001) {
+          const t1 = Math.atan2(y, x);
+          if (r > LMAX) return { ok: false, c2: c2, r: r, t1: t1, t2: 0 };
+          return { ok: false, c2: c2, r: r, t1: t1, t2: elbowSign * Math.PI };
+        }
+        const cc = Math.max(-1, Math.min(1, c2));
+        const s2 = elbowSign * Math.sqrt(Math.max(0, 1 - cc * cc));
+        const t2 = Math.atan2(s2, cc);
+        const t1 = Math.atan2(y, x) - Math.atan2(L2 * s2, L1 + L2 * cc);
+        return { ok: true, c2: cc, r: r, t1: t1, t2: t2 };
+      }
+
+      function svgPt(svg, evt) {
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return { x: 0, y: 0 };
+        const p = svg.createSVGPoint();
+        p.x = evt.clientX; p.y = evt.clientY;
+        const u = p.matrixTransform(ctm.inverse());
+        return { x: (u.x - OX) / S, y: (OY - u.y) / S };
+      }
+
+      function bindDrag(svg, onMove) {
+        let down = false;
+        function go(evt) {
+          evt.preventDefault();
+          const src = evt.touches ? evt.touches[0] : evt;
+          onMove(svgPt(svg, src));
+        }
+        svg.addEventListener("pointerdown", function (evt) {
+          down = true;
+          svg.setPointerCapture(evt.pointerId);
+          go(evt);
+        });
+        svg.addEventListener("pointermove", function (evt) { if (down) go(evt); });
+        svg.addEventListener("pointerup", function () { down = false; });
+        svg.addEventListener("pointercancel", function () { down = false; });
+      }
+
+      function ringCircles() {
+        return [
+          '<circle cx="' + X(0) + '" cy="' + Y(0) + '" r="' + (LMAX * S) + '" fill="none" stroke="#e2e2de" stroke-dasharray="4 4"/>',
+          '<circle cx="' + X(0) + '" cy="' + Y(0) + '" r="' + (LMIN * S) + '" fill="none" stroke="#e2e2de" stroke-dasharray="3 3"/>',
+          '<line x1="20" y1="' + Y(0) + '" x2="360" y2="' + Y(0) + '" stroke="#eee" />',
+          '<line x1="' + X(0) + '" y1="20" x2="' + X(0) + '" y2="250" stroke="#eee" />'
+        ].join("");
+      }
+
+      function armLines(t1, t2, stroke1, stroke2, width, dash) {
+        const p = fk(t1, t2);
+        const d = dash ? ' stroke-dasharray="5 4"' : "";
+        return [
+          '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(p.e1x) + '" y2="' + Y(p.e1y) + '" stroke="' + stroke1 + '" stroke-width="' + width + '" stroke-linecap="round"' + d + "/>",
+          '<line x1="' + X(p.e1x) + '" y1="' + Y(p.e1y) + '" x2="' + X(p.x) + '" y2="' + Y(p.y) + '" stroke="' + stroke2 + '" stroke-width="' + (width - 1) + '" stroke-linecap="round"' + d + "/>",
+          '<circle cx="' + X(0) + '" cy="' + Y(0) + '" r="5" fill="#ff9f1c"/>',
+          '<circle cx="' + X(p.e1x) + '" cy="' + Y(p.e1y) + '" r="4.5" fill="#ff9f1c"/>'
+        ].join("");
+      }
+
+      /* ── FK sliders (original) ── */
+      (function () {
+        const svg = document.getElementById("arm2r");
+        const th1 = document.getElementById("th1");
+        const th2 = document.getElementById("th2");
+        function draw() {
+          const t1 = rad(Number(th1.value)), t2 = rad(Number(th2.value));
+          document.getElementById("th1v").textContent = th1.value;
+          document.getElementById("th2v").textContent = th2.value;
+          const p = fk(t1, t2);
+          const Sf = 0.9, ox = 40, oy = 160;
+          const Xx = (x) => ox + x * Sf, Yy = (y) => oy - y * Sf;
+          svg.innerHTML = [
+            '<line x1="10" y1="160" x2="250" y2="160" stroke="#cfcfc8" stroke-width="1"/>',
+            '<line x1="40" y1="10" x2="40" y2="180" stroke="#cfcfc8" stroke-width="1"/>',
+            '<line x1="' + ox + '" y1="' + oy + '" x2="' + Xx(p.e1x) + '" y2="' + Yy(p.e1y) + '" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>',
+            '<line x1="' + Xx(p.e1x) + '" y1="' + Yy(p.e1y) + '" x2="' + Xx(p.x) + '" y2="' + Yy(p.y) + '" stroke="#d1934f" stroke-width="5" stroke-linecap="round"/>',
+            '<circle cx="' + ox + '" cy="' + oy + '" r="5" fill="#ff9f1c"/>',
+            '<circle cx="' + Xx(p.e1x) + '" cy="' + Yy(p.e1y) + '" r="5" fill="#ff9f1c"/>',
+            '<circle cx="' + Xx(p.x) + '" cy="' + Yy(p.y) + '" r="5" fill="#1a7f37"/>'
+          ].join("");
+          document.getElementById("xy-chip").textContent =
+            "x = " + p.x.toFixed(2) + " mm,  y = " + p.y.toFixed(2) + " mm";
+          document.getElementById("reach-chip").textContent =
+            "reach = " + Math.hypot(p.x, p.y).toFixed(1) + " mm  (max " + LMAX + ")";
+          const c12 = Math.cos(t1 + t2), s12 = Math.sin(t1 + t2);
+          function row(a, b, c, d) {
+            return "[ " + [a, b, c, d].map((v) => String(v.toFixed(3)).padStart(8)).join(" ") + " ]";
+          }
+          document.getElementById("mat-out").textContent =
+            "T_0^EE  ≈  (2-joint planar FK)\n" +
+            row(c12, -s12, 0, p.x) + "\n" +
+            row(s12,  c12, 0, p.y) + "\n" +
+            row(0, 0, 1, 0) + "\n" +
+            row(0, 0, 0, 1) +
+            "\n\nCheck: first link ends at (" + p.e1x.toFixed(2) + ", " + p.e1y.toFixed(2) + ")";
+        }
+        th1.addEventListener("input", draw);
+        th2.addEventListener("input", draw);
+        draw();
+      })();
+
+      /* ── Closed-form IK: drag the target ── */
+      (function () {
+        const svg = document.getElementById("arm-ik");
+        const ix = document.getElementById("ikx");
+        const iy = document.getElementById("iky");
+        const btnUp = document.getElementById("elbow-up");
+        const btnDown = document.getElementById("elbow-down");
+        let sign = 1;
+        let syncing = false;
+
+        function setElbow(s) {
+          sign = s;
+          btnUp.classList.toggle("on", s > 0);
+          btnDown.classList.toggle("on", s < 0);
+          draw();
+        }
+        btnUp.addEventListener("click", function () { setElbow(1); });
+        btnDown.addEventListener("click", function () { setElbow(-1); });
+
+        function setTarget(x, y, fromSlider) {
+          x = Math.max(-180, Math.min(180, x));
+          y = Math.max(-40, Math.min(180, y));
+          if (!fromSlider) {
+            syncing = true;
+            ix.value = String(Math.round(x));
+            iy.value = String(Math.round(y));
+            syncing = false;
+          }
+          document.getElementById("ikxv").textContent = Math.round(x);
+          document.getElementById("ikyv").textContent = Math.round(y);
+          return { x: x, y: y };
+        }
+
+        function draw() {
+          const tgt = setTarget(Number(ix.value), Number(iy.value), true);
+          const primary = ikClosed(tgt.x, tgt.y, sign);
+          const other = ikClosed(tgt.x, tgt.y, -sign);
+          const tipColor = primary.ok ? "#1a7f37" : "#cf222e";
+          let html = ringCircles();
+          html += '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(tgt.x) + '" y2="' + Y(tgt.y) + '" stroke="#ddd" stroke-dasharray="3 3"/>';
+          if (other.ok) html += armLines(other.t1, other.t2, "#c8c8c2", "#c8c8c2", 4, true);
+          html += armLines(primary.t1, primary.t2, "#1a1a1a", "#d1934f", 6, false);
+          html += '<circle cx="' + X(tgt.x) + '" cy="' + Y(tgt.y) + '" r="8" fill="' + tipColor + '" stroke="#fff" stroke-width="2"/>';
+          html += '<text x="' + (X(tgt.x) + 10) + '" y="' + (Y(tgt.y) - 10) + '" font-size="11" fill="' + tipColor + '" font-family="Inter, sans-serif">p*</text>';
+          svg.innerHTML = html;
+
+          const status = document.getElementById("ik-status");
+          status.textContent = primary.ok ? "reachable  |cos θ2| ≤ 1" : "IK failed  |cos θ2| > 1";
+          status.className = "chip " + (primary.ok ? "ok" : "fail");
+          document.getElementById("ik-angles").textContent =
+            "θ1* = " + deg(primary.t1).toFixed(1) + "°,  θ2* = " + deg(primary.t2).toFixed(1) + "°";
+          const p = fk(primary.t1, primary.t2);
+          const err = Math.hypot(tgt.x - p.x, tgt.y - p.y);
+          document.getElementById("ik-err").textContent = "|e| = " + err.toFixed(2) + " mm";
+
+          const num = tgt.x * tgt.x + tgt.y * tgt.y - L1 * L1 - L2 * L2;
+          const den = 2 * L1 * L2;
+          document.getElementById("ik-out").textContent =
+            "p* = (" + tgt.x.toFixed(1) + ", " + tgt.y.toFixed(1) + ") mm\n" +
+            "cos θ2 = (x² + y² − L1² − L2²) / (2 L1 L2)\n" +
+            "       = (" + tgt.x.toFixed(1) + "² + " + tgt.y.toFixed(1) + "² − " +
+            (L1 * L1) + " − " + (L2 * L2) + ") / " + den + "\n" +
+            "       = " + num.toFixed(1) + " / " + den + " = " + primary.c2.toFixed(4) +
+            (primary.ok ? "   →  |cos| ≤ 1, two elbows\n" : "   →  |cos| > 1, no real θ2\n") +
+            "active elbow sign = " + (sign > 0 ? "+1 (up)" : "−1 (down)") +
+            "   θ2 = ±arccos(·)\n" +
+            "θ1 = atan2(y, x) − atan2(L2 sinθ2, L1 + L2 cosθ2)\n" +
+            "FK check of this q*:  tip = (" + p.x.toFixed(2) + ", " + p.y.toFixed(2) +
+            ")   |e| = " + err.toFixed(2) + " mm" +
+            (other.ok
+              ? "\nother elbow: θ1 = " + deg(other.t1).toFixed(1) + "°, θ2 = " + deg(other.t2).toFixed(1) + "°  (grey dashed)"
+              : "");
+        }
+
+        ix.addEventListener("input", function () { if (!syncing) draw(); });
+        iy.addEventListener("input", function () { if (!syncing) draw(); });
+        bindDrag(svg, function (mm) {
+          setTarget(mm.x, mm.y, false);
+          draw();
+        });
+
+        function preset(x, y) {
+          setTarget(x, y, false);
+          draw();
+        }
+        document.getElementById("ik-preset-ex").addEventListener("click", function () { preset(86, 145); });
+        document.getElementById("ik-preset-pick").addEventListener("click", function () { preset(90, 40); });
+        document.getElementById("ik-preset-match").addEventListener("click", function () { preset(140, 70); });
+        document.getElementById("ik-preset-reject").addEventListener("click", function () { preset(40, 130); });
+        draw();
+      })();
+
+      /* ── Jacobian DLS step-through ── */
+      (function () {
+        const svg = document.getElementById("arm-dls");
+        const sx = document.getElementById("dlsx");
+        const sy = document.getElementById("dlsy");
+        const Q0 = { t1: rad(15), t2: rad(25) };
+        let t1 = Q0.t1, t2 = Q0.t2, iter = 0, playing = false, timer = 0;
+        const LAM = 0.08;
+        const logs = [];
+
+        function setTarget(x, y, fromSlider) {
+          x = Math.max(-180, Math.min(180, x));
+          y = Math.max(-40, Math.min(180, y));
+          if (!fromSlider) { sx.value = String(Math.round(x)); sy.value = String(Math.round(y)); }
+          document.getElementById("dlsxv").textContent = Math.round(Number(sx.value));
+          document.getElementById("dlsyv").textContent = Math.round(Number(sy.value));
+          return { x: Number(sx.value), y: Number(sy.value) };
+        }
+
+        function dlsStepOnce() {
+          const tgt = setTarget(Number(sx.value), Number(sy.value), true);
+          const p = fk(t1, t2);
+          const ex = tgt.x - p.x, ey = tgt.y - p.y;
+          const err = Math.hypot(ex, ey);
+          const s1 = Math.sin(t1), c1 = Math.cos(t1);
+          const s12 = Math.sin(t1 + t2), c12 = Math.cos(t1 + t2);
+          const j11 = -L1 * s1 - L2 * s12, j12 = -L2 * s12;
+          const j21 = L1 * c1 + L2 * c12, j22 = L2 * c12;
+          const l2 = LAM * LAM;
+          const a = j11 * j11 + j12 * j12 + l2;
+          const b = j11 * j21 + j12 * j22;
+          const c = j21 * j21 + j22 * j22 + l2;
+          const det = a * c - b * b;
+          const ixv = (c * ex - b * ey) / det;
+          const iyv = (-b * ex + a * ey) / det;
+          const dq1 = j11 * ixv + j21 * iyv;
+          const dq2 = j12 * ixv + j22 * iyv;
+          t1 += dq1;
+          t2 += dq2;
+          iter += 1;
+          const p2 = fk(t1, t2);
+          const err2 = Math.hypot(tgt.x - p2.x, tgt.y - p2.y);
+          logs.push(
+            "k=" + iter +
+            "  |e| " + err.toFixed(2) + " → " + err2.toFixed(2) + " mm" +
+            "  Δq = [" + deg(dq1).toFixed(2) + "°, " + deg(dq2).toFixed(2) + "°]" +
+            "  q = [" + deg(t1).toFixed(1) + "°, " + deg(t2).toFixed(1) + "°]"
+          );
+          if (logs.length > 12) logs.shift();
+          return err2;
+        }
+
+        function draw() {
+          const tgt = setTarget(Number(sx.value), Number(sy.value), true);
+          const p = fk(t1, t2);
+          const err = Math.hypot(tgt.x - p.x, tgt.y - p.y);
+          const done = err < 2;
+          let html = ringCircles();
+          html += '<line x1="' + X(p.x) + '" y1="' + Y(p.y) + '" x2="' + X(tgt.x) + '" y2="' + Y(tgt.y) + '" stroke="#cf222e" stroke-dasharray="4 3"/>';
+          html += armLines(t1, t2, "#1a1a1a", "#d1934f", 6, false);
+          html += '<circle cx="' + X(p.x) + '" cy="' + Y(p.y) + '" r="5" fill="#d1934f"/>';
+          html += '<circle cx="' + X(tgt.x) + '" cy="' + Y(tgt.y) + '" r="8" fill="' + (done ? "#1a7f37" : "#cf222e") + '" stroke="#fff" stroke-width="2"/>';
+          html += '<text x="' + (X(tgt.x) + 10) + '" y="' + (Y(tgt.y) - 10) + '" font-size="11" fill="#cf222e" font-family="Inter, sans-serif">p*</text>';
+          svg.innerHTML = html;
+          document.getElementById("dls-iter").textContent = "iter " + iter;
+          document.getElementById("dls-err").textContent = "|e| = " + err.toFixed(2) + " mm";
+          document.getElementById("dls-angles").textContent =
+            "θ1 = " + deg(t1).toFixed(1) + "°,  θ2 = " + deg(t2).toFixed(1) + "°";
+          const st = document.getElementById("dls-status");
+          if (done) { st.textContent = "converged  |e| < 2 mm"; st.className = "chip ok"; }
+          else if (iter >= 40) { st.textContent = "stopped (max iter)"; st.className = "chip fail"; }
+          else { st.textContent = playing ? "iterating…" : "idle — Step or Solve"; st.className = "chip info"; }
+          document.getElementById("dls-out").textContent = logs.length
+            ? logs.join("\n")
+            : "q starts at (15°, 25°). Each step: e = p* − FK(q),  Δq = J⁺ e.";
+        }
+
+        function stopPlay() {
+          playing = false;
+          if (timer) { clearInterval(timer); timer = 0; }
+        }
+
+        document.getElementById("dls-step").addEventListener("click", function () {
+          stopPlay();
+          dlsStepOnce();
+          draw();
+        });
+        document.getElementById("dls-solve").addEventListener("click", function () {
+          stopPlay();
+          playing = true;
+          timer = setInterval(function () {
+            const err = dlsStepOnce();
+            draw();
+            if (err < 2 || iter >= 40) {
+              stopPlay();
+              draw();
+            }
+          }, 180);
+        });
+        document.getElementById("dls-reset").addEventListener("click", function () {
+          stopPlay();
+          t1 = Q0.t1; t2 = Q0.t2; iter = 0; logs.length = 0;
+          draw();
+        });
+        sx.addEventListener("input", draw);
+        sy.addEventListener("input", draw);
+        bindDrag(svg, function (mm) {
+          stopPlay();
+          setTarget(mm.x, mm.y, false);
+          draw();
+        });
+        draw();
+      })();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initSo101Kinematics);
+    } else {
+      initSo101Kinematics();
+    }
+  </script>

@@ -1,0 +1,248 @@
+diff --git a/src/lerobot/scripts/lerobot_dataset_viz.py b/src/lerobot/scripts/lerobot_dataset_viz.py
+index d07a2767..ee9d7d93 100644
+--- a/src/lerobot/scripts/lerobot_dataset_viz.py
++++ b/src/lerobot/scripts/lerobot_dataset_viz.py
+@@ -29,7 +29,15 @@ save disk space. The compression factor applied has been tuned to not affect suc
+ 
+ Examples:
+ 
+-- Visualize data stored on a local machine:
++- Visualize **all episodes** together (Rerun: state/action plots + Episodes timeline):
++```
++local$ lerobot-dataset-viz \
++    --repo-id lerobot/pusht \
++    --root path/to/dataset \
++    --all-episodes
++```
++
++- Visualize a single episode:
+ ```
+ local$ lerobot-dataset-viz \
+     --repo-id lerobot/pusht \
+@@ -61,18 +69,22 @@ local$ rerun rerun+http://IP:GRPC_PORT/proxy
+ 
+ """
+ 
++from __future__ import annotations
++
+ import argparse
+ import gc
++import json
+ import logging
+ import time
+ from pathlib import Path
+ 
+ import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
+ import torch
+ import torch.utils.data
+ import tqdm
+ 
+-from lerobot.datasets import LeRobotDataset
+ from lerobot.utils.constants import ACTION, DONE, OBS_STATE, REWARD
+ from lerobot.utils.utils import init_logging
+ 
+@@ -172,6 +184,15 @@ def visualize_dataset(
+             if "next.success" in batch:
+                 rr.log("next.success", rr.Scalars(batch["next.success"][i].item()))
+ 
++    if mode == "local" and not save:
++        logging.info("Rerun viewer is open. Press Ctrl-C to exit.")
++        try:
++            while True:
++                time.sleep(1)
++        except KeyboardInterrupt:
++            print("Ctrl-C received. Exiting.")
++        return None
++
+     if mode == "local" and save:
+         # save .rrd locally
+         output_dir = Path(output_dir)
+@@ -190,6 +211,126 @@ def visualize_dataset(
+             print("Ctrl-C received. Exiting.")
+ 
+ 
++def _load_frame_table(root: Path) -> pa.Table:
++    files = sorted((root / "data").rglob("*.parquet"))
++    if not files:
++        raise FileNotFoundError(f"No parquet files under {root / 'data'}")
++    return pa.concat_tables([pq.read_table(path) for path in files])
++
++
++def visualize_all_episodes(
++    repo_id: str,
++    root: Path,
++    mode: str = "local",
++    web_port: int = 9090,
++    grpc_port: int = 9876,
++    save: bool = False,
++    output_dir: Path | None = None,
++    **kwargs,
++) -> Path | None:
++    """Log every episode as its own Rerun recording (state/action plots + Episodes timeline)."""
++    from lerobot.utils.import_utils import require_package
++
++    require_package("rerun-sdk", extra="viz", import_name="rerun")
++    import rerun as rr
++    import rerun.blueprint as rrb
++
++    if mode not in ["local", "distant"]:
++        raise ValueError(mode)
++
++    root = Path(root)
++    info_path = root / "meta" / "info.json"
++    if not info_path.is_file():
++        raise FileNotFoundError(f"Dataset info.json not found at {info_path}")
++
++    info = json.loads(info_path.read_text())
++    fps = float(info.get("fps") or 30)
++
++    logging.info("Loading frame table from %s", root)
++    table = _load_frame_table(root)
++    episode_ids = np.asarray(table.column("episode_index").to_pylist(), dtype=np.int64)
++    frame_index = np.asarray(table.column("frame_index").to_pylist(), dtype=np.int64)
++    global_index = np.asarray(table.column("index").to_pylist(), dtype=np.int64)
++    action = np.stack(table.column(ACTION).to_pylist()).astype(np.float64)
++    state = np.stack(table.column(OBS_STATE).to_pylist()).astype(np.float64)
++    times = global_index.astype(np.float64) / fps
++    unique_episodes = [int(ep) for ep in np.unique(episode_ids)]
++    n_joints = int(state.shape[1])
++
++    blueprint = rrb.Blueprint(
++        rrb.Horizontal(
++            rrb.TimeSeriesView(origin="state", name="state"),
++            rrb.TimeSeriesView(origin="action", name="action"),
++            column_shares=[1, 1],
++        ),
++        rrb.TimePanel(expanded=True),
++    )
++
++    logging.info("Starting Rerun with %s episodes", len(unique_episodes))
++    streams: list = []
++    first = True
++
++    for ep in tqdm.tqdm(unique_episodes, desc="Logging episodes"):
++        rec = rr.RecordingStream(repo_id, recording_id=str(ep))
++        streams.append(rec)
++        if first:
++            if mode == "local" and not save:
++                rec.spawn(memory_limit="50%", hide_welcome_screen=True, default_blueprint=blueprint)
++            elif mode == "distant":
++                rec.serve_grpc(grpc_port=grpc_port)
++            first = False
++        else:
++            rec.connect_grpc()
++
++        mask = episode_ids == ep
++        ep_times = times[mask]
++        ep_frames = frame_index[mask]
++        ep_state = state[mask]
++        ep_action = action[mask]
++        indexes = [
++            rr.TimeColumn("timestamp", duration=ep_times),
++            rr.TimeColumn("frame_index", sequence=ep_frames),
++        ]
++        for dim in range(n_joints):
++            rec.send_columns(
++                f"state/j{dim + 1}",
++                indexes=indexes,
++                columns=rr.Scalars.columns(scalars=ep_state[:, dim]),
++            )
++            rec.send_columns(
++                f"{ACTION}/j{dim + 1}",
++                indexes=indexes,
++                columns=rr.Scalars.columns(scalars=ep_action[:, dim]),
++            )
++
++    gc.collect()
++
++    if mode == "local" and save:
++        output_dir = Path(output_dir)
++        output_dir.mkdir(parents=True, exist_ok=True)
++        repo_id_str = repo_id.replace("/", "_")
++        rrd_path = output_dir / f"{repo_id_str}_all_episodes.rrd"
++        streams[0].save(str(rrd_path))
++        return rrd_path
++
++    if mode == "distant":
++        logging.info(f"Connect to a Rerun Server: rerun rerun+http://IP:{grpc_port}/proxy")
++        rr.serve_web_viewer(open_browser=False, web_port=web_port)
++        try:
++            while True:
++                time.sleep(1)
++        except KeyboardInterrupt:
++            print("Ctrl-C received. Exiting.")
++        return None
++
++    # Keep streams alive until the detached viewer has received everything.
++    for rec in streams:
++        flush = getattr(rec, "flush", None)
++        if callable(flush):
++            flush()
++    return None
++
++
+ def main():
+     parser = argparse.ArgumentParser()
+ 
+@@ -202,8 +343,13 @@ def main():
+     parser.add_argument(
+         "--episode-index",
+         type=int,
+-        required=True,
+-        help="Episode to visualize.",
++        default=None,
++        help="Episode to visualize. Omit this (or pass --all-episodes) to show every episode together.",
++    )
++    parser.add_argument(
++        "--all-episodes",
++        action="store_true",
++        help="Visualize every episode in one Rerun window (state/action plots + Episodes timeline).",
+     )
+     parser.add_argument(
+         "--root",
+@@ -229,6 +375,13 @@ def main():
+         default=4,
+         help="Number of processes of Dataloader for loading the data.",
+     )
++    parser.add_argument(
++        "--video-backend",
++        type=str,
++        default=None,
++        choices=["pyav", "torchcodec", "video_reader"],
++        help="Video decoder. Defaults to torchcodec when installed, else pyav. Use pyav if torchcodec fails to load FFmpeg.",
++    )
+     parser.add_argument(
+         "--mode",
+         type=str,
+@@ -299,9 +452,27 @@ def main():
+         kwargs["grpc_port"] = kwargs.pop("ws_port")
+ 
+     init_logging()
+-    logging.info("Loading dataset")
+-    dataset = LeRobotDataset(repo_id, episodes=[args.episode_index], root=root, tolerance_s=tolerance_s)
++    video_backend = kwargs.pop("video_backend", None)
++    show_all = bool(args.all_episodes or args.episode_index is None)
++    if show_all:
++        if root is None:
++            from lerobot.utils.constants import HF_LEROBOT_HOME
++
++            root = HF_LEROBOT_HOME / repo_id
++        logging.info("Visualizing all episodes from %s", root)
++        visualize_all_episodes(repo_id=repo_id, root=root, **kwargs)
++        return
+ 
++    logging.info("Loading dataset")
++    from lerobot.datasets import LeRobotDataset
++
++    dataset = LeRobotDataset(
++        repo_id,
++        episodes=[args.episode_index],
++        root=root,
++        tolerance_s=tolerance_s,
++        video_backend=video_backend,
++    )
+     visualize_dataset(dataset, **vars(args))
+ 
+ 

@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("docs-theme");
+    var theme = stored || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pick & Place Sorting · MindGrip AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    .project-page {
+      --surface:   var(--panel);
+      --surface2:  var(--code-bg);
+      --accent:    var(--mindgrip);
+      --accent2:   #1a7f37;
+      --accent3:   #cf222e;
+      --accent4:   #8250df;
+      --accent5:   #bf4b00;
+      --radius:    10px;
+    }
+
+    .project-page, .project-page * { box-sizing: border-box; }
+    .project-page {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      max-width: none !important;
+      width: 100%;
+    }
+    .layout:has(.project-page) .content {
+      max-width: none;
+      padding: 0;
+      background: var(--bg);
+    }
+    .layout:has(.project-page) {
+      background: var(--bg);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--bg) 45%, var(--tagline-bg) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,159,28,.14), transparent);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,159,28,.12);
+      border: 1px solid rgba(255,159,28,.35);
+      color: #bf4b00;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      font-family: "IBM Plex Serif", Georgia, serif;
+      background: linear-gradient(135deg, var(--text) 20%, var(--mindgrip) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      max-width: 640px;
+      margin: 0 auto 32px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .tag span { color: var(--text); font-weight: 500; }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 12px;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 720px;
+      margin-bottom: 36px;
+    }
+
+    /* ── CARDS GRID ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .card p  { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── USE-CASE LIST ── */
+    .use-case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .uc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .uc-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .uc-item p  { color: var(--muted); font-size: 13.5px; }
+
+    /* ── STEPS TIMELINE ── */
+    .timeline { position: relative; padding-left: 0; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 0 20px;
+      margin-bottom: 0;
+      position: relative;
+    }
+    .timeline-item + .timeline-item .step-connector { display: block; }
+
+    .step-num-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      min-height: 24px;
+      background: var(--border);
+      margin-top: 0;
+    }
+    .timeline-item:last-child .step-line { display: none; }
+
+    .step-body {
+      padding-bottom: 36px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      margin-bottom: 10px;
+    }
+    .step-header h3 { font-size: 17px; font-weight: 600; }
+    .step-phase {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .phase-hw  { background: rgba(191,75,0,.08);   color: var(--accent5); border: 1px solid rgba(191,75,0,.25); }
+    .phase-sw  { background: rgba(11,107,203,.08); color: var(--accent);  border: 1px solid rgba(11,107,203,.25); }
+    .phase-data{ background: rgba(26,127,55,.08);  color: var(--accent2); border: 1px solid rgba(26,127,55,.25); }
+    .phase-ml  { background: rgba(130,80,223,.08); color: var(--accent4); border: 1px solid rgba(130,80,223,.25); }
+    .phase-run { background: rgba(207,34,46,.08);  color: var(--accent3); border: 1px solid rgba(207,34,46,.25); }
+
+    .step-body p  { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .step-body ul { padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .step-body ul li { margin-bottom: 4px; }
+    .step-body ul li strong { color: var(--text); }
+
+    pre {
+      background: #1a1a1a;
+      border: 1px solid #2d2d2d;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-top: 12px;
+      color: #e6edf3;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      line-height: 1.5;
+    }
+    pre .comment { color: #8b949e; }
+    pre .cmd     { color: #79c0ff; }
+    pre .flag    { color: #d2a8ff; }
+    pre .val     { color: #a5d6ff; }
+    pre .kw      { color: #ffa657; }
+
+    /* ── HARDWARE SPEC TABLE ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-top: 20px;
+    }
+    .spec-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .spec-table td:first-child { color: var(--text); font-weight: 500; }
+    .spec-table tr:hover td { background: var(--surface2); }
+
+    /* ── POLICY GRID ── */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+    }
+    .policy-card .pname { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .policy-card .pdesc { color: var(--muted); font-size: 12.5px; }
+    .policy-badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .pb-rec { background: rgba(26,127,55,.12); color: var(--accent2); }
+    .pb-adv { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .pb-exp { background: rgba(191,75,0,.12); color: var(--accent5); }
+
+    /* ── LELAB COMPARISON ── */
+    .path-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    @media (max-width: 720px) {
+      .path-split { grid-template-columns: 1fr; }
+    }
+    .path-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+    }
+    .path-card.preferred {
+      border-color: rgba(26,127,55,.35);
+      box-shadow: 0 0 0 1px rgba(26,127,55,.08);
+    }
+    .path-card h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+    .path-card p { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+    .path-card ul { padding-left: 18px; color: var(--muted); font-size: 13.5px; margin: 0; }
+    .path-card ul li { margin-bottom: 6px; }
+    .path-card ul li strong { color: var(--text); }
+    .cmp-lelab { color: var(--accent2); font-weight: 600; }
+    .cmp-cli   { color: var(--accent); font-weight: 600; }
+
+    /* ── CLI COMMAND MENU ── */
+    .cli-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 20px;
+    }
+    .cli-jump a {
+      display: inline-block;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--accent);
+      background: rgba(11,107,203,.08);
+      border: 1px solid rgba(11,107,203,.22);
+      border-radius: 20px;
+      padding: 6px 12px;
+    }
+    .cli-jump a:hover { background: rgba(11,107,203,.14); }
+    .cli-menu details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .cli-menu details[open] { border-color: rgba(11,107,203,.35); }
+    .cli-menu summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+    .cli-menu summary::-webkit-details-marker { display: none; }
+    .cli-menu summary::after {
+      content: "▸";
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .cli-menu details[open] summary::after { content: "▾"; }
+    .cli-menu .cli-step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(11,107,203,.12);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .cli-menu .cli-body {
+      padding: 0 18px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .cli-menu .cli-body p {
+      color: var(--muted);
+      font-size: 13.5px;
+      margin: 12px 0 8px;
+    }
+    .cli-menu .cli-body a.deep {
+      font-size: 12.5px;
+      color: var(--accent);
+    }
+    .cmp-hw    { color: var(--accent5); font-weight: 600; }
+    .cmp-both  { color: var(--muted); font-weight: 500; }
+
+    /* ── NOTICE BOX ── */
+    .notice {
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-size: 13.5px;
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notice-body { color: var(--muted); }
+    .notice-body strong { color: var(--text); }
+    .n-info  { background: rgba(11,107,203,.08); border: 1px solid rgba(11,107,203,.22); }
+    .n-warn  { background: rgba(191,75,0,.08);   border: 1px solid rgba(191,75,0,.22); }
+    .n-tip   { background: rgba(26,127,55,.08);  border: 1px solid rgba(26,127,55,.22); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── STEP COLORS ── */
+    .s1 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s2 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s3 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s4 { background: rgba(191,75,0,.12);   color: var(--accent5); }
+    .s5 { background: rgba(11,107,203,.12); color: var(--accent); }
+    .s6 { background: rgba(11,107,203,.12); color: var(--accent); }
+    .s7 { background: rgba(26,127,55,.12);  color: var(--accent2); }
+    .s8 { background: rgba(130,80,223,.12); color: var(--accent4); }
+    .s9 { background: rgba(207,34,46,.12);  color: var(--accent3); }
+
+    @media (max-width: 640px) {
+      .timeline-item { grid-template-columns: 36px 1fr; gap: 0 14px; }
+      .step-num { width: 36px; height: 36px; font-size: 13px; }
+    }
+  
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <h1><a href="mindgrip.html" style="color:inherit;text-decoration:none">MindGrip AI</a></h1>
+      <div class="sub">Emphasizes cognitive decision-making for complex object targeting and handling.</div>
+      <details class="nav-root mindgrip" open><summary>MindGrip AI — Custom Project Pages</summary><p class="brand-tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</p><ul><li><a href="mindgrip.html">MindGrip AI Home</a></li><li><a href="project_page.html" class="active">Pick & Place Sorting</a></li><li><a href="so101_kinematics.html">Forward & Inverse Kinematics</a></li><li><a href="so101_mujoco.html">MuJoCo Simulation</a></li><li><a href="so101_setup.html">Setup (see project page)</a></li><li><a href="teleop_sync_checklist.html">Teleop Sync Checklist</a></li><li><a href="policy_cheatsheet.html">Policy Cheatsheet</a></li><li><a href="agent_guide.html">Agent Guide</a></li><li><a href="agents.html">Repo Architecture for Agents</a></li><li><a href="directory_structure.html">Directory Structure</a></li><li><a href="acronyms.html">Acronyms Glossary</a></li><li><a href="code_of_conduct.html">Code of Conduct</a></li><li><a href="ai_policy.html">AI Usage Policy</a></li><li><a href="security.html">Security Policy</a></li></ul></details>
+<div class="ext-docs"><strong>Original LeRobot documentation</strong>Not mirrored here — read the official docs on Hugging Face:<br><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener noreferrer">https://huggingface.co/docs/lerobot</a></div>
+    </nav>
+    <main class="content project-page">
+<div class="app-brand"><strong>MindGrip AI</strong><span class="tagline">Emphasizes cognitive decision-making for complex object targeting and handling.</span></div>
+
+<!-- ════════════════ HERO ════════════════ -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">MindGrip AI · SO-101 Arm · Imitation Learning</div>
+    <h1>Pick &amp; Place<br>Object Sorting Robot</h1>
+    <p><strong>MindGrip AI</strong> emphasizes cognitive decision-making for complex object targeting and handling. An end-to-end robotics project — from hardware assembly to autonomous sorting — powered by the LeRobot framework and the SO-101 6-DOF desktop arm. Prefer <strong>LeLab</strong> for the software workflow after assembly; use manual CLI when you need full control. This setup runs entirely from a <strong>MacBook Air (Apple M1)</strong> as the control PC, with cloud GPUs for training.</p>
+    <div class="hero-tags">
+      <div class="tag"><span>Hardware</span> SO-101 (Feetech STS3215)</div>
+      <div class="tag"><span>Host PC</span> MacBook Air M1 · 8 GB</div>
+      <div class="tag"><span>Framework</span> LeRobot (HuggingFace)</div>
+      <div class="tag"><span>GUI</span> LeLab (recommended path)</div>
+      <div class="tag"><span>Learning</span> Imitation / Behaviour Cloning</div>
+      <div class="tag"><span>Policies</span> ACT · Diffusion · SmolVLA</div>
+      <div class="tag"><span>Vision</span> Camera-guided sorting</div>
+    </div>
+
+    <div class="notice n-info" style="margin: 24px auto 0; max-width: 720px; text-align: left;">
+      <div class="notice-icon">📖</div>
+      <div class="notice-body"><strong>Acronyms:</strong> Short forms like <strong>HF</strong>, <strong>ACT</strong>, <strong>VLA</strong>, <strong>DOF</strong>, and <strong>CLI</strong> are explained on the <a href="acronyms.html">Acronyms glossary</a> page.
+      <strong>Which policy?</strong> See the <a href="policy_cheatsheet.html">SO-101 Policy Cheatsheet</a> (ACT, Diffusion, SmolVLA, π₀, … — with / without USB camera).
+      <strong>FK / IK equations:</strong> step-by-step FK / IK derivation on <a href="so101_kinematics.html">SO-101 Forward &amp; Inverse Kinematics</a>.
+      <strong>No LeLab?</strong> Run <code>./so101_cli_menu.sh</code>, or jump to the <a href="#cli-menu">CLI Command Menu</a> for copy-paste commands.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PURPOSE ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Purpose</div>
+    <h2>What This Project Builds</h2>
+    <p class="lead">
+      A tabletop robotic arm that learns to autonomously <strong>sort objects by color, shape, or category</strong> into designated bins — using visual observation and motor actions collected through teleoperation, then trained with state-of-the-art imitation learning policies.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(88,166,255,.15)">🤖</div>
+        <h3>Autonomous Manipulation</h3>
+        <p>The SO-101 follower arm learns from human demonstrations to grasp, lift, and place objects into target zones without any manual control.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(63,185,80,.15)">🧠</div>
+        <h3>Imitation Learning Pipeline</h3>
+        <p>Full ML pipeline: record human demos via leader-follower teleoperation → build a HuggingFace dataset → train a neural policy → deploy autonomously.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(210,168,255,.15)">📷</div>
+        <h3>Vision-Guided Sorting</h3>
+        <p>A fixed USB camera streams an overview of the workspace. The policy maps pixels + joint states → motor commands to pick and sort with visual feedback.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,166,87,.15)">🔬</div>
+        <h3>Research & Education</h3>
+        <p>Ideal for learning robotics, computer vision, and deep learning in one integrated project. Fully reproducible with open-source tooling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ MACBOOK AIR HOST ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Host Computer</div>
+    <h2>MacBook Air Only — Feasibility for This Project</h2>
+    <p class="lead">
+      This project is planned to run on a single <strong>MacBook Air (Apple M1)</strong> as the control PC for assembly, teleop, recording, and deployment.
+      Verified machine profile and step-by-step fit are below. Local training is the only phase that should move to the cloud.
+    </p>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>Item</th><th>This MacBook Air</th><th>Project implication</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Model</td><td>MacBook Air · <code>MacBookAir10,1</code> (MGN63HN/A)</td><td>Official macOS path (<code>requirements-macos.txt</code>, <code>/dev/tty.usbmodem*</code>)</td></tr>
+        <tr><td>Chip</td><td>Apple M1 · 8 CPU (4P+4E) · 7-core GPU</td><td>Fine for control, OpenCV camera, Rerun viz, ACT inference</td></tr>
+        <tr><td>Memory</td><td><strong>8 GB</strong> unified</td><td>OK for Steps 1–7 &amp; 9; tight for local training (Step 8)</td></tr>
+        <tr><td>Storage</td><td>~256 GB SSD · keep <strong>80+ GB free</strong> before big record/train runs</td><td>Demo video + checkpoints fill disk quickly — free space first</td></tr>
+        <tr><td>OS</td><td>macOS (Apple Silicon / arm64)</td><td>USB serial + USB webcam via OpenCV are supported</td></tr>
+        <tr><td>Python (uv)</td><td><strong>Python 3.13.4</strong> in project <code>.venv</code> via uv</td><td>Satisfies <code>requires-python &gt;= 3.12</code>. Prefer <code>uv run …</code> over system <code>python3</code> (may still be 3.11)</td></tr>
+        <tr><td>Toolchain</td><td><code>uv</code> installed; LeLab + CLI</td><td>Primary install / run path for this Mac setup</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Step fit on MacBook Air only</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Step</th><th>On this Air?</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 · Install software</td><td class="cmp-lelab">Yes</td><td>Use <code>uv sync</code> / <code>requirements-macos.txt</code>. Python 3.13.4 already available through uv.</td></tr>
+        <tr><td>2 · Program motor IDs</td><td class="cmp-lelab">Yes</td><td>Serial scripts are light; power arms from external PSUs.</td></tr>
+        <tr><td>3 · Assemble at neutral</td><td class="cmp-lelab">Yes</td><td>Physical workshop step; Mac only runs helpers.</td></tr>
+        <tr><td>4 · Calibrate both arms</td><td class="cmp-lelab">Yes</td><td>Calibration GUI + JSON save are fine on 8 GB.</td></tr>
+        <tr><td>5 · Teleop + USB camera</td><td class="cmp-lelab">Yes</td><td>Close extra apps; grant Camera permission to Terminal. Prefer USB cam over FaceTime.</td></tr>
+        <tr><td>6 · Sorting scene</td><td class="cmp-lelab">Yes</td><td>Physical only — no compute limit.</td></tr>
+        <tr><td>7 · Record demonstrations</td><td class="cmp-lelab">Yes (watch disk)</td><td>50–200 episodes at 640×480 are doable; free space before long sessions.</td></tr>
+        <tr><td>8 · Train policy</td><td class="cmp-hw">Cloud recommended</td><td>Do <strong>not</strong> rely on local Air training. Use <strong>LeLab → HF Jobs</strong> (or another cloud GPU). Prefer <strong>ACT</strong>. Skip Pi-0 / large VLAs on this laptop.</td></tr>
+        <tr><td>9 · Deploy / evaluate</td><td class="cmp-lelab">Yes</td><td>ACT rollout + camera on the Air is practical; keep other apps closed.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="notice n-tip" style="margin-top:20px">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Final observation:</strong> A MacBook Air M1 (8 GB) <strong>can complete this entire SO-101 pick-and-place project</strong> as the only local computer —
+        install, motor setup, calibrate, teleop, record, and deploy. Treat <strong>Step 8 training as a cloud job</strong> (LeLab / Hugging Face Jobs).
+        Local ACT-only training is possible but slow and memory-tight; Diffusion / SmolVLA / Pi-0 are not practical on this Air.
+      </div>
+    </div>
+    <div class="notice n-warn" style="margin-top:12px">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-body">
+        <strong>Before you start:</strong> free disk space (aim for 80+ GB free), always use <code>uv run</code> so you hit Python 3.13.4,
+        and plan training on a cloud GPU (HF Jobs or AWS EC2 below) after demos are recorded and pushed to the Hub.
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">MuJoCo simulation (optional)</h3>
+    <p class="lead" style="margin-bottom:12px">
+      This repo includes a LeRobot-native <strong>MuJoCo SO-101 follower</strong> (<code>--robot.type=so101_mujoco</code>).
+      The default scene is the <strong>official TheRobotStudio SO-ARM100 MuJoCo model</strong>
+      (<code>Simulation/SO101</code>, <code>so101_new_calib</code>) under
+      <code>src/lerobot/robots/so101_mujoco/assets/</code> — accurate CAD meshes + STS3215 motor params, not a capsule approximation.
+      Use it when the real follower is not needed — or to generate practice datasets — without replacing real USB-cam sorting demos.
+    </p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Mode</th><th>Robot</th><th>Teleop</th><th>When</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Leader connected</strong></td>
+          <td><code>so101_mujoco</code></td>
+          <td><code>so101_leader</code> (real leader port + id)</td>
+          <td>Leader plugged in; drive a <em>sim</em> follower for practice / demos</td>
+        </tr>
+        <tr>
+          <td><strong>Sim only</strong></td>
+          <td><code>so101_mujoco</code></td>
+          <td><code>so101_keyboard</code></td>
+          <td>No arms; record datasets for ML pipeline tests</td>
+        </tr>
+      </tbody>
+    </table>
+    <pre style="margin-top:12px"><span class="comment"># Install once</span>
+<span class="cmd">uv sync</span> <span class="flag">--extra</span> <span class="val">so101-mujoco</span> <span class="flag">--extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span>
+
+<span class="comment"># Sim-only teleop (keyboard)</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_keyboard</span> <span class="flag">--display_data=</span><span class="val">true</span>
+
+<span class="comment"># Real leader → MuJoCo follower</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+    <div class="notice n-info" style="margin-top:12px">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        Full details: <a href="so101_mujoco.html">SO-101 MuJoCo simulation</a> and <code>examples/so101_mujoco/README.md</code>.
+        Upstream model: <a href="https://github.com/TheRobotStudio/SO-ARM100/tree/main/Simulation/SO101">TheRobotStudio/SO-ARM100 Simulation/SO101</a>.
+        Sim datasets are for pipeline practice — the physical sorting project still needs real follower + USB camera demos.
+        On macOS, interactive viewer often needs <code>mjpython</code> (and <code>DYLD_LIBRARY_PATH</code> for the uv Python dylib).
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Cloud ML training — what you need (Step 8)</h3>
+    <p class="lead" style="margin-bottom:12px">
+      Steps <strong>1–7</strong> and <strong>9</strong> run on this MacBook Air. Step <strong>8</strong> needs a <strong>NVIDIA CUDA GPU</strong>.
+      Prefer <strong>ACT</strong> first (~2–6&nbsp;GB VRAM at batch 8). Target a single GPU with <strong>≥16&nbsp;GB VRAM</strong> (24&nbsp;GB is more comfortable).
+    </p>
+
+    <h4 style="font-size:15px;margin:16px 0 8px">AWS EC2 equivalents</h4>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Goal</th><th>AWS EC2</th><th>GPU</th><th>Approx. machine</th><th>Notes for this project</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Best starter (ACT)</strong></td>
+          <td><code>g5.xlarge</code> or <code>g5.2xlarge</code></td>
+          <td>1× <strong>NVIDIA A10G</strong> ~24&nbsp;GB</td>
+          <td>4–8 vCPU · 16–32&nbsp;GB RAM</td>
+          <td>Matches LeRobot A10G guidance. ACT on ~50 demos ≈ <strong>1–2&nbsp;h</strong> (order of magnitude).</td>
+        </tr>
+        <tr>
+          <td><strong>Good alt (ACT / Diffusion)</strong></td>
+          <td><code>g6.xlarge</code> or <code>g6.2xlarge</code></td>
+          <td>1× <strong>NVIDIA L4</strong> ~24&nbsp;GB</td>
+          <td>Similar envelope</td>
+          <td>Newer L4 family; same VRAM class as A10G for this workload.</td>
+        </tr>
+        <tr>
+          <td><strong>Budget / ACT-only</strong></td>
+          <td><code>g4dn.xlarge</code></td>
+          <td>1× <strong>NVIDIA T4</strong> 16&nbsp;GB</td>
+          <td>4 vCPU · 16&nbsp;GB RAM</td>
+          <td>Fine for ACT; tight for Diffusion / SmolVLA.</td>
+        </tr>
+        <tr>
+          <td><strong>Faster / larger batch</strong></td>
+          <td><code>g5.12xlarge</code></td>
+          <td>4× A10G</td>
+          <td>Multi-GPU</td>
+          <td>Only if you need speed — overkill for a first ACT sorting run.</td>
+        </tr>
+        <tr>
+          <td><strong>Large VLAs (Pi-0 …)</strong></td>
+          <td><code>p4d.24xlarge</code> (or similar)</td>
+          <td><strong>A100</strong> 40&nbsp;GB+</td>
+          <td>Expensive</td>
+          <td>Not needed for the first color-sorting policy.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notice n-tip" style="margin-top:16px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        <strong>Practical pick:</strong> rent <code>g5.2xlarge</code> (1× A10G, 8 vCPU, 32&nbsp;GB RAM) with <strong>≥100&nbsp;GB</strong> gp3 SSD,
+        Deep Learning AMI (Ubuntu + PyTorch + CUDA), or the image <code>huggingface/lerobot-gpu:latest</code>.
+        Train ACT → download checkpoint → run Step 9 rollout on the Air.
+      </div>
+    </div>
+    <div class="notice n-info" style="margin-top:12px">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        <strong>Simpler than raw EC2:</strong> use <strong>LeLab → Hugging Face Jobs</strong> with flavor <code>a10g-large</code>
+        (same GPU class as <code>g5.*</code>). No AMI/driver setup; billed by the second.
+        See also <a href="https://huggingface.co/docs/lerobot/hardware_guide" target="_blank" rel="noopener noreferrer">Compute Hardware Guide</a>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ USE CASES ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Use Cases</div>
+    <h2>Sorting Scenarios You Can Implement</h2>
+    <p class="lead">Each scenario below is a valid pick-and-place task you can collect demonstrations for and train a policy on.</p>
+    <div class="use-case-grid">
+      <div class="uc-item">
+        <h4>🎨 Color-Based Sorting</h4>
+        <p>Place red, blue, and green blocks into matching colored bins. The simplest and most demo-efficient use case to start with.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🔷 Shape-Based Sorting</h4>
+        <p>Sort cubes, cylinders, and spheres into separate trays. Tests the policy's ability to generalize over object geometry.</p>
+      </div>
+      <div class="uc-item">
+        <h4>♻️ Recycling Simulation</h4>
+        <p>Classify plastic vs. paper vs. metal objects (represented by lightweight proxies) into correct disposal bins.</p>
+      </div>
+      <div class="uc-item">
+        <h4>📦 Warehouse Pick-to-Bin</h4>
+        <p>Pick objects from a central pile and route them to labeled destination zones — simulating e-commerce order fulfillment.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🍎 Produce Grading</h4>
+        <p>Sort small produce replicas (apples, oranges) by ripeness indicator (color) into quality-graded output bins.</p>
+      </div>
+      <div class="uc-item">
+        <h4>🔩 Defect Inspection</h4>
+        <p>Separate "pass" parts from "reject" parts based on visual markers — an industrial quality-control simulation.</p>
+      </div>
+    </div>
+    <div class="notice n-tip" style="margin-top:28px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body"><strong>Recommendation for beginners:</strong> Start with color-based sorting of 3 distinct blocks into 3 bins. Collect 50–100 demonstrations per category. This gives clean, reproducible data and fast iteration.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ LELAB ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Recommended Path</div>
+    <h2>Why LeLab Matters for This Project</h2>
+    <p class="lead">
+      <a href="https://huggingface.co/docs/lerobot/lelab" target="_blank" rel="noopener noreferrer">LeLab</a> is the official LeRobot GUI for SO-101. After motors are programmed and arms are assembled, it is the <strong>fastest way to finish this pick-and-place project</strong> — calibrate, teleop, record demos, train (local or HF Jobs), and run the policy — without memorizing long CLI flags. Manual commands remain fully supported for debugging, scripting, and advanced options.
+    </p>
+
+    <div class="cards" style="margin-bottom:8px">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(26,127,55,.12)">🚀</div>
+        <h3>One app for the ML loop</h3>
+        <p>Configure robots, teleoperate, record datasets, train, watch progress, and deploy inference from a single UI — the same end-to-end loop this page teaches with CLI.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(11,107,203,.12)">🧭</div>
+        <h3>Lower cognitive load</h3>
+        <p>No need to remember <code>--robot.port</code>, camera JSON, dataset flags, or train args while you are learning sorting demos. LeLab walks you through the workflow.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(130,80,223,.12)">☁️</div>
+        <h3>Cloud training built in</h3>
+        <p>Train on HF Jobs GPUs from the app (after <code>hf auth login</code>), with live progress and automatic checkpoints — harder to orchestrate by hand at first.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(191,75,0,.12)">🛠️</div>
+        <h3>CLI still for hardware edge cases</h3>
+        <p>Motor ID programming, physical assembly, and low-level recovery stay on scripts / terminal. LeLab does not replace the workshop steps.</p>
+      </div>
+    </div>
+
+    <div class="path-split">
+      <div class="path-card preferred">
+        <h3>Prefer LeLab when…</h3>
+        <p>You want the SO-101 software path with the least friction.</p>
+        <ul>
+          <li>First-time calibrate → teleop → record → train → rollout</li>
+          <li>You want live training viz and one-click policy run</li>
+          <li>You want cloud GPU jobs without writing job YAML yourself</li>
+          <li>Teaching / demos where CLI typos slow everyone down</li>
+        </ul>
+      </div>
+      <div class="path-card">
+        <h3>Prefer manual CLI when…</h3>
+        <p>You need precise control or hardware-only tooling.</p>
+        <ul>
+          <li>Programming motor IDs with <code>set_middle_positions.py</code></li>
+          <li>Custom camera JSON, ports, or automation scripts</li>
+          <li>Debugging serial / calibration mismatch in the terminal</li>
+          <li>Policies, flags, or workflows LeLab does not expose yet</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:8px 0 12px">What you do in LeLab vs manual commands</h3>
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Project action</th>
+          <th>In LeLab (GUI)</th>
+          <th>Manual command / work</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Install / launch app</td>
+          <td class="cmp-lelab">Yes — <code>uv tool install git+https://github.com/huggingface/leLab.git &amp;&amp; lelab</code></td>
+          <td class="cmp-both">N/A (LeLab is the GUI itself)</td>
+        </tr>
+        <tr>
+          <td>Program motor IDs &amp; middle positions</td>
+          <td class="cmp-hw">No — physical / script step</td>
+          <td class="cmp-cli"><code>uv run python set_middle_positions.py --port … --id …</code></td>
+        </tr>
+        <tr>
+          <td>Assemble joints at neutral</td>
+          <td class="cmp-hw">No — workshop step</td>
+          <td class="cmp-hw">Attach horns while motors hold ~2047</td>
+        </tr>
+        <tr>
+          <td>Add robots (leader / follower) &amp; attach cameras</td>
+          <td class="cmp-lelab">Yes — select arm type &amp; ports. Attach USB camera on the <strong>follower (Robot)</strong> only — <strong>not</strong> the leader (Teleoperator)</td>
+          <td class="cmp-cli">Pass <code>--robot.cameras=…</code> on the follower; leader has no camera flags</td>
+        </tr>
+        <tr>
+          <td>Calibrate joints</td>
+          <td class="cmp-lelab">Yes — guided per-joint calibration from middle</td>
+          <td class="cmp-cli"><code>lerobot-calibrate</code> (separate leader &amp; follower sessions)</td>
+        </tr>
+        <tr>
+          <td>Teleoperate (leader → follower)</td>
+          <td class="cmp-lelab">Yes — live 3D arm viz. Camera feed: open Teleoperation → right <strong>Cameras</strong> panel → toggle <strong>On</strong> (off by default; needs follower cameras configured)</td>
+          <td class="cmp-cli"><code>lerobot-teleoperate</code> (+ optional Rerun via <code>--display_data=true</code>)</td>
+        </tr>
+        <tr>
+          <td>Find serial ports / camera index</td>
+          <td class="cmp-both">Often via robot setup UI; re-check if ports change</td>
+          <td class="cmp-cli"><code>lerobot-find-port</code> · <code>lerobot-find-cameras opencv</code></td>
+        </tr>
+        <tr>
+          <td>Set up sorting scene (bins, lighting, mount)</td>
+          <td class="cmp-hw">No — physical workspace</td>
+          <td class="cmp-hw">Tape workspace, mount USB cam, place bins</td>
+        </tr>
+        <tr>
+          <td>Record demonstration dataset</td>
+          <td class="cmp-lelab">Yes — task text, episode count, durations; spacebar between episodes</td>
+          <td class="cmp-cli"><code>lerobot-record</code> with dataset / camera flags</td>
+        </tr>
+        <tr>
+          <td>Inspect / visualise dataset</td>
+          <td class="cmp-both">Use app flows / Hub datasets; CLI still useful for deep inspection</td>
+          <td class="cmp-cli"><code>lerobot-dataset-viz</code></td>
+        </tr>
+        <tr>
+          <td>Train policy locally</td>
+          <td class="cmp-lelab">Yes — pick dataset, policy, batch size, steps; live progress</td>
+          <td class="cmp-cli"><code>lerobot-train --policy.type=act …</code></td>
+        </tr>
+        <tr>
+          <td>Train on cloud GPUs (HF Jobs)</td>
+          <td class="cmp-lelab">Yes — first-class in LeLab (after <code>hf auth login</code>)</td>
+          <td class="cmp-cli">Possible via Hub / jobs tooling; more setup by hand</td>
+        </tr>
+        <tr>
+          <td>Train on community Hub datasets</td>
+          <td class="cmp-lelab">Yes — enter any HF dataset ID</td>
+          <td class="cmp-cli"><code>lerobot-train --dataset.repo_id=…</code></td>
+        </tr>
+        <tr>
+          <td>Run / deploy trained policy</td>
+          <td class="cmp-lelab">Yes — pick a job/model and run inference on the robot</td>
+          <td class="cmp-cli"><code>lerobot-rollout --policy.path=…</code></td>
+        </tr>
+        <tr>
+          <td>Replay a recorded episode</td>
+          <td class="cmp-both">Prefer CLI for this verification step</td>
+          <td class="cmp-cli"><code>lerobot-replay --episode=…</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notice n-tip" style="margin-top:20px">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Practical split for this page:</strong> Steps <strong>2–3</strong> (motor IDs + assembly) and Step <strong>6</strong> (sorting scene) stay manual/physical.
+        Steps <strong>4–5</strong> and <strong>7–9</strong> (calibrate, teleop, record, train, deploy) are <strong>best done in LeLab</strong> for SO-101 on this <strong>MacBook Air</strong>;
+        for Step <strong>8</strong>, pick <strong>HF Jobs / cloud GPU</strong> inside LeLab rather than local training on 8 GB RAM.
+        Prefer the terminal? Use the <a href="#cli-menu">CLI Command Menu</a> below (full copy-paste path without LeLab).
+        Full LeLab docs: <a href="https://huggingface.co/docs/lerobot/lelab" target="_blank" rel="noopener noreferrer">LeLab — LeRobot GUI</a>. SO-ARM101 only for now.
+      </div>
+    </div>
+
+    <div class="notice n-tip" style="margin-top:12px">
+      <div class="notice-icon">📷</div>
+      <div class="notice-body">
+        <strong>LeLab camera setup (this project):</strong> Attach the USB camera to the <strong>follower</strong> robot record only
+        (Device Type <em>Robot (Follower)</em> / <code>LeoArm</code>) — not the leader teleoperator.
+        Same rule as CLI <code>--robot.cameras=…</code>. During Teleoperation, the right-side <strong>Cameras</strong> panel is
+        <strong>Off</strong> by default — flip it <strong>On</strong> to see the live browser preview (grant camera permission if asked).
+        Prefer the USB cam over FaceTime; if the feed fails after unplug/replug, use the panel’s retry button.
+      </div>
+    </div>
+
+    <pre style="margin-top:16px"><span class="comment"># Install once, then start anytime</span>
+<span class="cmd">uv tool install</span> <span class="val">git+https://github.com/huggingface/leLab.git</span>
+<span class="cmd">lelab</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════ CLI MENU (NO LELAB) ════════════════ -->
+<section id="cli-menu">
+  <div class="container">
+    <div class="section-label">Terminal</div>
+    <h2>CLI Command Menu (no LeLab)</h2>
+    <p class="lead">
+      Complete step-by-step terminal path for this MacBook Air project when you skip LeLab.
+      Prefer the interactive wrapper: <code>./so101_cli_menu.sh</code> (config saved in <code>.so101_cli.env</code>).
+      Ports below match this setup: <strong>leader</strong>
+      <code>/dev/tty.usbmodem5AE60832361</code> · <strong>follower</strong>
+      <code>/dev/tty.usbmodem5B141118901</code>.
+      Re-check with <code>lerobot-find-port</code> if they change. Replace
+      <code>your_username</code> with your Hugging Face id. Always run from the repo root with <code>uv run</code>.
+    </p>
+
+    <pre style="margin-bottom:16px"><span class="comment"># Interactive CLI menu (recommended when not using LeLab)</span>
+<span class="cmd">./so101_cli_menu.sh</span>
+<span class="comment"># Or one-shot: ./so101_cli_menu.sh 5   # calibrate leader
+# Dry-run:     DRY_RUN=1 ./so101_cli_menu.sh 8</span></pre>
+
+    <div class="cli-jump">
+      <a href="#cli-0">0 · Ports &amp; cam</a>
+      <a href="#cli-1">1 · Install</a>
+      <a href="#cli-2">2 · Motor IDs</a>
+      <a href="#cli-3">3 · Assemble</a>
+      <a href="#cli-4">4 · Calibrate</a>
+      <a href="#cli-5">5 · Teleop</a>
+      <a href="teleop_sync_checklist.html">Teleop sync checklist</a>
+      <a href="#cli-6">6 · Scene</a>
+      <a href="#cli-7">7 · Record</a>
+      <a href="#cli-8">8 · Train</a>
+      <a href="#cli-9">9 · Deploy</a>
+      <a href="#cli-mujoco">MuJoCo</a>
+      <a href="#steps">Full roadmap ↓</a>
+    </div>
+
+    <div class="cli-menu">
+
+      <details id="cli-0" open>
+        <summary><span class="cli-step-badge">0</span> Find USB ports &amp; camera</summary>
+        <div class="cli-body">
+          <p>Run after plugging / unplugging a bus. Unplug the adapter you want to identify when prompted.</p>
+<pre><span class="cmd">uv sync</span> <span class="flag">--extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">hardware</span> <span class="flag">--extra</span> <span class="val">viz</span>
+<span class="cmd">uv run lerobot-find-port</span>
+<span class="cmd">uv run lerobot-find-cameras</span> <span class="val">opencv</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-1">
+        <summary><span class="cli-step-badge">1</span> Install software</summary>
+        <div class="cli-body">
+          <p><a class="deep" href="#step-1">Open Step 1 in roadmap →</a></p>
+<pre><span class="cmd">cd</span> <span class="val">/path/to/lerobot</span>
+<span class="cmd">uv sync</span> <span class="flag">--locked --extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span>
+<span class="cmd">uv run python</span> <span class="flag">--version</span>   <span class="comment"># expect Python 3.13.x</span>
+<span class="cmd">hf auth login</span>   <span class="comment"># needed later for Hub datasets / jobs</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-2">
+        <summary><span class="cli-step-badge">2</span> Program motor IDs (one motor at a time)</summary>
+        <div class="cli-body">
+          <p>Connect <strong>only</strong> the target motor. Attach the horn at ~2047 when it says At middle. <a class="deep" href="#step-2">Open Step 2 →</a></p>
+<pre><span class="comment"># Leader — port /dev/tty.usbmodem5AE60832361 · IDs 1→6</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">1</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">2</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">3</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">4</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">5</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">6</span>
+
+<span class="comment"># Follower — port /dev/tty.usbmodem5B141118901 · IDs 1→6</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">1</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">2</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">3</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">4</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">5</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">6</span>
+
+<span class="comment"># Optional official helper (same idea)</span>
+<span class="cmd">uv run lerobot-setup-motors</span> <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span>
+<span class="cmd">uv run lerobot-setup-motors</span> <span class="flag">--robot.type=</span><span class="val">so101_follower</span> <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-3">
+        <summary><span class="cli-step-badge">3</span> Assemble arms</summary>
+        <div class="cli-body">
+          <p>Physical step — no CLI required beyond re-seating a joint if needed. <a class="deep" href="#step-3">Open Step 3 →</a></p>
+<pre><span class="comment"># Example: re-seat follower wrist_flex (ID 4) at middle</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">4</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-4" open>
+        <summary><span class="cli-step-badge">4</span> Calibrate leader &amp; follower</summary>
+        <div class="cli-body">
+          <p><strong>This Mac — LeLab robot <code>LeoArm</code></strong> (do not swap ports):</p>
+          <table class="spec-table" style="margin:0 0 12px;font-size:13px">
+            <thead><tr><th>Arm</th><th>USB port</th><th>Calibration file</th><th>Status (Aug 2026)</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Leader</td>
+                <td><code>/dev/tty.usbmodem5AE60832361</code></td>
+                <td><code>~/.cache/huggingface/lerobot/calibration/teleoperators/so_leader/LeoArm.json</code></td>
+                <td class="cmp-lelab">Saved · id <code>LeoArm</code></td>
+              </tr>
+              <tr>
+                <td>Follower</td>
+                <td><code>/dev/tty.usbmodem5B141118901</code></td>
+                <td><code>~/.cache/huggingface/lerobot/calibration/robots/so_follower/LeoArm.json</code></td>
+                <td class="cmp-lelab">Saved · id <code>LeoArm</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>LeLab (preferred):</strong> Landing → gear on <code>LeoArm</code> → Device Type <em>Teleoperator (Leader)</em> / <em>Robot (Follower)</em> → mid-pose → <strong>Start Calibration</strong> → badge <em>Recording Ranges</em> → full ROM sweep → <strong>Save Calibration</strong> (Cancel does <em>not</em> save). Green ticks = range guide only.</p>
+          <p><strong>Important:</strong> LeLab writes <code>LeoArm.json</code> for both arms (separate folders). Older <code>my_leader.json</code> / <code>my_follower.json</code> are <em>not</em> overwritten — CLI must use <code>--teleop.id=LeoArm</code> and <code>--robot.id=LeoArm</code>. Find Port only sees USB; power the arm or Status stays empty. <a class="deep" href="#step-4">Open Step 4 →</a></p>
+<pre><span class="comment"># CLI fallback — leader</span>
+<span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span>
+
+<span class="comment"># CLI fallback — follower</span>
+<span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-5">
+        <summary><span class="cli-step-badge">5</span> Live teleoperation</summary>
+        <div class="cli-body">
+          <p>Confirm leader → follower mirroring before recording. <a class="deep" href="#step-5">Open Step 5 →</a></p>
+          <p><strong>Sync issues?</strong> Work through the interactive checklist (calibration → config → motion tests), then paste the report into chat:
+            <a class="deep" href="teleop_sync_checklist.html">Teleop sync checklist →</a></p>
+<pre><span class="comment"># No camera</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span>
+
+<span class="comment"># With USB cam + Rerun</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-6">
+        <summary><span class="cli-step-badge">6</span> Sorting scene (physical)</summary>
+        <div class="cli-body">
+          <p>No CLI — tape workspace, bins, lighting, USB cam stand facing follower workspace. <a class="deep" href="#step-6">Open Step 6 →</a></p>
+        </div>
+      </details>
+
+      <details id="cli-7">
+        <summary><span class="cli-step-badge">7</span> Record demonstrations</summary>
+        <div class="cli-body">
+          <p>Enter starts episode; Ctrl+C ends session. Target 50–200 demos. <a class="deep" href="#step-7">Open Step 7 →</a></p>
+<pre><span class="cmd">export</span> <span class="val">HF_USER=your_username</span>
+
+<span class="cmd">uv run lerobot-record</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">100</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"Pick coloured block and place in matching bin"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span>
+
+<span class="cmd">uv run lerobot-dataset-viz</span> \
+  <span class="flag">--repo-id</span> <span class="val">${HF_USER}/pick_place_sorting</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-8">
+        <summary><span class="cli-step-badge">8</span> Train policy (cloud GPU)</summary>
+        <div class="cli-body">
+          <p>Do <strong>not</strong> train on the Air (8 GB). Push dataset, train on NVIDIA GPU (HF Jobs / AWS g5), download checkpoint. Prefer ACT. <a class="deep" href="#step-8">Open Step 8 →</a></p>
+<pre><span class="comment"># On cloud GPU machine (after cloning repo + uv sync --extra …)</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">act</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_act</span> \
+  <span class="flag">--job_name=</span><span class="val">sorting_act</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span> \
+  <span class="flag">--wandb.enable=</span><span class="val">true</span>
+
+<span class="comment"># Alternate: Diffusion</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">diffusion</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_diffusion</span> \
+  <span class="flag">--policy.device=</span><span class="val">cuda</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-9">
+        <summary><span class="cli-step-badge">9</span> Deploy / evaluate on follower</summary>
+        <div class="cli-body">
+          <p>Copy checkpoint to the Air (or Hub path), then roll out. <a class="deep" href="#step-9">Open Step 9 →</a></p>
+<pre><span class="cmd">uv run lerobot-rollout</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--policy.path=</span><span class="val">outputs/train/sorting_act/checkpoints/last</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/eval_pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">20</span> \
+  <span class="flag">--dataset.single_task=</span><span class="val">"Pick coloured block and place in matching bin"</span> \
+  <span class="flag">--strategy.num_episodes=</span><span class="val">20</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span>
+
+<span class="comment"># Hardware check: replay a recorded episode</span>
+<span class="cmd">uv run lerobot-replay</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
+  <span class="flag">--dataset.episode=</span><span class="val">0</span></pre>
+        </div>
+      </details>
+
+      <details id="cli-mujoco">
+        <summary><span class="cli-step-badge">M</span> Optional · MuJoCo sim (no real follower)</summary>
+        <div class="cli-body">
+          <p>Official TheRobotStudio SO101 MJCF. Practice pipeline without moving the physical follower. <a class="deep" href="so101_mujoco.html">MuJoCo docs →</a></p>
+<pre><span class="cmd">uv sync</span> <span class="flag">--extra</span> <span class="val">so101-mujoco</span> <span class="flag">--extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span>
+
+<span class="comment"># Keyboard → sim</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_keyboard</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span>
+
+<span class="comment"># Real leader → sim follower</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_mujoco</span> <span class="flag">--robot.id=</span><span class="val">sim_follower</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </details>
+
+    </div>
+
+    <div class="notice n-tip" style="margin-top:16px">
+      <div class="notice-icon">💡</div>
+      <div class="notice-body">
+        Camera index may be <code>0</code> or <code>1</code> — confirm with <code>lerobot-find-cameras opencv</code>.
+        Detailed narrative, photos, and troubleshooting stay in the <a href="#steps">roadmap below</a>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ HARDWARE ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Hardware</div>
+    <h2>SO-101 Arm Specification</h2>
+    <p class="lead">The SO-101 is a 6-DOF desktop arm built around Feetech STS3215 servos. A bilateral (leader + follower) setup is used for teleoperated data collection.</p>
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Leader Arm</th>
+          <th>Follower Arm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Degrees of Freedom</td><td>6-DOF</td><td>6-DOF</td></tr>
+        <tr><td>Motors</td><td>6 × STS3215-C046/C001 (5 V)</td><td>6 × STS3215-C018 (12 V, 30 kg·cm)</td></tr>
+        <tr><td>Encoder Resolution</td><td>12-bit · 4096 steps/rev</td><td>12-bit · 4096 steps/rev</td></tr>
+        <tr><td>Communication</td><td>TTL Serial Bus 1 Mbps</td><td>TTL Serial Bus 1 Mbps</td></tr>
+        <tr><td>USB Port (this Mac)</td><td><code>/dev/tty.usbmodem5AE60832361</code></td><td><code>/dev/tty.usbmodem5B141118901</code></td></tr>
+        <tr><td>LeLab / CLI id</td><td><code>LeoArm</code> → <code>so_leader/LeoArm.json</code></td><td><code>LeoArm</code> → <code>so_follower/LeoArm.json</code></td></tr>
+        <tr><td>Power Supply</td><td>5 V external PSU</td><td>12 V external PSU</td></tr>
+        <tr><td>Recommended Camera</td><td>—</td><td>USB webcam · 640×480 @ 30 FPS · 3P lens (OpenCV)</td></tr>
+        <tr><td>Camera Resolution Used</td><td>—</td><td>640 × 480 @ 30 FPS</td></tr>
+      </tbody>
+    </table>
+    <table class="spec-table" style="margin-top:28px">
+      <thead>
+        <tr><th>#</th><th>Joint</th><th>Motor Name</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>shoulder_pan</td><td>STS3215</td><td>Base rotation (left / right)</td></tr>
+        <tr><td>2</td><td>shoulder_lift</td><td>STS3215-C001 (leader) / C018</td><td>Shoulder pitch (up / down)</td></tr>
+        <tr><td>3</td><td>elbow_flex</td><td>STS3215</td><td>Elbow bend</td></tr>
+        <tr><td>4</td><td>wrist_flex</td><td>STS3215</td><td>Wrist pitch</td></tr>
+        <tr><td>5</td><td>wrist_roll</td><td>STS3215</td><td>Wrist rotation</td></tr>
+        <tr><td>6</td><td>gripper</td><td>STS3215</td><td>Gripper open / close</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:36px;font-size:18px">Motor Variants — Leader (5 V)</h3>
+    <p class="lead" style="margin-bottom:12px">Lighter/faster motors for sensing &amp; teleop input. J2 uses higher-torque <strong>C001</strong>.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>#</th><th>Motor</th><th>Model</th><th>Gear</th><th>Stall Torque</th><th>Voltage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>shoulder_pan</td><td>STS3215-C046</td><td>1:147</td><td>~14.4 kg·cm</td><td>5 V</td></tr>
+        <tr><td>2</td><td>shoulder_lift</td><td>STS3215-C001</td><td>1:345</td><td>~19 kg·cm</td><td>5 V</td></tr>
+        <tr><td>3–6</td><td>elbow / wrist / gripper</td><td>STS3215-C046</td><td>1:147</td><td>~14.4 kg·cm</td><td>5 V</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:28px;font-size:18px">Motor Variants — Follower (12 V)</h3>
+    <p class="lead" style="margin-bottom:12px">All joints use <strong>C018</strong> (1:345, ~30 kg·cm) for payload holding torque. Do not mix C018 and C046 on the same arm without recalibrating.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>#</th><th>Motor</th><th>Model</th><th>Gear</th><th>Stall Torque</th><th>Voltage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1–6</td><td>all joints</td><td>STS3215-C018</td><td>1:345</td><td>~30 kg·cm</td><td>12 V</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════ KEY STEPS ════════════════ -->
+<section id="steps">
+  <div class="container">
+    <div class="section-label">Roadmap</div>
+    <h2>Key Steps to Build Your Sorting Robot</h2>
+    <p class="lead">Follow these 9 phases end-to-end — from zero hardware to an autonomous pick-and-place robot — on the <strong>MacBook Air</strong> control PC. After assembly, prefer <a href="https://huggingface.co/docs/lerobot/lelab" target="_blank" rel="noopener noreferrer">LeLab</a> for calibrate → teleop → record → train (cloud) → deploy; CLI examples below are the equivalent manual path. See <strong>Host Computer</strong> above for Air-specific limits.</p>
+
+    <div class="timeline">
+
+      <!-- STEP 1 -->
+      <div class="timeline-item" id="step-1">
+        <div class="step-num-col">
+          <div class="step-num s1">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Install Software &amp; Dependencies</h3>
+            <span class="step-phase phase-sw">Software</span>
+          </div>
+          <p>Clone the repository and install dependencies. This project uses <strong>OS-specific requirement files</strong> — pick the one that matches your machine. On the <strong>MacBook Air</strong> host, prefer <strong>uv</strong>.</p>
+          <ul>
+            <li><strong>Python 3.12+</strong> and <strong>Git</strong> are prerequisites.</li>
+            <li><strong>This MacBook Air (uv):</strong> project <code>.venv</code> already uses <strong>Python 3.13.4</strong> — that satisfies 3.12+. Always run commands with <code>uv run …</code> (system <code>python3</code> may still be 3.11).</li>
+            <li><strong>macOS:</strong> use <code>requirements-macos.txt</code> (this is the file used on this setup).</li>
+            <li><strong>Ubuntu / Linux:</strong> use <code>requirements-ubuntu.txt</code>.</li>
+            <li>Other platforms should use the matching requirements file for that OS when available (or generate one from <code>requirements.in</code>).</li>
+            <li>On Linux, add your user to the <code>dialout</code> group for USB serial access. (Not needed on macOS.)</li>
+            <li><strong>Disk:</strong> free space before install + later demos (aim for 80+ GB free on the Air).</li>
+          </ul>
+          <pre><span class="comment"># Clone the repo</span>
+git clone https://github.com/rigbetellabs/lerobot.git
+cd lerobot
+
+<span class="comment"># macOS MacBook Air — preferred (uv manages Python 3.13.4 in .venv)</span>
+<span class="cmd">uv sync</span> <span class="flag">--locked --extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span>
+<span class="cmd">uv run python</span> <span class="flag">--version</span>   <span class="comment"># expect Python 3.13.x</span>
+
+<span class="comment"># Alternate: pip on macOS</span>
+<span class="cmd">pip install</span> <span class="flag">-r</span> <span class="val">requirements-macos.txt</span>
+
+<span class="comment"># Ubuntu / Linux</span>
+<span class="cmd">pip install</span> <span class="flag">-r</span> <span class="val">requirements-ubuntu.txt</span>
+
+<span class="comment"># Linux only: grant serial port access</span>
+sudo usermod -aG dialout $USER   <span class="comment"># then log out &amp; back in</span></pre>
+          <div class="notice n-info" style="margin-top:12px">
+            <div class="notice-icon">ℹ️</div>
+            <div class="notice-body"><strong>Why different files?</strong> <code>requirements-macos.txt</code> and <code>requirements-ubuntu.txt</code> are generated from the same <code>requirements.in</code> but pin OS-specific wheels and packages. Always install from the file that matches your OS. On this Air, <code>uv sync</code> is the primary path.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="timeline-item" id="step-2">
+        <div class="step-num-col">
+          <div class="step-num s2">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Program Motor IDs</h3>
+            <span class="step-phase phase-hw">Hardware</span>
+          </div>
+          <p>Every Feetech motor ships with ID = 1. Program each motor one at a time with <code>set_middle_positions.py</code> — the script sets the ID, baud rate (1 Mbps), and moves the joint to the neutral midpoint (~2047). On this macOS setup the serial ports are:</p>
+          <ul>
+            <li><strong>Leader arm:</strong> <code>/dev/tty.usbmodem5AE60832361</code></li>
+            <li><strong>Follower arm:</strong> <code>/dev/tty.usbmodem5B141118901</code></li>
+            <li>Connect <strong>ONLY</strong> the target motor, press Enter when prompted, then attach the joint link while it holds middle position.</li>
+          </ul>
+
+          <h4 style="margin:18px 0 8px;font-size:15px">Leader arm — IDs 1–6</h4>
+          <pre><span class="comment"># Port: /dev/tty.usbmodem5AE60832361</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">1</span>
+<span class="comment"># shoulder_pan → Position: 2062 / 2047  (✓ At middle!)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">2</span>
+<span class="comment"># [2/6] shoulder_lift — Found motor baudrate=1,000,000 id=1
+# ⚠ Setting ID 1 → 2 · Position: 2074 / 2047  (✓ At middle!)
+# → Attach joint link, then Enter → ✓ assembled at neutral</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">3</span>
+<span class="comment"># [3/6] elbow_flex — Setting ID 1 → 3 · Position: 2046 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">4</span>
+<span class="comment"># [4/6] wrist_flex — Setting ID 1 → 4 · Position: 2053 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">5</span>
+<span class="comment"># [5/6] wrist_roll — Setting ID 1 → 5 · Position: 2022 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5AE60832361</span> <span class="flag">--id</span> <span class="val">6</span>
+<span class="comment"># [6/6] gripper — Setting ID 1 → 6 · Position: 2057 / 2047  (✓)</span></pre>
+
+          <h4 style="margin:18px 0 8px;font-size:15px">Follower arm — IDs 1–6</h4>
+          <pre><span class="comment"># Port: /dev/tty.usbmodem5B141118901</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">1</span>
+<span class="comment"># [1/6] shoulder_pan — Position: 2051 / 2047  (✓ At middle!)
+# → Attach joint link → ✓ assembled at neutral</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">2</span>
+<span class="comment"># [2/6] shoulder_lift — Found motor id=2 · Position: 2046 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">3</span>
+<span class="comment"># [3/6] elbow_flex — Setting ID 1 → 3 · Position: 2051 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">4</span>
+<span class="comment"># [4/6] wrist_flex — Setting ID 1 → 4 · Position: 2050 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">5</span>
+<span class="comment"># [5/6] wrist_roll — Setting ID 1 → 5 · Position: 2044 / 2047  (✓)</span>
+
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">6</span>
+<span class="comment"># [6/6] gripper — Setting ID 1 → 6 · Position: 2051 / 2047  (✓)</span></pre>
+
+          <div class="notice n-tip" style="margin-top:12px">
+            <div class="notice-icon">💡</div>
+            <div class="notice-body"><strong>What “At middle!” means:</strong> the encoder is near 2047 (e.g. 2062, 2051). Attach the horn/link at that angle before pressing Enter. Ports on macOS look like <code>/dev/tty.usbmodem…</code> — re-check with <code>uv run lerobot-find-port</code> if they change after unplugging.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="timeline-item" id="step-3">
+        <div class="step-num-col">
+          <div class="step-num s3">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Assemble at Neutral Positions</h3>
+            <span class="step-phase phase-hw">Hardware</span>
+          </div>
+          <p>Joint links were attached <strong>during Step 2</strong> while each motor held ~2047. Never attach a horn off-middle — the software zero will be mechanically offset and the arm can damage itself.</p>
+          <ul>
+            <li>Leader: <code>/dev/tty.usbmodem5AE60832361</code> · Follower: <code>/dev/tty.usbmodem5B141118901</code></li>
+            <li>Procedure: run helper → motor holds middle → slide horn on → lock set screw → press Enter.</li>
+            <li>Never force a joint past its mechanical stop.</li>
+          </ul>
+
+          <h4 style="margin:16px 0 8px;font-size:15px">Follower arm — neutral assembly photos</h4>
+          <div class="cards" style="margin-bottom:16px">
+            <div class="card"><img src="images/followerbase.jpg" alt="J1 shoulder_pan" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J1 shoulder_pan</h3></div>
+            <div class="card"><img src="images/followerlift.jpg" alt="J2 shoulder_lift" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J2 shoulder_lift</h3></div>
+            <div class="card"><img src="images/followerelbow.jpg" alt="J3 elbow_flex" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J3 elbow_flex</h3></div>
+            <div class="card"><img src="images/followerwrist.jpg" alt="J4 wrist_flex" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J4 wrist_flex</h3></div>
+            <div class="card"><img src="images/followerroll.jpg" alt="J5 wrist_roll" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J5 wrist_roll</h3></div>
+            <div class="card"><img src="images/followergripper.jpg" alt="J6 gripper" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>J6 gripper</h3></div>
+          </div>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Leader J1–J5 match the follower photos. Leader gripper differs:</p>
+          <div class="cards" style="max-width:280px;margin-bottom:12px">
+            <div class="card"><img src="images/leadergripper.jpg" alt="Leader J6 gripper" style="width:100%;border-radius:6px;margin-bottom:8px"/><h3>Leader J6 gripper</h3></div>
+          </div>
+
+          <pre><span class="comment"># Re-seat a single joint if needed (example: follower wrist_flex)</span>
+<span class="cmd">uv run python set_middle_positions.py</span> <span class="flag">--port</span> <span class="val">/dev/tty.usbmodem5B141118901</span> <span class="flag">--id</span> <span class="val">4</span></pre>
+          <div class="notice n-warn" style="margin-top:12px">
+            <div class="notice-icon">⚠️</div>
+            <div class="notice-body"><strong>Overload during assembly?</strong> Power-cycle the arm supply, clear the mechanical obstruction, then retry.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="timeline-item" id="step-4">
+        <div class="step-num-col">
+          <div class="step-num s4">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Calibrate Both Arms</h3>
+            <span class="step-phase phase-hw">Hardware</span>
+          </div>
+          <p>Calibration records each joint's encoder <code>range_min</code> / <code>range_max</code> and homing offset. Runtime uses that JSON to convert ticks → degrees so leader and follower report the same values in the same pose.</p>
+
+          <h4 style="font-size:15px;margin:16px 0 8px">This project (LeLab robot <code>LeoArm</code>)</h4>
+          <table class="spec-table" style="font-size:13px">
+            <thead><tr><th>Arm</th><th>Port</th><th>Active calibration file</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Leader</td>
+                <td><code>/dev/tty.usbmodem5AE60832361</code></td>
+                <td><code>teleoperators/so_leader/LeoArm.json</code></td>
+                <td>Completed Aug 2026. Do <strong>not</strong> use old <code>my_leader.json</code>.</td>
+              </tr>
+              <tr>
+                <td>Follower</td>
+                <td><code>/dev/tty.usbmodem5B141118901</code></td>
+                <td><code>robots/so_follower/LeoArm.json</code></td>
+                <td>Completed Aug 2026. Old <code>my_follower.json</code> kept but unused. New lift/elbow ranges are realistic (old Jul file had full 0–4095 on those joints).</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4 style="font-size:15px;margin:16px 0 8px">Follower Aug 2026 vs Jul <code>my_follower.json</code> (summary)</h4>
+          <table class="spec-table" style="font-size:13px">
+            <thead><tr><th>Joint</th><th>Old range</th><th>New range</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>shoulder_pan</td><td>2273</td><td>2368</td><td>Similar</td></tr>
+              <tr><td>shoulder_lift</td><td>4095</td><td>2168</td><td>Old looked incomplete; new is realistic (slightly short of green-tick target)</td></tr>
+              <tr><td>elbow_flex</td><td>4095</td><td>2219</td><td>Same improvement</td></tr>
+              <tr><td>wrist_flex</td><td>2314</td><td>2295</td><td>~same</td></tr>
+              <tr><td>wrist_roll</td><td>4095</td><td>3765</td><td>Still strong</td></tr>
+              <tr><td>gripper</td><td>1494</td><td>1507</td><td>~same</td></tr>
+            </tbody>
+          </table>
+
+          <h4 style="font-size:15px;margin:16px 0 8px">LeLab Status panel</h4>
+          <ul style="margin:0 0 12px;padding-left:1.2rem;color:var(--muted);font-size:14px">
+            <li><strong>Idle</strong> until you click Start — Find Port only detects USB, not live motor reads.</li>
+            <li><strong>Recording Ranges</strong> shows Live Position Data (min / current / max). Put all joints mid-range <em>before</em> Start (no Enter step like CLI).</li>
+            <li><strong>Green tick</strong> = that joint’s <code>max−min</code> reached ~98% of an SO-101 target (guide only). Save still works if one joint stays unticked after a full sweep.</li>
+            <li><strong>Save Calibration</strong> writes the JSON. <strong>Cancel / Stop / leave page discards</strong> the session — always Save first.</li>
+          </ul>
+
+          <pre><span class="comment"># CLI fallback — leader (matches LeLab id)</span>
+<span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span>
+
+<span class="comment"># CLI fallback — follower</span>
+<span class="cmd">uv run lerobot-calibrate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span></pre>
+          <div class="notice n-info" style="margin-top:12px">
+            <div class="notice-icon">ℹ️</div>
+            <div class="notice-body">Both arms use id <code>LeoArm</code> on this Mac. Teleop/record: <code>--teleop.id=LeoArm</code> and <code>--robot.id=LeoArm</code>. Sync check: <a href="teleop_sync_checklist.html">Teleop sync checklist</a>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="timeline-item" id="step-5">
+        <div class="step-num-col">
+          <div class="step-num s5">5</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Verify with Live Teleoperation</h3>
+            <span class="step-phase phase-sw">Software</span>
+          </div>
+          <p>Before collecting training data, confirm everything works end-to-end: leader movements should be mirrored by the follower in real time with no lag or joint slipping.</p>
+          <div class="notice n-tip" style="margin:12px 0">
+            <div class="notice-icon">📷</div>
+            <div class="notice-body">
+              <strong>LeLab:</strong> Attach the USB camera on the <strong>follower (Robot)</strong> only — not the leader.
+              In Teleoperation, open the right <strong>Cameras</strong> panel and toggle <strong>On</strong> for the live preview.
+            </div>
+          </div>
+          <pre><span class="comment"># Basic teleoperation (no camera) — this Mac ports + LeoArm leader id</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span>
+
+<span class="comment"># With USB camera + Rerun visualisation</span>
+<span class="cmd">uv run lerobot-teleoperate</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span></pre>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="timeline-item" id="step-6">
+        <div class="step-num-col">
+          <div class="step-num s6">6</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Set Up the Sorting Scene</h3>
+            <span class="step-phase phase-hw">Hardware</span>
+          </div>
+          <p>Design a consistent tabletop workspace before collecting demonstrations. Consistency is critical — the policy generalises from what it sees, so the scene must stay fixed.</p>
+          <ul>
+            <li><strong>Workspace boundary:</strong> Use tape or a mat to mark the reachable area (≈ 30 × 30 cm in front of the arm base).</li>
+            <li><strong>Object placement:</strong> Define a source zone (random drop area) and labelled destination bins (e.g., red bin left, blue bin right).</li>
+            <li><strong>Camera mount:</strong> Place the USB camera on a stand <strong>in front of / above the workspace</strong> (see Step 5). Same angle every session.</li>
+            <li><strong>Lighting:</strong> Use stable, diffuse lighting — avoid strong shadows or reflections on objects.</li>
+            <li><strong>Objects:</strong> Start with 3 distinctly coloured, easily grippable blocks (≈ 3 × 3 × 3 cm works well).</li>
+          </ul>
+          <div class="notice n-tip" style="margin-top:12px">
+            <div class="notice-icon">💡</div>
+            <div class="notice-body"><strong>Pro tip:</strong> 3D-print or purchase bins with chamfered openings. The extra tolerance makes early policy evaluations far more forgiving.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="timeline-item" id="step-7">
+        <div class="step-num-col">
+          <div class="step-num s7">7</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Collect Demonstration Data</h3>
+            <span class="step-phase phase-data">Data</span>
+          </div>
+          <p>Use <code>lerobot-record</code> to capture teleoperated episodes directly into a LeRobot-format dataset (HuggingFace compatible). Each episode records joint positions, velocities, camera frames, and timestamps.</p>
+          <ul>
+            <li>Target <strong>50–200 demonstrations</strong> per task variant for a good policy.</li>
+            <li>Vary the starting position of objects slightly across episodes to improve generalisation.</li>
+            <li>Press <strong>Enter</strong> to start an episode, <strong>Ctrl+C</strong> to end the recording session.</li>
+          </ul>
+          <pre><span class="cmd">uv run lerobot-record</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
+  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
+  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">your_username/pick_place_sorting</span> \
+  <span class="flag">--dataset.num_episodes=</span><span class="val">100</span> \
+  <span class="flag">--dataset.task=</span><span class="val">"Pick coloured block and place in matching bin"</span>
+
+<span class="comment"># Visualise your dataset to spot bad episodes</span>
+<span class="cmd">uv run lerobot-dataset-viz</span> <span class="flag">--repo-id</span> <span class="val">your_username/pick_place_sorting</span></pre>
+        </div>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="timeline-item" id="step-8">
+        <div class="step-num-col">
+          <div class="step-num s8">8</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Train an Imitation Learning Policy</h3>
+            <span class="step-phase phase-ml">ML Training</span>
+          </div>
+          <p>Train a neural policy using <code>lerobot-train</code>. The policy learns to map visual observations and joint states to motor commands by imitating your recorded demonstrations.
+          Full comparison (with / without USB camera): <a href="policy_cheatsheet.html">SO-101 Policy Cheatsheet</a>.</p>
+
+          <div class="policy-grid">
+            <div class="policy-card">
+              <div class="policy-badge pb-rec">Recommended</div>
+              <div class="pname">ACT</div>
+              <div class="pdesc">Action Chunking Transformer. Fast training, great on pick-and-place with short demos.</div>
+            </div>
+            <div class="policy-card">
+              <div class="policy-badge pb-rec">Recommended</div>
+              <div class="pname">Diffusion Policy</div>
+              <div class="pdesc">Denoising diffusion for smooth, multi-modal action generation. Better generalisation.</div>
+            </div>
+            <div class="policy-card">
+              <div class="policy-badge pb-adv">Advanced</div>
+              <div class="pname">SmolVLA</div>
+              <div class="pdesc">Vision-Language-Action model. Requires task language prompts; strongest on varied tasks.</div>
+            </div>
+            <div class="policy-card">
+              <div class="policy-badge pb-exp">Explore</div>
+              <div class="pname">Pi-0 / Pi-0 Fast</div>
+              <div class="pdesc">Flow-matching diffusion transformer. State-of-the-art but compute-intensive.</div>
+            </div>
+          </div>
+
+          <pre style="margin-top:20px"><span class="comment"># Train ACT policy — good first choice for sorting</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">act</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">your_username/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_act</span> \
+  <span class="flag">--training.num_workers=</span><span class="val">4</span>
+
+<span class="comment"># Or train Diffusion Policy for smoother trajectories</span>
+<span class="cmd">uv run lerobot-train</span> \
+  <span class="flag">--policy.type=</span><span class="val">diffusion</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">your_username/pick_place_sorting</span> \
+  <span class="flag">--output_dir=</span><span class="val">outputs/train/sorting_diffusion</span></pre>
+          <div class="notice n-warn" style="margin-top:12px">
+            <div class="notice-icon">⚠️</div>
+            <div class="notice-body">
+              <strong>MacBook Air (this project):</strong> Do <strong>not</strong> plan on comfortable local training on the M1 Air (8 GB).
+              Prefer <strong>ACT</strong> on a cloud NVIDIA GPU after pushing the dataset to the Hub.
+              Recommended AWS: <code>g5.xlarge</code> / <code>g5.2xlarge</code> (1× A10G ~24&nbsp;GB) or <code>g6.xlarge</code> (1× L4 ~24&nbsp;GB);
+              budget ACT-only: <code>g4dn.xlarge</code> (T4 16&nbsp;GB). Full table under <strong>Host Computer → Cloud ML training</strong> above.
+              Or use <strong>LeLab → HF Jobs</strong> flavor <code>a10g-large</code> (same class, less setup).
+              Local MPS/CPU ACT is tiny-experiments only. Diffusion / SmolVLA / Pi-0 are not practical on this Air.
+            </div>
+          </div>
+          <div class="notice n-tip" style="margin-top:12px">
+            <div class="notice-icon">💡</div>
+            <div class="notice-body"><strong>Air workflow:</strong> record on the Mac → push dataset → train on HF Jobs (<code>a10g-large</code>) or AWS <code>g5.2xlarge</code> → download / point <code>--policy.path</code> to the checkpoint → run Step 9 rollout on the Air. Expect roughly <strong>1–2&nbsp;h</strong> for ACT on ~50 demos on A10G/L4.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9 -->
+      <div class="timeline-item" id="step-9">
+        <div class="step-num-col">
+          <div class="step-num s9">9</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-header">
+            <h3>Deploy &amp; Evaluate the Policy</h3>
+            <span class="step-phase phase-run">Inference</span>
+          </div>
+          <p>Run the trained policy on the physical robot using <code>lerobot-rollout</code>. The robot will observe the scene through its camera and autonomously execute pick-and-place actions.</p>
+          <pre><span class="comment"># Evaluate the trained policy on the robot</span>
+<span class="cmd">uv run lerobot-rollout</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/ttyACM0</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--robot.cameras=</span><span class="val">"{front: {type: opencv, index_or_path: 1, width: 640, height: 480, fps: 30, fourcc: MJPG}}"</span> \
+  <span class="flag">--policy.path=</span><span class="val">outputs/train/sorting_act/checkpoints/last</span> \
+  <span class="flag">--num_episodes=</span><span class="val">20</span> \
+  <span class="flag">--display_data=</span><span class="val">true</span>
+
+<span class="comment"># Replay a recorded episode to verify arm hardware</span>
+<span class="cmd">uv run lerobot-replay</span> \
+  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
+  <span class="flag">--robot.port=</span><span class="val">/dev/ttyACM0</span> \
+  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
+  <span class="flag">--dataset.repo_id=</span><span class="val">your_username/pick_place_sorting</span> \
+  <span class="flag">--episode=</span><span class="val">0</span></pre>
+          <ul style="margin-top:12px">
+            <li><strong>Success metric:</strong> Track % of objects correctly placed per evaluation run.</li>
+            <li><strong>Iterate:</strong> Add more diverse demos, augment data, retrain if performance is below target.</li>
+            <li><strong>Push to Hub:</strong> Share your dataset and policy on HuggingFace Hub for reproducibility.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+  </div>
+</section>
+
+<!-- ════════════════ TROUBLESHOOTING ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Support</div>
+    <h2>Troubleshooting</h2>
+    <p class="lead">Common faults from the SO-101 setup guide, kept here so you do not need a separate page.</p>
+    <div class="use-case-grid">
+      <div class="uc-item">
+        <h4>Input voltage error</h4>
+        <p>External PSU off/disconnected. Turn <strong>12 V (follower) / 5 V (leader)</strong> ON, reseat daisy-chain cables, power-cycle, retry.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Overload error</h4>
+        <p>Joint hit a hard stop or was blocked. Move the joint free by hand, power-cycle to clear the fault flag, retry.</p>
+      </div>
+      <div class="uc-item">
+        <h4>No status packet</h4>
+        <p>Bus communication break (loose JST cable). Check connectors up to the last responding motor ID, power-cycle.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Motor not found</h4>
+        <p><code>set_middle_positions.py</code> cannot see the servo. Confirm cable, correct macOS <code>/dev/tty.usbmodem…</code> port, and clear overload by power-cycle.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Calibration mismatch</h4>
+        <p>Motor replaced or reassembled since last JSON. Type <code>c</code> at the prompt, or re-run <code>lerobot-calibrate</code> / LeLab calibrate. On this Mac use id <code>LeoArm</code> for both arms (not old <code>my_leader</code> / <code>my_follower</code>).</p>
+      </div>
+      <div class="uc-item">
+        <h4>LeLab Status empty / no ticks</h4>
+        <p>Arm powered? Correct leader port <code>…5AE60832361</code>? Badge must be <em>Recording Ranges</em>. Green ticks are optional — click <strong>Save Calibration</strong> before Cancel. Cancel discards results.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Wrong leader/follower port in LeLab</h4>
+        <p>Find Port can attach the wrong adapter. Leader = <code>…5AE60832361</code>, follower = <code>…5B141118901</code>. Swap → sync/calibration looks broken.</p>
+      </div>
+      <div class="uc-item">
+        <h4>invalid choice: so101_follower</h4>
+        <p>Wrong flag prefix. Leader → <code>--teleop.type=so101_leader</code>. Follower → <code>--robot.type=so101_follower</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ KEY SCRIPTS ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Reference</div>
+    <h2>Key Scripts &amp; Commands</h2>
+    <p class="lead">All entry-points exposed by LeRobot after installation via <code>uv sync</code>.</p>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Command</th><th>Phase</th><th>What It Does</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>lerobot-find-port</code></td><td>Hardware</td><td>Detect which <code>/dev/ttyACM*</code> port corresponds to each arm's bus adapter.</td></tr>
+        <tr><td><code>lerobot-find-cameras</code></td><td>Hardware</td><td>List available camera device indices for OpenCV.</td></tr>
+        <tr><td><code>lerobot-calibrate</code></td><td>Hardware</td><td>Interactive joint calibration — records encoder min/max per joint to a JSON file.</td></tr>
+        <tr><td><code>lerobot-teleoperate</code></td><td>Hardware</td><td>Real-time leader → follower teleoperation with optional live Rerun visualisation.</td></tr>
+        <tr><td><code>lerobot-record</code></td><td>Data</td><td>Record teleoperated demonstrations into a LeRobot dataset with camera + joint data.</td></tr>
+        <tr><td><code>lerobot-replay</code></td><td>Data</td><td>Replay a saved episode on the physical arm — useful for hardware verification.</td></tr>
+        <tr><td><code>lerobot-dataset-viz</code></td><td>Data</td><td>Visualise dataset episodes to inspect quality before training.</td></tr>
+        <tr><td><code>lerobot-train</code></td><td>ML</td><td>Train an imitation learning policy (ACT, Diffusion, SmolVLA, etc.) on a dataset.</td></tr>
+        <tr><td><code>lerobot-eval</code></td><td>ML</td><td>Evaluate a trained policy on a simulation environment.</td></tr>
+        <tr><td><code>lerobot-rollout</code></td><td>Inference</td><td>Deploy a trained policy on the real robot for autonomous execution.</td></tr>
+        <tr><td><code>set_middle_positions.py</code></td><td>Hardware</td><td>Program motor IDs and move each motor to the neutral encoder midpoint (2047).</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════ CHECKLIST ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Checklist</div>
+    <h2>Quick-Start Checklist</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="background:rgba(255,166,87,.15)">🔧</div>
+        <h3>Hardware Ready</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li>Both arms fully assembled</li>
+          <li>Motor IDs 1–6 programmed on each arm</li>
+          <li>Leader (5 V) &amp; follower (12 V) PSU connected</li>
+          <li>USB camera (640×480 @ 30 FPS) mounted on a fixed stand</li>
+          <li>Sorting bins positioned in workspace</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(88,166,255,.15)">💻</div>
+        <h3>Software Ready (MacBook Air)</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li><code>uv sync</code> / <code>requirements-macos.txt</code> installed</li>
+          <li><code>uv run python --version</code> shows <strong>3.12+</strong> (this Air: 3.13.4)</li>
+          <li><code>lelab</code> installed (<code>uv tool install …leLab.git</code>) — recommended</li>
+          <li>~80+ GB free disk before long recording</li>
+          <li>Ports identified (LeLab setup or <code>lerobot-find-port</code>)</li>
+          <li>Both arms calibrated &amp; teleop verified (LeLab or CLI)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:rgba(63,185,80,.15)">📊</div>
+        <h3>Data &amp; Training</h3>
+        <ul style="color:var(--muted);font-size:13.5px;padding-left:16px;margin-top:8px">
+          <li>50–200 demonstrations recorded on the Air</li>
+          <li>Dataset visualised &amp; bad episodes removed</li>
+          <li>Policy type chosen (<strong>ACT</strong> recommended on Air)</li>
+          <li>Training on cloud: <strong>HF Jobs <code>a10g-large</code></strong> or AWS <code>g5.2xlarge</code> (not local Air)</li>
+          <li>Policy evaluated on real hardware from the Air</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ ROS2 RECOMMENDATION ════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Architecture</div>
+    <h2>ROS2, Gazebo, RViz &amp; URDF — Summary Recommendation</h2>
+    <p class="lead">
+      Guidance for the remaining project phases (sorting scene, demos, training, deploy), based on whether to involve ROS2.
+      This project’s goal is a <strong>learned</strong> pick-and-place sorter — not classical scripted MoveIt picking.
+    </p>
+
+    <div class="notice n-tip" style="margin-bottom:24px">
+      <div class="notice-icon">✅</div>
+      <div class="notice-body">
+        <strong>Primary recommendation:</strong> Finish Steps 6–9 on the <strong>native LeRobot path</strong>
+        (real teleop → <code>lerobot-record</code> → <code>lerobot-train</code> → <code>lerobot-rollout</code>).
+        Use your SO-101 <strong>URDF</strong> only as a helper for kinematics / reachability checks
+        (every matrix and IK iteration is unpacked on
+        <a href="so101_kinematics.html">SO-101 Forward &amp; Inverse Kinematics</a>).
+        Do <strong>not</strong> rebuild the whole pipeline around ROS2 to finish this project faster.
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin-bottom:12px">What helps vs what does not</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Pending step</th><th>ROS2 / Gazebo / RViz</th><th>Recommended for this project</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Set up sorting scene</td>
+          <td>Light help — RViz + URDF to check reach / layout</td>
+          <td>Build the <strong>real table</strong> scene; fixed USB cam must see bins + objects</td>
+        </tr>
+        <tr>
+          <td>Collect demonstration data</td>
+          <td>Possible via ROS2 teleop, but needs a bridge to LeRobot datasets</td>
+          <td><code>lerobot-record</code> with leader–follower (simplest) or phone/gamepad teleop</td>
+        </tr>
+        <tr>
+          <td>Train imitation policy</td>
+          <td><strong>No</strong> — ROS2 does not train ACT / Diffusion</td>
+          <td><code>lerobot-train</code> on your recorded dataset</td>
+        </tr>
+        <tr>
+          <td>Deploy &amp; evaluate</td>
+          <td>Gazebo can smoke-test controllers only; sim ≠ real cam/motors</td>
+          <td><code>lerobot-rollout</code> on the <strong>real</strong> SO-101 + USB camera</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Going “full ROS2” — does the advice change?</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:12px">
+      <strong>Mostly no</strong> for this sorting goal. Full ROS2 adds drivers, topics, bags, and conversion work.
+      It does not remove real demos, real camera pixels, or real-robot evaluation. Choose full ROS2 only if you need
+      fleet / factory ROS integration or classical planning — not to shortcut imitation learning.
+    </p>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">No leader arm — can ROS2 teleop replace it?</h3>
+    <div class="use-case-grid">
+      <div class="uc-item">
+        <h4>Yes — teleop only</h4>
+        <p>Training does not require a leader. You can drive the <strong>follower</strong> with ROS2 (Joy, MoveIt Servo, keyboard) or LeRobot phone/gamepad teleop instead.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Still required</h4>
+        <p>Synced <strong>USB camera + joint actions</strong> saved as a LeRobot dataset (or converted from ROS bags), then <code>lerobot-train</code> / <code>lerobot-rollout</code>.</p>
+      </div>
+      <div class="uc-item">
+        <h4>Gripper in ROS2 teleop</h4>
+        <p>Gripper is joint 6 (open/close ~0–100). Map a <strong>button / trigger</strong> separately from arm IK — Cartesian teleop does not open/close the gripper by itself.</p>
+      </div>
+      <div class="uc-item">
+        <h4>URDF role</h4>
+        <p>Use URDF for FK/IK, EE teleop, joint limits, RViz display. It does not replace LeRobot recording or policy training.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:28px 0 12px">Decision guide</h3>
+    <ul style="color:var(--muted);font-size:14px;padding-left:18px">
+      <li><strong>Fastest path to a working sorter:</strong> keep leader + follower + LeRobot record/train/rollout (recommended).</li>
+      <li><strong>No leader hardware:</strong> prefer LeRobot phone/gamepad teleop over a custom ROS2 bridge when possible.</li>
+      <li><strong>Already strong in ROS2:</strong> optional ROS2 teleop is fine if you budget time to export demos into LeRobot format; gripper must be commanded explicitly.</li>
+      <li><strong>Gazebo:</strong> optional for layout/controller experiments only — not a substitute for real USB-cam demonstrations.</li>
+    </ul>
+
+    <div class="notice n-info" style="margin-top:20px">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        <strong>Bottom line:</strong> ROS2 / Gazebo / RViz are optional tooling (viz, sim, planning, alternate teleop).
+        They are <strong>not</strong> the backbone for Steps 6–9. LeRobot remains the path for data, ML training, and deployment on this SO-101 sorting project.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <div class="container">
+    <p>
+      Built on <a href="https://github.com/huggingface/lerobot">LeRobot</a> by HuggingFace &nbsp;·&nbsp;
+      SO-101 hardware by <a href="https://github.com/TheRobotStudio/SO-ARM100">The Robot Studio</a> &nbsp;·&nbsp;
+      Project: <strong>LeRobot SO-101 Pick &amp; Place Object Sorting</strong>
+    </p>
+    <p style="margin-top:8px;font-size:12px">Apache 2.0 License &nbsp;·&nbsp; Python 3.12+ (this Air: uv · 3.13.4) &nbsp;·&nbsp; Host: MacBook Air M1 · Feetech STS3215 Motors</p>
+  </div>
+</footer>
+    </main>
+  </div>
+<button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle color theme">◐</button>
+<script>
+(function () {
+  var btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  function current() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function apply(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("docs-theme", theme); } catch (e) {}
+    btn.textContent = theme === "dark" ? "☀" : "☾";
+    btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  }
+  apply(current());
+  btn.addEventListener("click", function () {
+    apply(current() === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>
