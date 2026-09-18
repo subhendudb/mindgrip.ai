@@ -3,7 +3,7 @@
 Overlay project for **SO-101 pick & place sorting**. Vanilla [LeRobot](https://github.com/huggingface/lerobot) stays the core; this repo only owns your plugins, scripts, and optional UX patches.
 
 ```
-lerobot/          ← core (Docker base / untouched upstream)
+lerobot/          ← upstream core (sibling checkout)
 so101-lab/        ← this project (your additions only)
 ```
 
@@ -18,8 +18,6 @@ so101-lab/        ← this project (your additions only)
 | `patches/` | Optional diffs for recording keyboard UX, OpenCV OBS fix, dataset viz |
 | `docs/` | Authoring sources (`docs/source/*.html` + `.mdx`) for MindGrip docs |
 | `docs-web/` | MindGrip AI docs — React + Vite SPA (`npm run dev` → :8000) |
-| `docker/Dockerfile` | `FROM lerobot-user` + install plugins |
-| `docker-compose.yml` | Optional lab shell (+ opt-in docs profile) |
 
 No forks of `src/lerobot/` are required for MuJoCo or keyboard teleop — LeRobot auto-discovers packages named `lerobot_robot_*` / `lerobot_teleoperator_*`.
 
@@ -55,27 +53,6 @@ Quick smoke test (plugins registered):
 uv run python -c "from lerobot.utils.import_utils import register_third_party_plugins as r; r(); from lerobot.robots.config import RobotConfig; print('so101_mujoco' in RobotConfig.get_known_choices())"
 ```
 
-## Docker
-
-```bash
-# Interactive lab shell (needs so101-lab image)
-docker compose build lab
-docker compose run --rm lab
-docker compose run --rm lab ./so101_cli_menu.sh
-
-# Build core image from the lerobot repo (once, if missing)
-docker build -f ../lerobot/docker/Dockerfile.user -t lerobot-user ../lerobot
-
-# Overlay with UX patches
-APPLY_PATCHES=1 docker compose build --no-cache lab
-
-# Optional: docs via nginx (prefer local npm below)
-docker compose --profile docs up --build docs
-# → http://localhost:8000/
-```
-
-The `lab` service is behind profile `lab` — use `compose run` for a shell. Docs Docker is behind profile `docs` (local `npm run dev` is the default). Datasets persist in the `so101-data` volume.
-
 ## Optional patches
 
 These improve day-to-day SO-101 workflows but touch core LeRobot files. Prefer upstream PRs long-term; until then:
@@ -102,8 +79,6 @@ cd docs-web && npm install && npm run dev
 # After editing docs/source/*.html:
 python3 docs-web/scripts/extract_fragments.py
 ```
-
-Optional production-style nginx image: `docker compose --profile docs up --build docs`.
 
 Official LeRobot library docs (not mirrored here): https://huggingface.co/docs/lerobot
 

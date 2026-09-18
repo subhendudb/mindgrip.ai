@@ -23,4 +23,5 @@ echo "==> Building MindGrip AI docs (custom pages only)"
 echo "    Official LeRobot docs: https://huggingface.co/docs/lerobot"
 cd "$ROOT"
 python3 docs/build_html.py
-echo "==> Done. Browse: docs/html/mindgrip.html (or docker compose up → http://localhost:8000/)"
+echo "==> Done. Prefer: cd docs-web && npm run dev → http://localhost:8000/"
+echo "    Legacy static: docs/html/mindgrip.html"

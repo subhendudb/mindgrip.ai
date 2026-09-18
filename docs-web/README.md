@@ -23,7 +23,7 @@ python3 scripts/extract_fragments.py
 python3 docs-web/scripts/extract_fragments.py
 ```
 
-Prefer this local npm workflow. Docker nginx is optional (`docker compose --profile docs up --build docs`).
+Prefer this local npm workflow (`npm run dev` → http://localhost:8000/).
 
 ## Production build
 

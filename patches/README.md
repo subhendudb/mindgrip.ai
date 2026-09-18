@@ -9,7 +9,5 @@ Apply onto a LeRobot source checkout:
 ./scripts/apply_lerobot_patches.sh /path/to/lerobot
 ```
 
-Or at Docker build time: `--build-arg APPLY_PATCHES=1`.
-
-MindGrip project docs are separate (`docs/html/`). Official LeRobot docs:
+MindGrip project docs: `docs-web/` (`npm run dev`). Official LeRobot docs:
 https://huggingface.co/docs/lerobot

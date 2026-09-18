@@ -4,7 +4,7 @@ This page maps **so101-lab** (the MindGrip overlay). Vanilla [LeRobot](https://g
 
 ```text
 temp/   (or your workspace)
-├── lerobot/      ← upstream core (clone / Docker base)
+├── lerobot/      ← upstream core (clone separately)
 └── so101-lab/    ← this project (plugins, CLI, docs, patches)
 ```
 
@@ -23,9 +23,7 @@ so101-lab/
 ├── scripts/                  # HF home, patches, docs helpers, episode viewer
 ├── patches/                  # Optional diffs applied onto a lerobot checkout
 ├── docs/                     # HTML/MDX sources (+ optional static html build)
-├── docs-web/                 # MindGrip docs SPA (Vite + React) — preferred local site
-├── docker/                   # Overlay image ON TOP of lerobot-user
-├── docker-compose.yml        # lab shell (+ optional docs profile)
+├── docs-web/                 # MindGrip docs SPA (Vite + React)
 ├── images/                   # Shared photos / diagrams
 ├── pyproject.toml            # Overlay Python project metadata
 └── README.md                 # Setup: sibling lerobot + plugins + menu
@@ -44,7 +42,6 @@ so101-lab/
 | **`docs/source/`** | Authoritative page sources (`.html` fragments + `.mdx`). |
 | **`docs/html/`** | Optional static HTML build (legacy / offline). Prefer **`docs-web`**. |
 | **`docs-web/`** | Local docs site: `npm run dev` → http://localhost:8000/. |
-| **`docker/`** | `Dockerfile` extending `lerobot-user` with this overlay’s plugins. |
 | **`images/`** | Camera placement, assembly photos, home hero assets. |
 
 ---
@@ -115,17 +112,6 @@ cd docs-web && npm run dev
 
 ---
 
-## `docker/` (overlay)
-
-| Item | Purpose |
-|------|---------|
-| **`docker/Dockerfile`** | `FROM lerobot-user` + install so101-lab plugins (optional patches via build arg). |
-| **`docker-compose.yml`** | `compose run --rm lab` for a shell; docs profile optional — local npm is preferred. |
-
-Build the upstream base once from the lerobot repo (`Dockerfile.user` → `lerobot-user`), then build this overlay.
-
----
-
 ## Sibling `lerobot/` (not in this repo)
 
 You still need a normal LeRobot checkout for `uv run lerobot-train`, Feetech extras, etc. Mentally:
@@ -136,7 +122,6 @@ You still need a normal LeRobot checkout for `uv run lerobot-train`, Feetech ext
 | **`src/lerobot/policies/`** | ACT, Diffusion, SmolVLA, … |
 | **`src/lerobot/datasets/`** | LeRobotDataset + Hub |
 | **`src/lerobot/scripts/`** | CLIs: calibrate, teleoperate, record, train, rollout, … |
-| **`docker/Dockerfile.user`** | Base image this overlay extends |
 
 Official layout details: upstream LeRobot repo + [huggingface.co/docs/lerobot](https://huggingface.co/docs/lerobot).
 
