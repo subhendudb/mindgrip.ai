@@ -26,7 +26,7 @@ from pathlib import Path
 import numpy as np
 
 from lerobot.cameras import make_cameras_from_configs
-from lerobot.types import RobotAction, RobotObservation
+from lerobot.lerobot_types import RobotAction, RobotObservation
 from lerobot.utils.decorators import check_if_already_connected, check_if_not_connected
 from lerobot.robots.robot import Robot
 from .config_so101_mujoco import SO101MujocoConfig
@@ -153,9 +153,9 @@ class SO101Mujoco(Robot):
                 raise ValueError(f"Actuator '{name}' (or 'act_{name}') missing from MJCF {mjcf}")
             self._actuator_ids[name] = int(aid)
 
-        self._renderer = mujoco.Renderer(
-            self._model, height=self.config.image_height, width=self.config.image_width
-        )
+        # Offscreen Renderer needs a GL context (mjpython on macOS). Defer until
+        # get_observation() so the interactive viewer path can open without it.
+        self._renderer = None
 
         # Apply home pose
         home_action = {f"{k}.pos": v for k, v in self.config.home_positions.items()}
@@ -187,6 +187,22 @@ class SO101Mujoco(Robot):
         self._connected = True
         logger.info("SO101 MuJoCo connected (%s)", mjcf)
 
+    def _ensure_renderer(self) -> None:
+        """Create the offscreen MuJoCo renderer lazily (needed for sim camera frames)."""
+        if self._renderer is not None:
+            return
+        import mujoco
+
+        try:
+            self._renderer = mujoco.Renderer(
+                self._model, height=self.config.image_height, width=self.config.image_width
+            )
+        except Exception as e:
+            raise RuntimeError(
+                "Failed to create MuJoCo offscreen renderer (needed for sim camera images). "
+                "On macOS, run under mjpython — e.g. ./so101_cli_menu.sh 16 or 17."
+            ) from e
+
     @check_if_not_connected
     def run_viewer_control_loop(self) -> None:
         """Step physics while the MuJoCo UI owns actuator controls (no keyboard teleop).
@@ -201,7 +217,7 @@ class SO101Mujoco(Robot):
         if self._viewer is None:
             raise RuntimeError(
                 "MuJoCo viewer is not open. Connect with show_viewer=True "
-                "(e.g. ./so101_cli_menu.sh 15)."
+                "(e.g. ./so101_cli_menu.sh 16)."
             )
 
         print(
@@ -250,6 +266,7 @@ class SO101Mujoco(Robot):
     def _render_sim_camera(self) -> np.ndarray:
         import mujoco
 
+        self._ensure_renderer()
         cam_name = self.config.sim_camera_name
         try:
             self._renderer.update_scene(self._data, camera=cam_name)

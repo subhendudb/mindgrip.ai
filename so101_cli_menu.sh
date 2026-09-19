@@ -79,8 +79,30 @@ need_uv() {
   fi
 }
 
+# Sibling LeRobot checkout (editable install into so101-lab/.venv).
+LEROBOT_SRC="${LEROBOT_SRC:-$ROOT/../lerobot}"
+
+# so101-lab's pyproject has no feetech/viz/… extras — those live on LeRobot.
+# Always install into THIS overlay's active venv via uv pip (not `uv sync` here).
+ensure_lerobot_extras() {
+  local extras="${1:-feetech,hardware,viz,dataset}"
+  need_uv
+  if [[ ! -f "$LEROBOT_SRC/pyproject.toml" ]]; then
+    echo "Error: LeRobot checkout not found at $LEROBOT_SRC"
+    echo "Expected sibling layout: temp/lerobot + temp/so101-lab"
+    echo "Clone: git clone https://github.com/huggingface/lerobot.git \"$LEROBOT_SRC\""
+    return 1
+  fi
+  echo "Installing LeRobot extras [$extras] into so101-lab .venv from $LEROBOT_SRC …"
+  if [[ "$DRY_RUN" == "1" ]]; then
+    echo "▶ uv pip install -e \"${LEROBOT_SRC}[${extras}]\""
+    echo "(dry-run — not executed)"
+    return 0
+  fi
+  uv pip install -e "${LEROBOT_SRC}[${extras}]"
+}
+
 # Replay / viz load LeRobotDataset — needs the dataset extra (huggingface datasets + pandas).
-# Always list the extras we want kept: `uv sync --extra X` uninstalls extras not named here.
 ensure_overlay_plugins() {
   # Editable installs of SO-101 Lab plugins (idempotent).
   if uv run python -c "import lerobot_robot_so101_mujoco, lerobot_teleoperator_so101_keyboard" >/dev/null 2>&1; then
@@ -101,31 +123,14 @@ ensure_replay_deps() {
   if uv run python -c "from lerobot.datasets import LeRobotDataset" >/dev/null 2>&1; then
     return 0
   fi
-  echo "Installing dataset / viz extras on the LeRobot env…"
-  if [[ "$DRY_RUN" == "1" ]]; then
-    echo "▶ (in lerobot venv) uv sync --extra dataset --extra feetech --extra hardware --extra viz"
-    echo "(dry-run — not executed)"
-    return 0
-  fi
-  # Prefer current env; if using sibling lerobot checkout with its own venv, sync there.
-  if [[ -f "$ROOT/../lerobot/pyproject.toml" ]]; then
-    (cd "$ROOT/../lerobot" && uv sync --extra dataset --extra feetech --extra hardware --extra viz) || true
-  fi
+  ensure_lerobot_extras "dataset,feetech,hardware,viz"
 }
 
-# MuJoCo + keyboard need so101-mujoco; --display_data=true needs viz (rerun-sdk).
-# Keep feetech so option 16 (real leader) still works after this sync.
+# MuJoCo + keyboard need plugins; --display_data=true needs viz (rerun-sdk).
 ensure_mujoco_deps() {
   echo "Ensuring so101-lab plugins + viz + feetech…"
   ensure_overlay_plugins
-  if [[ "$DRY_RUN" == "1" ]]; then
-    echo "▶ (optional) uv sync --extra viz --extra feetech  # in lerobot env"
-    echo "(dry-run — not executed)"
-    return 0
-  fi
-  if [[ -f "$ROOT/../lerobot/pyproject.toml" ]]; then
-    (cd "$ROOT/../lerobot" && uv sync --extra viz --extra feetech) || true
-  fi
+  ensure_lerobot_extras "viz,feetech"
 }
 
 open_teleop_sync_help() {
@@ -155,7 +160,7 @@ display_flag() {
   else
     echo "Installing viz (rerun-sdk) for --display_data…" >&2
     if [[ "$DRY_RUN" != "1" ]]; then
-      uv sync --extra viz >/dev/null
+      ensure_lerobot_extras "viz" >/dev/null || true
     fi
     if uv run python -c "import rerun" 2>/dev/null; then
       echo "true"
@@ -349,7 +354,7 @@ show_menu() {
   8) Teleop (USB camera + Rerun)
   9) Teleop sync help (Roadmap · Troubleshooting)
  10) Record demos (USB camera)
-  11) Visualize dataset (all episodes — Rerun)
+ 11) Visualize dataset (all episodes — Rerun)
  12) Train ACT (cloud GPU — run where CUDA is available)
  13) Train Diffusion (cloud GPU)
  14) Rollout / evaluate policy
@@ -358,8 +363,6 @@ show_menu() {
  17) MuJoCo — real leader → sim (3D viewer)
  18) Install MuJoCo extra
  19) HF auth login
- 20) Serve project HTML docs
- 21) Record demos (no camera) — Use Case 1 fixed pick & place
  ──
   C) Configure ports / ids / HF user / camera
   D) Toggle dry-run (print commands only)
@@ -437,7 +440,8 @@ dispatch() {
       run uv run lerobot-find-cameras opencv
       ;;
     2)
-      run uv sync --locked --extra feetech --extra viz --extra hardware --extra dataset
+      ensure_lerobot_extras "feetech,hardware,viz,dataset"
+      ensure_overlay_plugins
       run uv run python --version
       ;;
     3)
@@ -506,6 +510,8 @@ dispatch() {
     11)
       local ep
       local -a viz_args
+      local viz_help=""
+      local has_all_episodes=0
       resolve_dataset_repo_id
       echo "Using dataset: $RESOLVED_DATASET_REPO_ID"
       if [[ -n "${RESOLVED_DATASET_ROOT:-}" ]]; then
@@ -513,14 +519,37 @@ dispatch() {
       else
         echo "Warning: no local dataset found for ${HF_USER}/${DATASET_REPO}*"
       fi
-      echo "Rerun: state + action (j1–j6) with every episode on the timeline."
-      if [[ "${SO101_CLI_NONINTERACTIVE:-0}" == "1" ]]; then
-        ep="${SO101_VIZ_EPISODE:-all}"
-      else
-        read -r -p "Episode index [all]: " ep
-        ep="${ep:-all}"
+      # Stock LeRobot requires --episode-index. Optional patch 0004 adds --all-episodes.
+      viz_help="$(uv run lerobot-dataset-viz --help 2>&1 || true)"
+      if grep -q -- '--all-episodes' <<<"$viz_help"; then
+        has_all_episodes=1
       fi
-      viz_args=(uv run lerobot-dataset-viz --repo-id "$RESOLVED_DATASET_REPO_ID" --video-backend pyav --num-workers 0)
+      if [[ "$has_all_episodes" == "1" ]]; then
+        echo "Rerun: pick one episode, or 'all' for every episode on one timeline (patched LeRobot)."
+        if [[ "${SO101_CLI_NONINTERACTIVE:-0}" == "1" ]]; then
+          ep="${SO101_VIZ_EPISODE:-all}"
+        else
+          read -r -p "Episode index [all]: " ep
+          ep="${ep:-all}"
+        fi
+      else
+        echo "Rerun: one episode at a time (stock LeRobot — no --all-episodes)."
+        if [[ "${SO101_CLI_NONINTERACTIVE:-0}" == "1" ]]; then
+          ep="${SO101_VIZ_EPISODE:-0}"
+        else
+          read -r -p "Episode index [0]: " ep
+          ep="${ep:-0}"
+        fi
+        if [[ "$ep" == "all" || "$ep" == "*" || "$ep" == "-1" ]]; then
+          echo "Error: this LeRobot build has no --all-episodes."
+          echo "Enter a numeric episode (e.g. 0), or apply patches/0004-dataset-viz-all-episodes.patch to ../lerobot."
+          return 1
+        fi
+      fi
+      viz_args=(uv run lerobot-dataset-viz --repo-id "$RESOLVED_DATASET_REPO_ID" --num-workers 0)
+      if grep -q -- '--video-backend' <<<"$viz_help"; then
+        viz_args+=(--video-backend pyav)
+      fi
       if [[ -n "${RESOLVED_DATASET_ROOT:-}" ]]; then
         viz_args+=(--root "$RESOLVED_DATASET_ROOT")
       fi
@@ -621,26 +650,6 @@ dispatch() {
       else
         run uv run hf auth login
       fi
-      ;;
-    20)
-      run "$ROOT/start.sh"
-      ;;
-    21)
-      # Use Case 1: fixed pick & place — state + action only (no cameras)
-      run uv run lerobot-record \
-        --robot.type=so101_follower \
-        --robot.port="$FOLLOWER_PORT" \
-        --robot.id="$FOLLOWER_ID" \
-        --teleop.type=so101_leader \
-        --teleop.port="$LEADER_PORT" \
-        --teleop.id="$LEADER_ID" \
-        --dataset.repo_id="${HF_USER}/${DATASET_REPO}" \
-        --dataset.num_episodes="$NUM_EPISODES" \
-        --dataset.episode_time_s="$EPISODE_TIME_S" \
-        --dataset.reset_time_s="$RESET_TIME_S" \
-        --dataset.single_task="$TASK" \
-        --dataset.push_to_hub=false \
-        --display_data=false
       ;;
     [cC])
       configure

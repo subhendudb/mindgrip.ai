@@ -522,8 +522,6 @@
       <a href="#cli-17">17 · Leader→sim</a>
       <a href="#cli-18">18 · MuJoCo extra</a>
       <a href="#cli-19">19 · HF login</a>
-      <a href="#cli-20">20 · Docs serve</a>
-      <a href="#cli-21">21 · Record no cam</a>
       <a href="#cli-C">C · Config</a>
       <a href="#cli-D">D · Dry-run</a>
       <a href="#cli-S">S · Save</a>
@@ -550,8 +548,14 @@
       <details id="cli-2">
         <summary><span class="cli-step-badge">2</span> Install / sync deps</summary>
         <div class="cli-body">
-          <p>feetech + viz + hardware + dataset. <a class="deep" href="roadmap.html#step-1">Open Step 1 in roadmap →</a></p>
-<pre><span class="cmd">uv sync</span> <span class="flag">--locked --extra</span> <span class="val">feetech</span> <span class="flag">--extra</span> <span class="val">viz</span> <span class="flag">--extra</span> <span class="val">hardware</span> <span class="flag">--extra</span> <span class="val">dataset</span>
+          <p>Installs LeRobot extras (<code>feetech</code> + <code>viz</code> + <code>hardware</code> + <code>dataset</code>)
+          into <strong>so101-lab’s</strong> <code>.venv</code> from the sibling <code>../lerobot</code> checkout,
+          then ensures MuJoCo / keyboard plugins.
+          <a class="deep" href="roadmap.html#step-1">Open Step 1 in roadmap →</a></p>
+<pre><span class="comment"># From so101-lab/ (this overlay’s venv — not uv sync in so101-lab)</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">"../lerobot[feetech,hardware,viz,dataset]"</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_robot_so101_mujoco</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_teleoperator_so101_keyboard</span>
 <span class="cmd">uv run python</span> <span class="flag">--version</span></pre>
         </div>
       </details>
@@ -674,13 +678,15 @@
       <details id="cli-11">
         <summary><span class="cli-step-badge">11</span> Visualize dataset</summary>
         <div class="cli-body">
-          <p><code>lerobot-dataset-viz</code> — resolves stamped repo ids under <code>$HF_LEROBOT_HOME</code>. Prompt for episode index or <code>all</code>.</p>
+          <p><code>lerobot-dataset-viz</code> — resolves stamped repo ids under <code>$HF_LEROBOT_HOME</code>.
+          Stock LeRobot needs a numeric <code>--episode-index</code> (default <code>0</code>).
+          Optional patch <code>0004-dataset-viz-all-episodes</code> enables <code>--all-episodes</code>.</p>
 <pre><span class="cmd">uv run lerobot-dataset-viz</span> \
   <span class="flag">--repo-id</span> <span class="val">${HF_USER}/pick_place_sorting</span> \
-  <span class="flag">--video-backend</span> <span class="val">pyav</span> \
+  <span class="flag">--episode-index</span> <span class="val">0</span> \
   <span class="flag">--num-workers</span> <span class="val">0</span> \
-  <span class="flag">--all-episodes</span>
-<span class="comment"># Or: --episode-index N · add --root /path/to/local/dataset when present</span></pre>
+  <span class="flag">--root</span> <span class="val">$HF_LEROBOT_HOME/${HF_USER}/pick_place_sorting</span>
+<span class="comment"># With patch 0004: --all-episodes instead of --episode-index</span></pre>
         </div>
       </details>
 
@@ -777,11 +783,10 @@
       <details id="cli-18">
         <summary><span class="cli-step-badge">18</span> Install MuJoCo extra</summary>
         <div class="cli-body">
-          <p>Ensures so101-lab plugins (editable installs) + viz + feetech so leader→sim still works.</p>
-<pre><span class="cmd">uv pip install -e</span> <span class="val">packages/lerobot_robot_so101_mujoco</span>
-<span class="cmd">uv pip install -e</span> <span class="val">packages/lerobot_teleoperator_so101_keyboard</span>
-<span class="comment"># In sibling lerobot env when present:</span>
-<span class="cmd">uv sync</span> <span class="flag">--extra</span> <span class="val">viz</span> <span class="flag">--extra</span> <span class="val">feetech</span></pre>
+          <p>Ensures so101-lab plugins (editable installs) + <code>viz</code> + <code>feetech</code> in this overlay’s <code>.venv</code>.</p>
+<pre><span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_robot_so101_mujoco</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">packages/lerobot_teleoperator_so101_keyboard</span>
+<span class="cmd">uv pip install</span> <span class="flag">-e</span> <span class="val">"../lerobot[viz,feetech]"</span></pre>
         </div>
       </details>
 
@@ -791,36 +796,6 @@
           <p>Needed for Hub datasets / jobs. Uses <code>hf</code> if on PATH, else <code>uv run hf</code>.</p>
 <pre><span class="cmd">hf auth login</span>
 <span class="comment"># or: uv run hf auth login</span></pre>
-        </div>
-      </details>
-
-      <details id="cli-20">
-        <summary><span class="cli-step-badge">20</span> Serve project HTML docs</summary>
-        <div class="cli-body">
-          <p>Runs <code>./start.sh</code> from the repo root (docs web UI).</p>
-<pre><span class="cmd">./start.sh</span></pre>
-        </div>
-      </details>
-
-      <details id="cli-21">
-        <summary><span class="cli-step-badge">21</span> Record demos (no camera) — Use Case 1</summary>
-        <div class="cli-body">
-          <p>Fixed pick &amp; place — state + action only. Sets <code>--dataset.push_to_hub=false</code> and <code>--display_data=false</code>.
-          Still uses <code>$TASK</code> from config.</p>
-<pre><span class="cmd">uv run lerobot-record</span> \
-  <span class="flag">--robot.type=</span><span class="val">so101_follower</span> \
-  <span class="flag">--robot.port=</span><span class="val">/dev/tty.usbmodem5B141118901</span> \
-  <span class="flag">--robot.id=</span><span class="val">LeoArm</span> \
-  <span class="flag">--teleop.type=</span><span class="val">so101_leader</span> \
-  <span class="flag">--teleop.port=</span><span class="val">/dev/tty.usbmodem5AE60832361</span> \
-  <span class="flag">--teleop.id=</span><span class="val">LeoArm</span> \
-  <span class="flag">--dataset.repo_id=</span><span class="val">${HF_USER}/pick_place_sorting</span> \
-  <span class="flag">--dataset.num_episodes=</span><span class="val">100</span> \
-  <span class="flag">--dataset.episode_time_s=</span><span class="val">120</span> \
-  <span class="flag">--dataset.reset_time_s=</span><span class="val">60</span> \
-  <span class="flag">--dataset.single_task=</span><span class="val">"$TASK"</span> \
-  <span class="flag">--dataset.push_to_hub=</span><span class="val">false</span> \
-  <span class="flag">--display_data=</span><span class="val">false</span></pre>
         </div>
       </details>
 

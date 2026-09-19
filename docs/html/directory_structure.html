@@ -50,7 +50,6 @@
 ├── Makefile              # E2E / make targets
 ├── README.md             # SO-101 setup &amp; teleoperation guide (this fork)
 ├── set_middle_positions.py
-├── start.sh              # Serve local HTML docs
 ├── control_arm.py
 └── test_arm.py</code></pre>
 <hr />
@@ -125,7 +124,7 @@
 </tr>
 <tr class="even">
 <td><strong><code>docs/html/</code></strong></td>
-<td>Generated static HTML for local browsing (<code>./start.sh</code>).</td>
+<td>Generated static HTML for local browsing (prefer <code>docs-web</code> + <code>npm run dev</code>).</td>
 </tr>
 <tr class="odd">
 <td><strong><code>docs/build_html.py</code></strong></td>
@@ -505,22 +504,18 @@
 <td>Program Feetech motor IDs and move to encoder midpoint before assembly.</td>
 </tr>
 <tr class="odd">
-<td><strong><code>start.sh</code></strong></td>
-<td>Builds HTML docs if needed and serves them at <code>http://127.0.0.1:8000/</code>.</td>
+<td><strong><code>LICENSE</code></strong></td>
+<td>Project license.</td>
 </tr>
 <tr class="even">
 <td><strong><code>control_arm.py</code></strong>, <strong><code>test_arm.py</code></strong></td>
 <td>Fork helper scripts for arm bring-up / smoke tests.</td>
 </tr>
 <tr class="odd">
-<td><strong><code>LICENSE</code></strong></td>
-<td>Project license.</td>
-</tr>
-<tr class="even">
 <td><strong><code>.pre-commit-config.yaml</code></strong></td>
 <td>Lint/format hooks (ruff, typos, …).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><strong><code>.dockerignore</code></strong>, <strong><code>.gitignore</code></strong>, <strong><code>.gitattributes</code></strong></td>
 <td>Ignore rules; LFS attributes for large test artifacts.</td>
 </tr>

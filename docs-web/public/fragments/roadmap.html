@@ -1258,7 +1258,6 @@ sudo usermod -aG dialout $USER   <span class="comment"># then log out &amp; back
             <li><strong>0 · Find USB ports</strong> / <strong>1 · Find cameras</strong> — confirm leader / follower / cam still match config.</li>
             <li><strong>10 · Record demos (USB camera)</strong> — main path for this project (<code>lerobot-record</code> + <code>front</code> cam + Rerun).</li>
             <li><strong>11 · Visualize dataset</strong> — spot bad episodes with <code>lerobot-dataset-viz</code> before training.</li>
-            <li><strong>21 · Record demos (no camera)</strong> — optional state-only Use Case 1; not the ACT vision path.</li>
           </ul>
           <figure style="margin:12px 0 16px;max-width:560px;border:1px solid var(--border);background:var(--surface)">
             <img
@@ -1273,13 +1272,12 @@ sudo usermod -aG dialout $USER   <span class="comment"># then log out &amp; back
 <pre><span class="comment"># From so101-lab/</span>
 ./so101_cli_menu.sh
 <span class="comment"># → C  set TASK / dataset  ·  10  record+cam  ·  11  visualize</span>
-<span class="comment"># Deep links: cli_menu.html#cli-10 · #cli-11 · #cli-21 · #cli-C</span></pre>
+<span class="comment"># Deep links: cli_menu.html#cli-10 · #cli-11 · #cli-C</span></pre>
           <div class="notice n-tip" style="margin:12px 0">
             <div class="notice-icon">⌨️</div>
             <div class="notice-body">
               Details: <a href="cli_menu.html#cli-10">CLI · 10</a> ·
               <a href="cli_menu.html#cli-11">CLI · 11</a> ·
-              <a href="cli_menu.html#cli-21">CLI · 21</a> ·
               <a href="cli_menu.html#cli-C">CLI · C</a>.
               Press <strong>Enter</strong> to start an episode; <strong>Ctrl+C</strong> ends the recording session.
             </div>

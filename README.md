@@ -92,7 +92,7 @@ After extracting this overlay, you can restore vanilla LeRobot:
 cd ../lerobot
 git checkout -- .
 git clean -fd -- src/lerobot/robots/so101_mujoco src/lerobot/teleoperators/so101_keyboard \
-  so101_cli_menu.sh start.sh examples/so101_mujoco scripts/setup_lerobot_home.sh scripts/view_all_episodes.py
+  so101_cli_menu.sh examples/so101_mujoco scripts/setup_lerobot_home.sh scripts/view_all_episodes.py
 # also remove lab docs tooling if present:
 # rm -rf docs/html docs/build_html.py docs/serve_html.py
 # rm -f docs/source/{acronyms,directory_structure,policy_cheatsheet,so101_mujoco}.mdx

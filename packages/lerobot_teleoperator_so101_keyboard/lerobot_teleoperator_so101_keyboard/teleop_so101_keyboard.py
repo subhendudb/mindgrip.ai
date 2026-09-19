@@ -17,7 +17,7 @@
 """Keyboard teleoperator emitting SO-101 joint `.pos` actions (optional / headless).
 
 Prefer MuJoCo native viewer Control sliders for interactive sim
-(``./so101_cli_menu.sh 15`` / ``python -m lerobot_robot_so101_mujoco.run_viewer``).
+(``./so101_cli_menu.sh 16`` / ``python -m lerobot_robot_so101_mujoco.run_viewer``).
 Keyboard teleop conflicts with MuJoCo's own keybindings when the 3D viewer is open.
 """
 
@@ -27,7 +27,7 @@ import logging
 import time
 from typing import Any
 
-from lerobot.types import RobotAction
+from lerobot.lerobot_types import RobotAction
 from lerobot.utils.decorators import check_if_already_connected, check_if_not_connected
 
 from lerobot.teleoperators.keyboard.teleop_keyboard import KeyboardTeleop, PYNPUT_AVAILABLE, keyboard
