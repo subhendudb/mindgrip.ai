@@ -1,6 +1,7 @@
 # SO-101 Lab
 .so101_cli.env
 .venv/
+.pptx-venv/
 __pycache__/
 *.py[cod]
 .DS_Store

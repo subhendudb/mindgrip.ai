@@ -25,4 +25,12 @@ python3 docs-web/scripts/extract_fragments.py
 
 Full site map: [`docs-web/README.md`](../docs-web/README.md)
 
+## Project slide deck (≤10 slides)
+
+```bash
+python3 -m venv .pptx-venv && .pptx-venv/bin/pip install python-pptx
+.pptx-venv/bin/python scripts/build_project_pptx.py
+# → docs/MindGrip_SO101_Project.pptx
+```
+
 Official LeRobot docs: https://huggingface.co/docs/lerobot
